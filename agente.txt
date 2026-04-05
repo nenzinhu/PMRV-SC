@@ -1,0 +1,23 @@
+$apiKey = "AIzaSyAbDTmWasK2wOMlonqSrQEMVeMc1aD2RMg"
+$model = "gemini-1.5-flash"
+$url = "https://generativelanguage.googleapis.com/v1beta/models/$($model):generateContent?key=$apiKey"
+
+# Estrutura do corpo da mensagem
+$bodyObject = @{
+    contents = @(
+        @{
+            parts = @(
+                @{ text = "Olá, como você pode me ajudar via PowerShell?" }
+            )
+        }
+    )
+}
+
+# Converte para JSON com profundidade garantida
+$bodyJson = $bodyObject | ConvertTo-Json -Depth 10
+
+# Faz a chamada à API garantindo UTF-8
+$response = Invoke-RestMethod -Uri $url -Method Post -Body ([System.Text.Encoding]::UTF8.GetBytes($bodyJson)) -ContentType "application/json; charset=utf-8"
+
+# Exibe a resposta de forma limpa
+$response.candidates[0].content.parts[0].text
