@@ -1,0 +1,514 @@
+/* Arquivo consolidado de estilos para o PMRV 4 em 1.
+ *
+ * Este arquivo reúne os estilos existentes no projeto, incluindo o rodapé
+ * assinado e algumas melhorias responsivas.  Centralizar os estilos em um
+ * único arquivo facilita o versionamento e a manutenção.
+ */
+
+/* Rodapé com assinatura.  Você pode ajustar as cores utilizando
+   variáveis CSS (veja definições no <head> de index.html). */
+footer.footer-signature {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 24px;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+footer.footer-signature .author {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* Grade responsiva para formulários.  Ajusta automaticamente o
+   número de colunas conforme a largura da tela. */
+.legacy-layout .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+/* Torna botões e layouts mais amigáveis em telas pequenas. */
+@media (max-width: 768px) {
+  .legacy-layout .btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  .legacy-layout .steps {
+    flex-direction: column;
+  }
+}
+
+/* ---------------------------------------------------------------
+   ESTILOS NOVOS - INICIANDO O SERVIÇO (DESIGN REACT-LIKE)
+--------------------------------------------------------------- */
+.space-y-6 > * + * { margin-top: 1.5rem; }
+.space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; }
+
+.field-label-orange {
+  display: block;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #f58220;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+
+.pol-grid-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 160px;
+  overflow-y: auto;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pol-chip {
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pol-chip.active {
+  background: #f58220;
+  border-color: #f58220;
+  color: white;
+  box-shadow: 0 0 15px rgba(245, 130, 32, 0.3);
+}
+
+.lote-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.lote-title {
+  font-weight: 700;
+  color: #f58220;
+  font-size: 13px;
+}
+
+.lote-horario {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.lote-pols {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 4px;
+}
+
+.btn-remove {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 18px;
+  padding: 4px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.btn-remove:hover { opacity: 1; }
+
+/* ---------------------------------------------------------------
+   ESTILOS DOCUMENTOS DE TRÂNSITO
+--------------------------------------------------------------- */
+.doc-links-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.doc-link-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.doc-link-item:hover, .doc-link-item:active {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #f58220;
+  transform: translateY(-2px);
+}
+
+.doc-icon {
+  font-size: 24px;
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doc-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-info strong {
+  font-size: 14px;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.doc-info span {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Estilos de Passos / Tabs */
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(245, 130, 32, 0.1);
+  padding-bottom: 6px;
+}
+
+.step-number {
+  width: 22px;
+  height: 22px;
+  background: #f58220;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.step-header .field-label-orange {
+  margin-bottom: 0;
+}
+
+.flex-2 { flex: 2; }
+
+/* ---------------------------------------------------------------
+   DANOS - PONTOS INTERATIVOS E ZOOM
+--------------------------------------------------------------- */
+/* Círculos no Carro (SVG) */
+#dan-diagram-area g {
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+#dan-diagram-area g:hover,
+#dan-diagram-area g:active {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* Círculos na Moto (HTML) */
+.v360-pin {
+  opacity: 0;
+  width: 52px !important;
+  height: 52px !important;
+  margin-left: -26px !important;
+  margin-top: -26px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px !important;
+  transition: opacity 0.2s, transform 0.2s, background 0.2s;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.v360-pin:hover,
+.v360-pin:active {
+  opacity: 1;
+  transform: scale(1.3);
+}
+
+/* Se o ponto já tiver avaria, ele fica visível mas sutil */
+.v360-pin.avaria,
+#dan-diagram-area g.has-damage {
+  opacity: 0.6;
+}
+
+.v360-pin.avaria:hover,
+#dan-diagram-area g.has-damage:hover {
+  opacity: 1;
+}
+
+/* Tooltip com Zoom */
+#dan-hover-tooltip {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  background: rgba(13, 17, 23, 0.95);
+  border: 1px solid #f58220;
+  border-radius: 12px;
+  padding: 8px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  transform: translate(-9999px, -9999px);
+  max-width: 240px;
+}
+
+#dan-hover-tooltip.open {
+  display: flex;
+}
+
+.dan-tooltip-zoom {
+  width: 190px;
+  height: 190px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 2px solid #f58220;
+  background: #000;
+  position: relative;
+  margin-bottom: 8px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+.dan-tooltip-zoom-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  image-rendering: high-quality;
+  will-change: transform;
+}
+
+.dan-tooltip-crosshair {
+  position: absolute;
+  inset: 0;
+}
+
+.dan-tooltip-crosshair::before,
+.dan-tooltip-crosshair::after {
+  content: '';
+  position: absolute;
+  background: rgba(245, 130, 32, 0.95);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+
+.dan-tooltip-crosshair::before {
+  width: 2px;
+  height: 100%;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.dan-tooltip-crosshair::after {
+  height: 2px;
+  width: 100%;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.dan-tooltip-point {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #f58220;
+  border: 2px solid #fff;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.45);
+}
+
+.dan-tooltip-label {
+  font-size: 12px;
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  text-align: center;
+  background: #f58220;
+  padding: 2px 8px;
+  border-radius: 4px;
+  width: 100%;
+}
+
+
+/* Rodap� Geral */
+.app-footer {
+  text-align: center;
+  padding: 20px;
+  margin-top: 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.app-footer-badge {
+  display: inline-block;
+  background: #f58220;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.app-footer-text {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.app-footer-author {
+  color: #fff;
+  font-weight: 700;
+}
+
+.btn-clear-cache {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-left: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.btn-clear-cache:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fff;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+
+/* Bot�o GPS Minimalista na Home */
+.btn-gps-minimal {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #3b82f6;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-gps-minimal:hover {
+  background: #3b82f6;
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-gps-minimal:active {
+  transform: scale(0.95);
+}
+
+/* ---------------------------------------------------------------
+   PATRULHAMENTO - GUIA RÁPIDO DE INFRAÇÕES
+--------------------------------------------------------------- */
+.infra-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.infra-quick-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.infra-quick-card:hover, .infra-quick-card:active {
+  background: rgba(245, 130, 32, 0.08);
+  border-color: rgba(245, 130, 32, 0.3);
+  transform: translateY(-2px);
+}
+
+.infra-quick-card.active {
+  background: rgba(245, 130, 32, 0.15);
+  border-color: #f58220;
+  box-shadow: 0 4px 12px rgba(245, 130, 32, 0.2);
+}
+
+.infra-quick-card .q-code {
+  font-size: 10px;
+  font-weight: 900;
+  color: #f58220;
+  background: rgba(245, 130, 32, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+
+.infra-quick-card .q-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 3px;
+}
+
+.infra-quick-card .q-art {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 400;
+}
+
+/* Ajuste para telas muito pequenas */
+@media (max-width: 360px) {
+  .infra-quick-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hidden { display: none !important; }
+
