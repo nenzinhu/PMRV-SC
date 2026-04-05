@@ -1,0 +1,42 @@
+Aqui estão as principais funções do programa
+
+1. Cálculo de Peso Automático
+O usuário insere dois valores básicos
+
+Tara O peso do veículo vazio (caminhão + carroceria).
+
+Peso da Carga O peso indicado na Nota Fiscal (NF).
+
+Resultado O programa soma os dois e gera o PBT Apurado.
+
+2. Verificação de Limites Legais
+O programa já vem configurado com os limites de peso padrão para diferentes tipos de veículos
+
+Caminhão Toco (2 eixos) 16 toneladas.
+
+Bitruck (4 eixos) 29 toneladas.
+
+Rodotrem (9 eixos) 74 toneladas.
+
+E várias outras configurações comuns no Brasil.
+
+3. Aplicação da Tolerância de 5%
+De acordo com a legislação brasileira (Resoluções do CONTRAN), existe uma margem de tolerância de 5% sobre o PBT na fiscalização por nota fiscal.
+
+O programa calcula automaticamente esse valor de segurança.
+
+Ele avisa se o peso está OK, se está acima do limite mas dentro da tolerância, ou se já ultrapassou o limite de multa.
+
+4. Geração de Dados para Autuação (Multa)
+Se o veículo estiver com excesso de peso acima da tolerância, o programa
+
+Exibe o Excesso Total e o Excesso acima da tolerância.
+
+Indica o enquadramento legal Artigo 231, V do CTB (Código de Trânsito Brasileiro) e o código da infração (682-31).
+
+Informa a medida administrativa necessária Transbordo da carga (retirar o excesso antes de seguir viagem).
+
+5. Facilidade de Uso
+O botão Copiar Dados permite que o policial copie rapidamente o resumo da infração para colar em relatórios, aplicativos de multas ou sistemas internos de comunicação.
+
+Em resumo É uma calculadora de bolso digital para garantir que a fiscalização de peso seja rápida, precisa e esteja de acordo com as leis de trânsito atuais.

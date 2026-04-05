@@ -1,0 +1,21 @@
+{
+  "name": "pmrv-4em1-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Wrapper Android para o app PMRv Operacional",
+  "scripts": {
+    "prepare:web": "node scripts/copy-web-assets.mjs",
+    "cap:copy": "npm run prepare:web && npx cap copy",
+    "cap:sync": "npm run prepare:web && npx cap sync",
+    "cap:open:android": "npx cap open android",
+    "build:apk:debug": "npm run prepare:web && npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.2.0",
+    "@capacitor/cli": "^8.2.0",
+    "@capacitor/core": "^8.2.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5"
+  }
+}

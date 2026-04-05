@@ -1,0 +1,28 @@
+function Analisar-Pasta {
+    param (
+        [Parameter(Mandatory=$true)][string]$Caminho,
+        [Parameter(Mandatory=$false)][string]$Instrucao = "Explique o objetivo deste projeto e liste os principais arquivos."
+    )
+    
+    # Filtra apenas extensões de texto puro e ignora pastas pesadas como .git ou node_modules
+    $extensoes = @("*.ps1", "*.txt", "*.json", "*.py", "*.js", "*.md", "*.html", "*.css")
+    $arquivos = Get-ChildItem -Path $Caminho -Include $extensoes -File -Recurse -ErrorAction SilentlyContinue | 
+                Where-Object { $_.FullName -notlike "*\.git\*" -and $_.Length -lt 100KB } # Ignora arquivos > 100KB
+
+    if ($arquivos.Count -eq 0) { return "Nenhum arquivo de texto pequeno encontrado." }
+
+    $contexto = "Analise os arquivos do projeto PMRV:`n"
+    foreach ($arq in $arquivos) {
+        try {
+            $conteudo = Get-Content $arq.FullName -Raw -ErrorAction SilentlyContinue
+            if ($conteudo) {
+                # Limpa espaços excessivos para reduzir o tamanho do JSON
+                $conteudoLimpo = $conteudo -replace '\s+', ' '
+                $contexto += "`n-- ARQUIVO: $($arq.Name) --`n$conteudoLimpo`n"
+            }
+        } catch {}
+    }
+
+    $perguntaFinal = "$Instrucao`n$contexto"
+    Gemini -Pergunta $perguntaFinal
+}

@@ -1,0 +1,27 @@
+/*
+ * Custom stylesheet for the PMRV‑4em1 application.
+ *
+ * This file contains only a handful of responsive enhancements to
+ * demonstrate how you can externalize your styles.  Move the bulk of
+ * your existing CSS from `<style>` in `index.html` into this file and
+ * delete the inline `<style>` block.  External stylesheets are easier
+ * to maintain, cache and minify.
+ */
+
+/* Responsive grid for form fields */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+/* Make buttons full width on small screens */
+@media (max-width: 768px) {
+  .btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  .steps {
+    flex-direction: column;
+  }
+}
