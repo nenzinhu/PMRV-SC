@@ -364,7 +364,40 @@ footer.footer-signature .author {
 }
 
 
-/* Rodap� Geral */
+/* Barra de Telemetria Superior */
+.top-gps-bar {
+  background: #111827;
+  border-bottom: 1px solid rgba(245, 130, 32, 0.3);
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  position: sticky;
+  top: 60px; /* Logo abaixo da topbar (ajustar se necessário) */
+  z-index: 900;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.top-gps-bar .gps-main {
+  font-size: 13px;
+  font-weight: 900;
+  color: #f58220;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.top-gps-bar .gps-coords {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: monospace;
+  text-align: right;
+  line-height: 1.1;
+}
+
+/* Ajustes no Rodapé (Removendo GPS) */
 .app-footer {
   text-align: center;
   padding: 20px;
@@ -377,9 +410,9 @@ footer.footer-signature .author {
   display: inline-block;
   background: #f58220;
   color: white;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
   font-weight: 900;
   text-transform: uppercase;
   margin-bottom: 8px;
@@ -510,5 +543,34 @@ footer.footer-signature .author {
   }
 }
 
-.hidden { display: none !important; }
+/* ============================================================
+   ESTILOS DO CROQUI
+============================================================ */
+#croqui-svg g.selected .icon-body,
+#croqui-svg g.selected rect,
+#croqui-svg g.selected path {
+  filter: drop-shadow(0 0 5px var(--blue));
+  stroke: var(--blue) !important;
+  stroke-width: 2px !important;
+}
+
+#croqui-svg g.selected .icon-label {
+  fill: var(--blue) !important;
+  font-size: 12px !important;
+}
+
+#croqui-svg g {
+  transition: filter 0.2s ease;
+}
+
+/* Animação suave para seleção */
+@keyframes selected-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+#croqui-svg g.selected {
+  animation: selected-pulse 2s infinite ease-in-out;
+}
 

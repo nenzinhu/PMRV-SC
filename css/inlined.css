@@ -10,11 +10,11 @@
       --border-hi: rgba(245,130,32,.35);
 
       --text:      #ffffff;
-      --muted:     rgba(255,230,200,.75);
-      --label:     rgba(245,130,32,.80);
+      --muted:     #e5e7eb; /* Cinza claro sólido para melhor contraste */
+      --label:     #fb923c; /* Laranja mais vibrante e sólido para rótulos */
 
-      --blue:      #F58220;
-      --blue-dim:  rgba(245,130,32,.15);
+      --blue:      #f97316; /* Laranja vibrante padrão */
+      --blue-dim:  rgba(249,115,22,.15);
       --green:     #009543;
       --green-dim: rgba(0,149,67,.12);
       --red:       #D82A2E;
@@ -1045,6 +1045,131 @@
       margin-top: 3px;
     }
 
+    .screen-pmrv {
+      min-height: calc(100vh - 132px);
+    }
+
+    .pmrv-card {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .pmrv-form-grid {
+      gap: 12px;
+    }
+
+    .pmrv-advanced-toggle-wrap {
+      display: none;
+    }
+
+    .pmrv-advanced-section {
+      display: contents;
+    }
+
+    .pmrv-preview-box {
+      margin-top: 0 !important;
+    }
+
+    .pmrv-preview-box .result-text {
+      max-height: 220px;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .pmrv-footer-panel {
+      margin-top: auto;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(245,130,32,.18);
+      background:
+        linear-gradient(135deg, rgba(245,130,32,.12), rgba(216,42,46,.08)),
+        rgba(16,10,6,.78);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .pmrv-footer-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .pmrv-footer-local {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pmrv-footer-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .7px;
+      text-transform: uppercase;
+      color: rgba(255,210,160,.72);
+    }
+
+    .pmrv-footer-local strong {
+      font-family: var(--font-display);
+      font-size: 16px;
+      line-height: 1.15;
+      color: #fff3e6;
+      word-break: break-word;
+    }
+
+    .pmrv-footer-local small {
+      font-size: 11px;
+      line-height: 1.35;
+      color: rgba(255,220,190,.74);
+    }
+
+    .pmrv-footer-buttons {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .pmrv-gps-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .pmrv-gps-chip,
+    .pmrv-gps-coords {
+      padding: 9px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .pmrv-gps-chip span,
+    .pmrv-gps-coords span {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .55px;
+      color: rgba(255,210,160,.62);
+    }
+
+    .pmrv-gps-chip strong,
+    .pmrv-gps-coords strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 13px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .pmrv-gps-coords {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
     .vitimas-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -1372,6 +1497,140 @@
       .report-header h1 { font-size: 16px; }
       .app-footer { padding: 12px 14px; border-radius: 16px; }
       .app-footer-text { width: 100%; }
+      .screen-pmrv {
+        min-height: calc(100vh - 98px);
+        margin-top: 8px;
+      }
+      #screen-pmrv.active ~ .app-footer {
+        display: none;
+      }
+      .screen-pmrv .back-row {
+        display: none;
+      }
+      .pmrv-card {
+        min-height: calc(100vh - 116px);
+        padding: 10px;
+        gap: 10px;
+      }
+      .pmrv-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        align-content: start;
+      }
+      .pmrv-advanced-toggle-wrap {
+        display: block;
+        grid-column: 1 / -1;
+      }
+      .pmrv-advanced-toggle {
+        padding: 9px 10px;
+        font-size: 12px;
+      }
+      .pmrv-advanced-section {
+        display: none;
+        grid-column: 1 / -1;
+        gap: 8px;
+      }
+      .pmrv-advanced-section.open {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      .pmrv-advanced-section > .form-row {
+        display: contents;
+      }
+      .pmrv-advanced-section > .form-field,
+      .pmrv-advanced-section > .form-row > .form-field {
+        min-width: 0;
+      }
+      .pmrv-form-grid .form-row {
+        display: contents;
+      }
+      .pmrv-form-grid .form-field {
+        min-width: 0;
+        margin: 0;
+      }
+      .pmrv-form-grid .form-field > .field-label {
+        margin-bottom: 4px;
+        font-size: 10px;
+      }
+      .pmrv-form-grid input,
+      .pmrv-form-grid select,
+      .pmrv-form-grid textarea {
+        min-height: 38px;
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+      .pmrv-form-grid textarea {
+        min-height: 62px;
+        max-height: 62px;
+      }
+      .pmrv-form-grid .prefix-input span {
+        font-size: 11px;
+      }
+      .pmrv-local-field,
+      .pmrv-advanced-section > .form-field:first-child,
+      #pmrv_box_vitimas,
+      #pmrv_box_objeto,
+      #pmrv_box_outros,
+      .pmrv-advanced-section > .form-field:last-child,
+      .pmrv-form-grid > .form-field:last-child {
+        grid-column: 1 / -1;
+      }
+      .pmrv-local-field {
+        display: none;
+      }
+      .pmrv-preview-box {
+        margin-top: 2px !important;
+      }
+      .pmrv-preview-box .result-label {
+        margin-bottom: 5px;
+      }
+      .pmrv-preview-box .result-text {
+        max-height: 118px;
+        padding: 10px;
+        font-size: 11px;
+        line-height: 1.45;
+      }
+      .pmrv-preview-box .result-actions {
+        margin-top: 8px;
+        gap: 6px;
+      }
+      .pmrv-preview-box .result-actions .btn {
+        min-width: 0;
+        font-size: 11px;
+        padding: 8px 6px;
+      }
+      .pmrv-footer-panel {
+        position: sticky;
+        bottom: 0;
+        z-index: 5;
+        margin-top: auto;
+        padding: 10px;
+        border-radius: 14px;
+      }
+      .pmrv-footer-top {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .pmrv-footer-buttons {
+        width: 100%;
+      }
+      .pmrv-footer-buttons .btn {
+        flex: 1;
+      }
+      .pmrv-footer-local strong {
+        font-size: 14px;
+      }
+      .pmrv-footer-local small {
+        font-size: 10px;
+      }
+      .pmrv-gps-summary {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .pmrv-gps-coords {
+        grid-column: 1 / -1;
+      }
     }
 
     @media (max-width: 360px) {
@@ -1383,6 +1642,15 @@
       .btn { padding: 7px 10px; font-size: 12px; }
       input, select, textarea { font-size: 13px; padding: 9px 10px; }
       .menu-grid { gap: 8px; }
+      .pmrv-form-grid {
+        grid-template-columns: 1fr;
+      }
+      .pmrv-advanced-section.open {
+        grid-template-columns: 1fr;
+      }
+      .pmrv-gps-summary {
+        grid-template-columns: 1fr 1fr;
+      }
     }
 
     /* ============================================================
