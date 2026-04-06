@@ -5,11 +5,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Ferramenta 4 em 1 para PMRv - Iniciando o Serviço, Envolvidos, Relatório e Danos" />
+  <meta name="description" content="PMRV-SC - Ferramentas operacionais da Polícia Militar Rodoviária" />
   <meta name="theme-color" content="#07090f" />
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <title>4 em 1 · PMRv</title>
+  <title>PMRV-SC</title>
 
     <link rel="stylesheet" href="css/inlined.css">
     <link rel="stylesheet" href="css/style.css">
@@ -25,11 +25,10 @@
     <div class="brand">
       <img src="img/extracted_1.png" alt="Brasão PMRv" class="brand-logo" aria-hidden="true" />
       
-      <span class="brand-pill" aria-label="Sistema PMRv 4 em 1 - Online">
+      <span class="brand-pill" aria-label="Sistema PMRV-SC - Online">
         <span class="brand-dot" aria-hidden="true"></span>
-        PMRv · 4 em 1
+        PMRV-SC
       </span>
-      <span class="brand-title">Padronização e Otimização</span>
     </div>
     <nav class="topbar-actions" aria-label="Navegação principal">
       <button class="btn" data-click="go('home')" aria-label="Ir para o menu principal">Menu</button>
@@ -37,6 +36,18 @@
       <button class="btn btn-danger" data-click="go('ended')" aria-label="Encerrar sessão">Sair</button>
     </nav>
   </header>
+
+  <!-- Barra de Telemetria Superior (GPS) -->
+  <div class="top-gps-bar" id="footer-gps-container">
+    <div class="gps-main">
+      📍 <span id="footer-gps-rodovia">Iniciando...</span> 
+      🏁 KM <span id="footer-gps-km">---</span>
+    </div>
+    <div class="gps-coords">
+      Lat: <span id="footer-gps-lat">---</span><br>
+      Lng: <span id="footer-gps-lng">---</span>
+    </div>
+  </div>
 
   <!-- ============================================================
        HOME
@@ -79,67 +90,67 @@
           <span class="menu-arrow">›</span>
         </button>
 
-        <button class="menu-card" data-color="red" data-click="go('danos')">
-          <div class="menu-icon"><img src="img/extracted_5.png" alt="Danos Aparentes" class="menu-icon-img menu-icon-img-danos" /></div>
+        <button class="menu-card" data-color="red" data-click="go('danos')" aria-label="Abrir Vistoria de Danos Aparentes">
+          <div class="menu-icon"><img src="img/extracted_5.png" alt="" aria-hidden="true" class="menu-icon-img menu-icon-img-danos" /></div>
           <div class="menu-title">Danos Aparentes</div>
           <div class="menu-desc">Registrar avarias por veículo</div>
-          <span class="menu-arrow">›</span>
+          <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
 
-        <button class="menu-card" data-color="purple" data-click="go('relatorio')">
-          <div class="menu-icon"><img src="relatorio.png" class="menu-icon-img menu-icon-img-rel" alt="Relatório Completo"></div>
+        <button class="menu-card" data-color="purple" data-click="go('relatorio')" aria-label="Abrir Relatório Completo de Sinistro">
+          <div class="menu-icon"><img src="relatorio.png" class="menu-icon-img menu-icon-img-rel" alt="" aria-hidden="true"></div>
           <div class="menu-title">Relatório Completo</div>
           <div class="menu-desc">Envolvidos + Danos em um relatório</div>
-          <span class="menu-arrow">›</span>
+          <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
 
-        <button class="menu-card" data-color="blue" data-click="go('patrulhamento')">
-          <div class="menu-icon"><img src="patrulhamento.png" alt="Patrulhamento" class="menu-icon-img menu-icon-img-pat" /></div>
+        <button class="menu-card" data-color="blue" data-click="go('patrulhamento')" aria-label="Abrir Consulta de Patrulhamento e Infrações">
+          <div class="menu-icon"><img src="patrulhamento.png" alt="" aria-hidden="true" class="menu-icon-img menu-icon-img-pat" /></div>
           <div class="menu-title">Patrulhamento</div>
           <div class="menu-desc">Registro rápido de infrações em lote</div>
-          <span class="menu-arrow">›</span>
+          <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
 
-        <button class="menu-card" data-color="amber" data-click="go('pesos')">
-          <div class="menu-icon"><img src="peso.png" alt="Pesos e Dimensões" class="menu-icon-img menu-icon-img-peso" /></div>
+        <button class="menu-card" data-color="amber" data-click="go('pesos')" aria-label="Abrir Cálculo de Pesos e Dimensões">
+          <div class="menu-icon"><img src="peso.png" alt="" aria-hidden="true" class="menu-icon-img menu-icon-img-peso" /></div>
           <div class="menu-title">Pesos e Dimensões</div>
           <div class="menu-desc">PBT, tolerância e excesso dimensional</div>
-          <span class="menu-arrow">›</span>
+          <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
 
-        <button class="menu-card" data-color="green" data-click="go('tacografo')">
-          <div class="menu-icon"><img src="tacofrafo.png" alt="Tacógrafo" class="menu-icon-img menu-icon-img-taco" /></div>
+        <button class="menu-card" data-color="green" data-click="go('tacografo')" aria-label="Abrir Análise de Tacógrafo">
+          <div class="menu-icon"><img src="tacofrafo.png" alt="" aria-hidden="true" class="menu-icon-img menu-icon-img-taco" /></div>
           <div class="menu-title">Tacógrafo</div>
           <div class="menu-desc">Descanso, condução e conversão UTC</div>
-          <span class="menu-arrow">›</span>
+          <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
 
-        <button class="menu-card" data-color="purple" data-click="go('croqui')">
-          <div class="menu-icon"><img src="Croqui.png" alt="Croqui" class="menu-icon-img menu-icon-img-croqui" /></div>
+        <button class="menu-card" data-color="purple" data-click="go('croqui')" aria-label="Abrir Ferramenta de Croqui Técnico">
+          <div class="menu-icon"><img src="Croqui.png" alt="" aria-hidden="true" class="menu-icon-img menu-icon-img-croqui" /></div>
           <div class="menu-title">Croqui</div>
-          <div class="menu-desc">Monte o desenho técnico do sinistro</div>
-          <span class="menu-arrow">›</span>
+          <div class="menu-desc">Esboço técnico do local do acidente</div>
+          <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
 
-        <button class="menu-card" data-color="red" data-click="go('prazos-transito')">
-          <div class="menu-icon"><img src="prazos.png" alt="Prazos de Licenciamento" class="menu-icon-img menu-icon-img-cal" /></div>
+        <button class="menu-card" data-color="red" data-click="go('prazos-transito')" aria-label="Abrir Consulta de Prazos de Licenciamento">
+          <div class="menu-icon"><img src="prazos.png" alt="" aria-hidden="true" class="menu-icon-img menu-icon-img-cal" /></div>
           <div class="menu-title">Prazos de Licenciamento</div>
           <div class="menu-desc">Calendário por UF e final de placa</div>
-          <span class="menu-arrow">›</span>
+          <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
 
-        <button class="menu-card" data-color="green" data-click="go('docs')">
-          <div class="menu-icon"><img src="ctb.png" alt="Documentos de Trânsito" class="menu-icon-img menu-icon-img-ctb" /></div>
+        <button class="menu-card" data-color="green" data-click="go('docs')" aria-label="Abrir Documentos e Instruções de Trânsito">
+          <div class="menu-icon"><img src="ctb.png" alt="" aria-hidden="true" class="menu-icon-img menu-icon-img-ctb" /></div>
           <div class="menu-title">Documentos de Trânsito</div>
           <div class="menu-desc">Instruções rápidas sobre porte, CNH e CRLV-e</div>
-          <span class="menu-arrow">›</span>
+          <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
 
-        <button class="menu-card" data-color="blue" data-click="go('help')">
-          <div class="menu-icon"><img src="AJUDA.png" alt="Ajuda" class="menu-icon-img menu-icon-img-help" /></div>
+        <button class="menu-card" data-color="blue" data-click="go('help')" aria-label="Abrir Ajuda e Manual de Uso">
+          <div class="menu-icon"><img src="AJUDA.png" alt="" aria-hidden="true" class="menu-icon-img menu-icon-img-help" /></div>
           <div class="menu-title">Ajuda</div>
           <div class="menu-desc">Manual de uso de cada opção</div>
-          <span class="menu-arrow">›</span>
+          <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
       </div>
     </div>
@@ -327,18 +338,18 @@
   <!-- ============================================================
        PMRv
   ============================================================ -->
-  <section id="screen-pmrv" class="screen">
+  <section id="screen-pmrv" class="screen screen-pmrv">
     <div class="back-row">
       <button class="btn" data-click="go('home')">← Voltar</button>
       <button class="btn btn-danger" data-click="go('ended')">Sair</button>
     </div>
-    <div class="card">
+    <div class="card pmrv-card">
       <div class="report-header">
         <h1>POLÍCIA MILITAR RODOVIÁRIA</h1>
         <small>1º BPMRv / 1ª CIA / Posto 19</small>
       </div>
 
-      <div class="form-grid">
+      <div class="form-grid pmrv-form-grid">
         <!-- Linha 1: SADE + VTR + Rodovia -->
         <div class="form-row form-row-3">
           <div class="form-field" style="grid-column: span 1;">
@@ -381,157 +392,189 @@
               <option value="Colônia Santana/SC">Colônia Santana/SC</option>
             </select>
           </div>
-          <div class="form-field">
+          <div class="form-field pmrv-km-field">
             <label class="field-label">KM</label>
             <input type="text" id="pmrv_km" placeholder="0.000" maxlength="6" data-input="pmrv_atualizar()">
-            <div class="flex gap-8 mt-8">
-              <button type="button" class="btn btn-sm" id="btn-gps-localizar-pmrv" style="flex:1" data-click="gps_obterLocalizacao()">📍 Usar GPS</button>
-              <button type="button" class="btn btn-sm" style="flex:1" data-click="gps_simularLocalizacao()">🧪 Teste GPS</button>
-            </div>
           </div>
         </div>
 
-        <div id="pmrv_gps_result" class="sub-box hidden">
-          <div style="font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--label);margin-bottom:10px;">Retorno do GPS</div>
-          <div class="res-row"><span class="res-label">Latitude</span><strong id="pmrv_gps_lat">---</strong></div>
-          <div class="res-row"><span class="res-label">Longitude</span><strong id="pmrv_gps_lng">---</strong></div>
-          <div class="res-row"><span class="res-label">Precisão</span><strong id="pmrv_gps_acc">---</strong></div>
-          <div class="res-row"><span class="res-label">Rodovia mais próxima</span><strong id="pmrv_gps_rodovia">---</strong></div>
-          <div class="res-row"><span class="res-label">KM aproximado</span><strong id="pmrv_gps_km">---</strong></div>
-          <div id="pmrv_gps_msg" style="margin-top:8px;font-size:12px;color:var(--label);"></div>
+        <div class="form-field pmrv-local-field">
+          <label class="field-label">Local</label>
+          <input type="text" id="pmrv_local" placeholder="Rodovia e km específico" readonly>
         </div>
 
-        <!-- Horário -->
-        <div class="form-field">
-          <label class="field-label">Horário do Sinistro</label>
-          <div class="sub-box">
-            <div class="radio-row">
-              <label><input type="radio" name="pmrv_tipo_hora" id="pmrv_hora_auto" checked data-click="pmrv_atualizar()"> Automático</label>
-              <label><input type="radio" name="pmrv_tipo_hora" id="pmrv_hora_manual" data-click="pmrv_atualizar()"> Manual</label>
-              <input type="time" id="pmrv_input_hora" data-input="pmrv_atualizar()" style="width:110px; padding:6px;">
-            </div>
-          </div>
+        <div class="pmrv-advanced-toggle-wrap">
+          <button type="button" class="btn btn-full pmrv-advanced-toggle" id="pmrv_advanced_toggle" data-click="pmrv_toggleAvancado()">
+            Mais opções
+          </button>
         </div>
 
-        <!-- Ocorrência -->
-        <div class="form-row form-row-2">
+        <div id="pmrv_advanced_section" class="pmrv-advanced-section">
+          <!-- Horário -->
           <div class="form-field">
-            <label class="field-label">Tipo de Ocorrência</label>
-            <select id="pmrv_ocorrencia" data-change="pmrv_verificarVitimas()">
-              <option value="Sinistro de trânsito com danos materiais">Danos materiais</option>
-              <option value="Sinistro de trânsito com vítima(s)">Com vítima(s)</option>
-              <option value="Sinistro de trânsito com óbito">Com óbito</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label class="field-label">Acionamento</label>
-            <select id="pmrv_conhecimento" data-change="pmrv_atualizar()">
-              <option value="pela Central">Pela Central</option>
-              <option value="após deparar-se">Deparou-se</option>
-              <option value="por usuário da via">Usuário da via</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Vítimas (condicional) -->
-        <div id="pmrv_box_vitimas" class="form-field hidden">
-          <label class="field-label">Quantidade de Vítimas</label>
-          <div class="sub-box sub-box-red">
-            <div class="vitimas-grid">
-              <div class="form-field">
-                <label class="field-label">Leve</label>
-                <input type="number" id="pmrv_qtd_leve" value="0" min="0" data-input="pmrv_atualizar()">
-              </div>
-              <div class="form-field">
-                <label class="field-label">Grave</label>
-                <input type="number" id="pmrv_qtd_grave" value="0" min="0" data-input="pmrv_atualizar()">
-              </div>
-              <div class="form-field">
-                <label class="field-label">Gravíssima</label>
-                <input type="number" id="pmrv_qtd_gravissima" value="0" min="0" data-input="pmrv_atualizar()">
+            <label class="field-label">Horário do Sinistro</label>
+            <div class="sub-box">
+              <div class="radio-row">
+                <label><input type="radio" name="pmrv_tipo_hora" id="pmrv_hora_auto" checked data-click="pmrv_atualizar()"> Automático</label>
+                <label><input type="radio" name="pmrv_tipo_hora" id="pmrv_hora_manual" data-click="pmrv_atualizar()"> Manual</label>
+                <input type="time" id="pmrv_input_hora" data-input="pmrv_atualizar()" style="width:110px; padding:6px;">
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Sentido -->
-        <div class="form-row form-row-2">
-          <div class="form-field">
-            <label class="field-label">Sentido</label>
-            <select id="pmrv_sentido" data-change="pmrv_toggleSentidoManual()">
-              <option value="Centro–Bairro">Centro–Bairro</option>
-              <option value="Bairro–Centro">Bairro–Centro</option>
-              <option value="KM Crescente">KM Crescente</option>
-              <option value="KM Decrescente">KM Decrescente</option>
-              <option value="MANUAL">Outro...</option>
-            </select>
-            <input type="text" id="pmrv_sentido_manual" class="hidden mt-8" placeholder="Descreva o sentido..." data-input="pmrv_atualizar()">
+          <!-- Ocorrência -->
+          <div class="form-row form-row-2">
+            <div class="form-field">
+              <label class="field-label">Tipo de Ocorrência</label>
+              <select id="pmrv_ocorrencia" data-change="pmrv_verificarVitimas()">
+                <option value="Sinistro de trânsito com danos materiais">Danos materiais</option>
+                <option value="Sinistro de trânsito com vítima(s)">Com vítima(s)</option>
+                <option value="Sinistro de trânsito com óbito">Com óbito</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="field-label">Acionamento</label>
+              <select id="pmrv_conhecimento" data-change="pmrv_atualizar()">
+                <option value="pela Central">Pela Central</option>
+                <option value="após deparar-se">Deparou-se</option>
+                <option value="por usuário da via">Usuário da via</option>
+              </select>
+            </div>
           </div>
-          <div class="form-field">
-            <label class="field-label">Tipo de Sinistro</label>
-            <select id="pmrv_subtipo" data-change="pmrv_mudarSubtipo()">
-              <optgroup label="1. Atropelamento">
-                <option value="1.1">1.1 – Atropelamento de Pedestre</option>
-                <option value="1.2">1.2 – Atropelamento de Animal</option>
-              </optgroup>
-              <optgroup label="2. Abalroamento">
-                <option value="2.1">2.1 – Abalroamento Longitudinal (Mesmo Sentido)</option>
-                <option value="2.2">2.2 – Abalroamento Longitudinal (Sentido Oposto)</option>
-                <option value="2.3">2.3 – Abalroamento Transversal</option>
-              </optgroup>
-              <optgroup label="3. Colisão">
-                <option value="3.1">3.1 – Colisão Frontal</option>
-                <option value="3.2">3.2 – Colisão Traseira</option>
-                <option value="3.3">3.3 – Colisão Engavetamento</option>
-              </optgroup>
-              <optgroup label="4. Choque">
-                <option value="4.1">4.1 – Choque em Poste</option>
-                <option value="4.6">4.6 – Choque em Defensa</option>
-                <option value="4.9">4.9 – Choque em Objeto (especificar)</option>
-              </optgroup>
-              <optgroup label="5. Saída de Pista">
-                <option value="5.1">5.1 – Saída de Pista Simples</option>
-                <option value="5.3">5.3 – Saída de Pista com Capotamento</option>
-                <option value="5.4">5.4 – Saída de Pista com Tombamento</option>
-              </optgroup>
-              <optgroup label="6. Saída + Choque">
-                <option value="6.1">6.1 – Saída + Choque em Poste</option>
-                <option value="6.2">6.2 – Saída + Choque em Muro</option>
-                <option value="6.3">6.3 – Saída + Choque em Defensa</option>
-                <option value="6.4">6.4 – Saída + Choque em Objeto (especificar)</option>
-              </optgroup>
-              <optgroup label="7. Outros">
-                <option value="7.1">7.1 – Outros (especificar)</option>
-              </optgroup>
-            </select>
+
+          <!-- Vítimas (condicional) -->
+          <div id="pmrv_box_vitimas" class="form-field hidden">
+            <label class="field-label">Quantidade de Vítimas</label>
+            <div class="sub-box sub-box-red">
+              <div class="vitimas-grid">
+                <div class="form-field">
+                  <label class="field-label">Leve</label>
+                  <input type="number" id="pmrv_qtd_leve" value="0" min="0" data-input="pmrv_atualizar()">
+                </div>
+                <div class="form-field">
+                  <label class="field-label">Grave</label>
+                  <input type="number" id="pmrv_qtd_grave" value="0" min="0" data-input="pmrv_atualizar()">
+                </div>
+                <div class="form-field">
+                  <label class="field-label">Gravíssima</label>
+                  <input type="number" id="pmrv_qtd_gravissima" value="0" min="0" data-input="pmrv_atualizar()">
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- Objeto / Outros condicional -->
-        <div id="pmrv_box_objeto" class="form-field hidden">
-          <label class="field-label">Qual o objeto?</label>
-          <input type="text" id="pmrv_nome_objeto" placeholder="Ex: árvore, barranco..." data-input="pmrv_mudarSubtipo()">
-        </div>
-        <div id="pmrv_box_outros" class="form-field hidden">
-          <label class="field-label">Descreva a natureza do sinistro</label>
-          <input type="text" id="pmrv_descricao_outros" placeholder="Ex: incêndio em veículo, queda de carga..." data-input="pmrv_mudarSubtipo()">
-        </div>
+          <!-- Sentido -->
+          <div class="form-row form-row-2">
+            <div class="form-field">
+              <label class="field-label">Sentido</label>
+              <select id="pmrv_sentido" data-change="pmrv_toggleSentidoManual()">
+                <option value="Centro–Bairro">Centro–Bairro</option>
+                <option value="Bairro–Centro">Bairro–Centro</option>
+                <option value="KM Crescente">KM Crescente</option>
+                <option value="KM Decrescente">KM Decrescente</option>
+                <option value="MANUAL">Outro...</option>
+              </select>
+              <input type="text" id="pmrv_sentido_manual" class="hidden mt-8" placeholder="Descreva o sentido..." data-input="pmrv_atualizar()">
+            </div>
+            <div class="form-field">
+              <label class="field-label">Tipo de Sinistro</label>
+              <select id="pmrv_subtipo" data-change="pmrv_mudarSubtipo()">
+                <optgroup label="1. Atropelamento">
+                  <option value="1.1">1.1 – Atropelamento de Pedestre</option>
+                  <option value="1.2">1.2 – Atropelamento de Animal</option>
+                </optgroup>
+                <optgroup label="2. Abalroamento">
+                  <option value="2.1">2.1 – Abalroamento Longitudinal (Mesmo Sentido)</option>
+                  <option value="2.2">2.2 – Abalroamento Longitudinal (Sentido Oposto)</option>
+                  <option value="2.3">2.3 – Abalroamento Transversal</option>
+                </optgroup>
+                <optgroup label="3. Colisão">
+                  <option value="3.1">3.1 – Colisão Frontal</option>
+                  <option value="3.2">3.2 – Colisão Traseira</option>
+                  <option value="3.3">3.3 – Colisão Engavetamento</option>
+                </optgroup>
+                <optgroup label="4. Choque">
+                  <option value="4.1">4.1 – Choque em Poste</option>
+                  <option value="4.6">4.6 – Choque em Defensa</option>
+                  <option value="4.9">4.9 – Choque em Objeto (especificar)</option>
+                </optgroup>
+                <optgroup label="5. Saída de Pista">
+                  <option value="5.1">5.1 – Saída de Pista Simples</option>
+                  <option value="5.3">5.3 – Saída de Pista com Capotamento</option>
+                  <option value="5.4">5.4 – Saída de Pista com Tombamento</option>
+                </optgroup>
+                <optgroup label="6. Saída + Choque">
+                  <option value="6.1">6.1 – Saída + Choque em Poste</option>
+                  <option value="6.2">6.2 – Saída + Choque em Muro</option>
+                  <option value="6.3">6.3 – Saída + Choque em Defensa</option>
+                  <option value="6.4">6.4 – Saída + Choque em Objeto (especificar)</option>
+                </optgroup>
+                <optgroup label="7. Outros">
+                  <option value="7.1">7.1 – Outros (especificar)</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
 
-        <!-- Dinâmica -->
-        <div class="form-field">
-          <label class="field-label">Dinâmica do Fato (editável)</label>
-          <textarea id="pmrv_dinamica_texto" data-input="pmrv_atualizar()"></textarea>
+          <!-- Objeto / Outros condicional -->
+          <div id="pmrv_box_objeto" class="form-field hidden">
+            <label class="field-label">Qual o objeto?</label>
+            <input type="text" id="pmrv_nome_objeto" placeholder="Ex: árvore, barranco..." data-input="pmrv_mudarSubtipo()">
+          </div>
+          <div id="pmrv_box_outros" class="form-field hidden">
+            <label class="field-label">Descreva a natureza do sinistro</label>
+            <input type="text" id="pmrv_descricao_outros" placeholder="Ex: incêndio em veículo, queda de carga..." data-input="pmrv_mudarSubtipo()">
+          </div>
+
+          <!-- Dinâmica -->
+          <div class="form-field">
+            <label class="field-label">Dinâmica do Fato (editável)</label>
+            <textarea id="pmrv_dinamica_texto" data-input="pmrv_atualizar()"></textarea>
+          </div>
         </div>
       </div>
 
       <!-- Resultado em tempo real -->
-      <div class="result-box visible" style="margin-top:20px;">
+      <div class="result-box visible pmrv-preview-box" style="margin-top:20px;">
         <p class="result-label">Prévia do relatório</p>
         <div class="result-text" id="pmrv_relatorio"></div>
         <div class="result-actions">
           <button class="btn"            data-click="pmrv_limpar()">🗑 Limpar</button>
           <button class="btn btn-success" data-click="copiar('pmrv_relatorio', this)">📋 Copiar</button>
           <button class="btn btn-whats"   data-click="pmrv_enviarWhatsApp()">📱 WhatsApp</button>
+        </div>
+      </div>
+
+      <div class="pmrv-footer-panel">
+        <div class="pmrv-footer-top">
+          <div class="pmrv-footer-local">
+            <span class="pmrv-footer-label">Local do GPS</span>
+            <strong id="pmrv_local_footer">---</strong>
+            <small id="pmrv_gps_msg">Use o GPS para preencher rodovia e km.</small>
+          </div>
+          <div class="pmrv-footer-buttons">
+            <button type="button" class="btn btn-sm" id="btn-gps-localizar-pmrv" data-click="gps_obterLocalizacao()">📍 GPS</button>
+            <button type="button" class="btn btn-sm" data-click="gps_simularLocalizacao()">🧪 Teste</button>
+          </div>
+        </div>
+
+        <div id="pmrv_gps_result" class="pmrv-gps-summary hidden">
+          <div class="pmrv-gps-chip">
+            <span>Rodovia</span>
+            <strong id="pmrv_gps_rodovia">---</strong>
+          </div>
+          <div class="pmrv-gps-chip">
+            <span>KM</span>
+            <strong id="pmrv_gps_km">---</strong>
+          </div>
+          <div class="pmrv-gps-chip">
+            <span>Precisão</span>
+            <strong id="pmrv_gps_acc">---</strong>
+          </div>
+          <div class="pmrv-gps-coords">
+            <span>Lat <strong id="pmrv_gps_lat">---</strong></span>
+            <span>Lng <strong id="pmrv_gps_lng">---</strong></span>
+          </div>
         </div>
       </div>
     </div>
@@ -854,7 +897,7 @@
 
       <div class="infra-tabs" role="tablist" aria-label="Seções da consulta de infrações">
         <button id="infra_tab_consulta" class="infra-tab-btn active" type="button" data-click="infra_showTab('consulta')">Consulta</button>
-        <button id="infra_tab_frequentes" class="infra-tab-btn" type="button" data-click="infra_showTab('frequentes')">Infrações Frequente</button>
+        <button id="infra_tab_frequentes" class="infra-tab-btn" type="button" data-click="infra_showTab('frequentes')">Infrações Frequentes</button>
       </div>
 
       <div id="infra_panel_consulta" class="infra-tab-panel active">
@@ -1338,6 +1381,22 @@
               </div>
             </div>
           </div>
+
+          <div class="sub-box">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--label);margin-bottom:10px;">Acessos Externos</div>
+            <a href="https://cronotacografo.rbmlq.gov.br/certificados/consultar" target="_blank" class="btn btn-primary btn-full" style="text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px; background:#2563eb;">
+              🌐 Consultar Certificado (Inmetro)
+            </a>
+          </div>
+
+          <!-- Caixa de Infração do Tacógrafo -->
+          <div id="tac_infracao_box" class="result-box hidden" style="margin-top:20px;">
+            <p class="result-label">Enquadramento sugerido</p>
+            <div class="result-text" id="tac_infracao_text"></div>
+            <div class="result-actions">
+              <button class="btn btn-success" data-click="tac_copiarInfracao()">📋 Copiar</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1358,6 +1417,14 @@
               <li>Preencha início e fim da condução para verificar excesso.</li>
               <li>Use o conversor UTC quando o tacógrafo estiver em horário universal.</li>
             </ul>
+          </section>
+          
+          <section class="help-block" style="border-top: 1px solid var(--border); padding-top: 15px; margin-top: 15px;">
+            <h3 class="help-title">Consulta Oficial</h3>
+            <p class="help-text">Verifique a validade do certificado do cronotacógrafo no portal oficial do Inmetro.</p>
+            <a href="https://cronotacografo.rbmlq.gov.br/certificados/consultar" target="_blank" class="btn btn-primary btn-full" style="text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px; background:#2563eb; font-weight: 700;">
+              🌐 Consultar Certificado (RBMLQ/Inmetro) ↗
+            </a>
           </section>
         </div>
       </div>
@@ -1811,8 +1878,22 @@
   </section>
 
   <footer class="app-footer" role="contentinfo">
-    <div class="app-footer-badge">PMRv · 4 em 1</div>
+    <div class="app-footer-row">
+      <div class="app-footer-badge">PMRV-SC</div>
+      
+      <div class="app-footer-gps" id="footer-gps-container">
+        <div class="gps-main">
+          📍 <span id="footer-gps-rodovia">Iniciando...</span> 
+          🏁 KM <span id="footer-gps-km">---</span>
+        </div>
+        <div class="gps-coords">
+          Lat: <span id="footer-gps-lat">---</span> | Lng: <span id="footer-gps-lng">---</span>
+        </div>
+      </div>
+    </div>
+
     <div class="app-footer-text">Desenvolvido por <span class="app-footer-author">Cabo Jeferson</span></div>
+    
     <div style="margin-top:10px;">
       <button class="btn-clear-cache" type="button" data-click="if(confirm('Limpar os dados locais salvos do app?')) core_limparCache()">Limpar cache</button>
     </div>
@@ -1885,31 +1966,59 @@
 
     <div class="croqui-icon-tabs flex gap-8 flex-wrap" style="margin-bottom:12px;">
       <button class="btn btn-primary" data-click="croqui_filtrarIcones('veiculo')">Veículos</button>
-      <button class="btn" data-click="croqui_filtrarIcones('objeto')">Objetos</button>
+      <button class="btn" data-click="croqui_filtrarIcones('objeto')">Sinalização</button>
+      <button class="btn" data-click="croqui_filtrarIcones('obstaculo')">Obstáculos</button>
       <button class="btn" data-click="croqui_filtrarIcones('sinistro')">Sinistros</button>
     </div>
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
+      <!-- Veículos -->
       <button class="btn croqui-icon-item veiculo" data-click="croqui_inserirIcone('v1')">🚗 Veículo 1</button>
       <button class="btn croqui-icon-item veiculo" data-click="croqui_inserirIcone('v2')">🚘 Veículo 2</button>
       <button class="btn croqui-icon-item veiculo" data-click="croqui_inserirIcone('moto')">🏍️ Moto</button>
       <button class="btn croqui-icon-item veiculo" data-click="croqui_inserirIcone('caminhao')">🚚 Caminhão</button>
+      <button class="btn croqui-icon-item veiculo" data-click="croqui_inserirIcone('carreta')">🚛 Carreta</button>
       <button class="btn croqui-icon-item veiculo" data-click="croqui_inserirIcone('onibus')">🚌 Ônibus</button>
+      <button class="btn croqui-icon-item veiculo" data-click="croqui_inserirIcone('bicicleta')">🚲 Bicicleta</button>
       <button class="btn croqui-icon-item veiculo" data-click="croqui_inserirIcone('viatura')">🚓 Viatura</button>
+      <button class="btn croqui-icon-item veiculo" data-click="croqui_inserirIcone('ambulancia')">🚑 Ambulância</button>
 
-      <button class="btn croqui-icon-item objeto hidden" data-click="croqui_inserirIcone('cone')">⚠️ Cone</button>
+      <!-- Sinalização -->
       <button class="btn croqui-icon-item objeto hidden" data-click="croqui_inserirIcone('pare')">🛑 Pare</button>
-      <button class="btn croqui-icon-item objeto hidden" data-click="croqui_inserirIcone('poste')">💡 Poste</button>
-      <button class="btn croqui-icon-item objeto hidden" data-click="croqui_inserirIcone('arvore')">🌳 Árvore</button>
+      <button class="btn croqui-icon-item objeto hidden" data-click="croqui_inserirIcone('preferencial')">🔻 Preferencial</button>
+      <button class="btn croqui-icon-item objeto hidden" data-click="croqui_inserirIcone('semaforo')">🚦 Semáforo</button>
+      <button class="btn croqui-icon-item objeto hidden" data-click="croqui_inserirIcone('cone')">⚠️ Cone</button>
       <button class="btn croqui-icon-item objeto hidden" data-click="croqui_inserirIcone('norte')">🧭 Norte</button>
       <button class="btn croqui-icon-item objeto hidden" data-click="croqui_inserirIcone('frenagem')">⬛ Frenagem</button>
 
-      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('3.1-colisao-frontal.svg')">Frontal</button>
-      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('3.2-colisao-traseira.svg')">Traseira</button>
-      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('2.3-abalroamento-transversal.svg')">Transversal</button>
-      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('1.1-atropelamento-pedestre.svg')">Atrop. pedestre</button>
-      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('1.2-atropelamento-animal.svg')">Atrop. animal</button>
-      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('5.3-saida-pista-capotamento.svg')">Saída de pista</button>
+      <!-- Obstáculos -->
+      <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('poste')">💡 Poste</button>
+      <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('arvore')">🌳 Árvore</button>
+      <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('buraco')">🕳️ Defeito na Via</button>
+      <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('animal_via')">🐄 Animal</button>
+
+      <!-- Sinistros (SVG) -->
+      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('3.1-colisao-frontal.svg')">💥 Colisão Frontal</button>
+      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('3.2-colisao-traseira.svg')">💥 Colisão Traseira</button>
+      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('3.3-colisao-engavetamento.svg')">💥 Engavetamento</button>
+      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('2.3-abalroamento-transversal.svg')">💥 Transversal</button>
+      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('5.3-saida-pista-capotamento.svg')">🔄 Capotamento</button>
+      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('5.4-saida-pista-tombamento.svg')">📐 Tombamento</button>
+      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('1.1-atropelamento-pedestre.svg')">🚶 Atrop. Pedestre</button>
+      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('1.2-atropelamento-animal.svg')">🐎 Atrop. Animal</button>
+      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('4.1-choque-poste.svg')">💡 Choque Poste</button>
+      <button class="btn croqui-icon-item sinistro hidden" data-click="croqui_inserirSvg('4.6-choque-defensa.svg')">🚧 Choque Defensa</button>
+      
+      <!-- Outros Elementos -->
+      <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('pedestre')">🚶 Pedestre</button>
+      <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('idoso')">👨‍🦳 Idoso</button>
+      <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('crianca')">🧒 Criança</button>
+      <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('cadeirante')">👨‍🦽 Cadeirante</button>
+      <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('oleo')">🛢️ Óleo na Pista</button>
+      <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('buraco')">🕳️ Defeito na Via</button>
+      <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('vtr_emergencia')">🚨 VTR Emergência</button>
+      <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('sem_verde')">🟢 Semáforo Verde</button>
+      <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('sem_vermelho')">🔴 Semáforo Vermelho</button>
     </div>
   </div>
 </div>
@@ -1918,15 +2027,14 @@
      SCRIPTS UNIFICADOS
 ============================================================ -->
   <script src="js/core.js"></script>
+  <script src="js/data-manager.js"></script>
   <script src="js/assuncao.js"></script>
   <script src="js/envolvidos.js"></script>
-  <script src="js/gps_data_sc.js"></script>
   <script src="js/gps.js"></script>
   <script src="js/pmrv.js"></script>
   <script src="js/patrulhamento.js"></script>
   <script src="js/danos.js"></script>
   <script src="js/relatorio.js"></script>
-  <script src="js/infracoes-data.js"></script>
   <script src="js/infracoes.js"></script>
   <script src="js/pesos.js"></script>
   <script src="js/tacografo.js"></script>
