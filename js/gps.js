@@ -35,8 +35,18 @@ function gps_setResultado(payload) {
 /**
  * Preenche os selects de rodovias do sistema com os dados carregados de SC.
  */
-function gps_preencherSelects() {
-    const banco = window.GPS_RODOVIAS_SC || GPS_RODOVIAS_BASE;
+async function gps_preencherSelects() {
+    let banco = GPS_RODOVIAS_BASE;
+    try {
+        const data = await PMRV.dataManager.loadResource('gps_data', 'data/gps_data_sc.json');
+        if (data) {
+            window.GPS_RODOVIAS_SC = data;
+            banco = data;
+        }
+    } catch (err) {
+        console.error('Erro ao carregar base de GPS, usando fallback:', err);
+    }
+
     if (!banco) return;
 
     const selectIds = ['pmrv_rodovia', 'pat_manual_rodovia'];
@@ -321,4 +331,51 @@ window.gps_obterLocalizacao = gps_obterLocalizacao;
 window.gps_identificarRodoviaKM = gps_identificarRodoviaKM;
 window.gps_simularLocalizacao = gps_simularLocalizacao;
 
-document.addEventListener('DOMContentLoaded', gps_preencherSelects);
+/**
+ * Inicia o monitoramento contínuo para exibição de Telemetria no rodapé
+ */
+function gps_iniciarMonitoramentoRodape() {
+    if (!navigator.geolocation) {
+        console.warn("Geolocalização não suportada para o rodapé.");
+        return;
+    }
+
+    navigator.geolocation.watchPosition(
+        (pos) => {
+            const { latitude, longitude } = pos.coords;
+            const resultado = gps_identificarRodoviaKM(latitude, longitude);
+
+            const latEl = document.getElementById('footer-gps-lat');
+            const lngEl = document.getElementById('footer-gps-lng');
+            const rodEl = document.getElementById('footer-gps-rodovia');
+            const kmEl = document.getElementById('footer-gps-km');
+
+            if (latEl) latEl.textContent = latitude.toFixed(6);
+            if (lngEl) lngEl.textContent = longitude.toFixed(6);
+
+            if (resultado) {
+                if (rodEl) rodEl.textContent = resultado.rodovia;
+                if (kmEl) kmEl.textContent = resultado.km.toFixed(3).replace('.', ',');
+            } else {
+                if (rodEl) rodEl.textContent = "Via não mapeada";
+                if (kmEl) kmEl.textContent = "---";
+            }
+        },
+        (err) => {
+            console.warn("Monitoramento GPS (Rodapé):", err.message);
+            const rodEl = document.getElementById('footer-gps-rodovia');
+            if (rodEl) rodEl.textContent = "GPS Indisponível";
+        },
+        { 
+            enableHighAccuracy: true, 
+            maximumAge: 10000, 
+            timeout: 20000 
+        }
+    );
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    gps_preencherSelects();
+    // Inicia monitoramento do rodapé após um breve delay para carga da base
+    setTimeout(gps_iniciarMonitoramentoRodape, 1500);
+});

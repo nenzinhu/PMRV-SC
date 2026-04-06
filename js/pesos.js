@@ -177,10 +177,10 @@ function pes_calcular() {
     const excessoEixoOcorre = eixosExcedentes.length > 0;
 
     if (!excessoPBTOcorre && !excessoEixoOcorre) {
-        pes_setAlerta(alerta, 'legal', "DENTRO DO LIMITE", "Pesagem em conformidade (considerando tolerâncias).");
+        pes_setAlerta(alerta, 'legal', "DENTRO DO LIMITE", "Pesagem em conformidade (considerando tolerâncias da Res. 882/21).");
         document.getElementById('pes_infracao_box').classList.add('hidden');
     } else {
-        let tit = "EXCESSO DETECTADO!";
+        let tit = "IRREGULARIDADE DETECTADA!";
         let desc = "";
         let detalhesInfra = "";
         let transbordo = 0;
@@ -190,6 +190,10 @@ function pes_calcular() {
         const excessoParaMulta = Math.max(excessoPBT, maiorExcessoEixo);
         const valorMulta = pes_getValorMulta(excessoParaMulta);
 
+        // Inteligência Pericial: Art. 10 da Res. 882/21
+        // Se PBT está ok mas Eixo excedeu, não se aplica multa se for possível remanejar.
+        const somenteEixo = !excessoPBTOcorre && excessoEixoOcorre;
+
         if (excessoPBTOcorre) {
             transbordo = pbtApurado - limiteLegalPBT;
             desc += `<strong>PBT:</strong> +${excessoPBT.toLocaleString('pt-BR')} kg (Acima da tolerância)<br>`;
@@ -198,24 +202,37 @@ function pes_calcular() {
         }
         
         if (excessoEixoOcorre) {
-            if (!excessoPBTOcorre) {
-                remanejamento = eixosExcedentes.reduce((acc, curr) => {
-                    const match = curr.match(/Exc: (\d+)kg/);
-                    return acc + (match ? parseInt(match[1]) : 0);
-                }, 0);
-                desc += `<strong>EIXOS:</strong> ${eixosExcedentes.length} irregularidades<br>`;
-                desc += `⚖️ <strong>REMANEJAMENTO:</strong> Mover ${remanejamento.toLocaleString('pt-BR')} kg entre eixos<br>`;
-            } else {
-                desc += `<strong>EIXOS:</strong> Verifique também a distribuição após transbordo.<br>`;
+            remanejamento = eixosExcedentes.reduce((acc, curr) => {
+                const match = curr.match(/Exc: (\d+)kg/);
+                return acc + (match ? parseInt(match[1]) : 0);
+            }, 0);
+
+            if (somenteEixo) {
+                tit = "REMANEJAMENTO OBRIGATÓRIO (Art. 10)";
+                desc += `<div style="background:rgba(245,158,11,0.1);padding:8px;border-radius:8px;margin-bottom:8px;">⚖️ <strong>PBT REGULAR:</strong> Conforme Art. 10 da Res. 882/21, proceda ao remanejamento da carga. Só haverá multa se o remanejamento for impossível.</div>`;
             }
+            desc += `<strong>EIXOS:</strong> ${eixosExcedentes.length} irregularidades (+${remanejamento.toLocaleString('pt-BR')} kg totais)<br>`;
             detalhesInfra += `\nEXCESSO NOS EIXOS (Art. 231, V):\n${eixosExcedentes.join('\n')}`;
         }
 
-        desc += `<br>💰 <strong>MULTA ESTIMADA: R$ ${valorMulta.toFixed(2).replace('.', ',')}</strong>`;
+        if (excessoPBTOcorre || (somenteEixo && valorMulta > 0)) {
+            desc += `<br>💰 <strong>MULTA ESTIMADA: R$ ${valorMulta.toFixed(2).replace('.', ',')}</strong>`;
+        }
 
         pes_setAlerta(alerta, 'excesso', tit, desc);
         const metodoTxt = metodo === 'balanca' ? 'BALANÇA' : 'NOTA FISCAL';
-        pes_montarInfracao('PESO', `Método: ${metodoTxt}\nCódigo: 682-31\n${detalhesInfra}\nValor Est.: R$ ${valorMulta.toFixed(2).replace('.', ',')}`);
+        
+        let resumoInfra = `*INFRAÇÃO: EXCESSO DE PESO*\n`;
+        resumoInfra += `Enquadramento: Art. 231, V do CTB\n`;
+        resumoInfra += `Código da Infração: 682-31\n`;
+        resumoInfra += `Método: ${metodoTxt}\n`;
+        resumoInfra += `----------------------------\n`;
+        resumoInfra += `${detalhesInfra}\n`;
+        resumoInfra += `----------------------------\n`;
+        resumoInfra += `Medida Adm: Retenção para transbordo ou remanejamento.\n`;
+        resumoInfra += `Valor Est.: R$ ${valorMulta.toFixed(2).replace('.', ',')}`;
+
+        pes_montarInfracao('PESO (RES. 882/21)', resumoInfra);
     }
 }
 
@@ -241,21 +258,47 @@ function pes_calcDimensoes() {
     }
 
     const alerta = document.getElementById('dim_alerta');
-    if (larg === 0 && alt === 0 && comp === 0) { alerta.classList.add('hidden'); return; }
+    if (larg === 0 && alt === 0 && comp === 0) { 
+        alerta.classList.add('hidden'); 
+        document.getElementById('pes_infracao_box').classList.add('hidden');
+        return; 
+    }
     alerta.classList.remove('hidden');
 
     let erros = [];
-    if (larg > limLarg) erros.push(`Largura excedente (${larg}m > ${limLarg}m)`);
-    if (alt > limAlt) erros.push(`Altura excedente (${alt}m > ${limAlt}m)`);
-    if (comp > limComp) erros.push(`Comprimento excedente (${comp}m > ${limComp}m)`);
-    if (balMed > limBal && eixos > 0) erros.push(`Balanço excedente (${balMed}m > ${limBal.toFixed(2)}m)`);
+    let detalhes = "";
+    if (larg > limLarg) {
+        erros.push(`Largura excedente (${larg}m > ${limLarg}m)`);
+        detalhes += `- Largura: ${larg}m (Limite: ${limLarg}m)\n`;
+    }
+    if (alt > limAlt) {
+        erros.push(`Altura excedente (${alt}m > ${limAlt}m)`);
+        detalhes += `- Altura: ${alt}m (Limite: ${limAlt}m)\n`;
+    }
+    if (comp > limComp) {
+        erros.push(`Comprimento excedente (${comp}m > ${limComp}m)`);
+        detalhes += `- Comprimento: ${comp}m (Limite: ${limComp}m)\n`;
+    }
+    if (balMed > limBal && eixos > 0) {
+        erros.push(`Balanço excedente (${balMed}m > ${limBal.toFixed(2)}m)`);
+        detalhes += `- Balanço: ${balMed}m (Limite: ${limBal.toFixed(2)}m)\n`;
+    }
 
     if (erros.length === 0) {
         pes_setAlerta(alerta, 'legal', "DIMENSÕES LEGAIS", "Veículo dentro dos limites da Res. 210/06.");
         document.getElementById('pes_infracao_box').classList.add('hidden');
     } else {
         pes_setAlerta(alerta, 'excesso', "DIMENSÃO EXCEDENTE!", erros.join('<br>'));
-        pes_montarInfracao('DIMENSÕES', `Código: 682-32 | Art. 231, IV\nMotivo: ${erros.join(', ')}\nMedida: Retenção para regularização.`);
+        
+        let resumoInfra = `*INFRAÇÃO: DIMENSÕES EXCEDENTES*\n`;
+        resumoInfra += `Enquadramento: Art. 231, IV do CTB\n`;
+        resumoInfra += `Código da Infração: 682-32\n`;
+        resumoInfra += `----------------------------\n`;
+        resumoInfra += `Irregularidades:\n${detalhes}`;
+        resumoInfra += `----------------------------\n`;
+        resumoInfra += `Medida Adm: Retenção para regularização (AET se couber).`;
+
+        pes_montarInfracao('DIMENSÕES (RES. 210/06)', resumoInfra);
     }
 }
 
@@ -274,8 +317,11 @@ function pes_setAlerta(el, status, titulo, desc) {
 function pes_montarInfracao(tipo, detalhes) {
     const box = document.getElementById('pes_infracao_box');
     const text = document.getElementById('pes_infracao_text');
-    text.innerText = `*INFRAÇÃO DETECTADA: ${tipo}*\n${detalhes}`;
-    box.classList.remove('hidden');
+    if (box && text) {
+        text.innerText = detalhes;
+        box.classList.remove('hidden');
+        box.style.display = 'block';
+    }
 }
 
 function pes_copiarInfracao() {

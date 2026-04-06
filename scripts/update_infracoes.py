@@ -2,6 +2,8 @@ import base64
 import os
 import csv
 import io
+import json
+from datetime import datetime
 
 # Tabela de preços atualizada com base na Lei 13.281/16 e vigência 2024/2025
 PRECOS = {
@@ -25,10 +27,11 @@ PRECOS = {
     "Gravíssima 60X": "17608,20"
 }
 
-input_path = r'C:\Users\Nei\Desktop\PMRV-main\scripts\infracoes_original.csv'
-output_js_path = r'C:\Users\Nei\Desktop\PMRV-main\js\infracoes-data.js'
+# Caminhos baseados na estrutura do projeto
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+input_path = os.path.join(BASE_DIR, 'scripts', 'infracoes_original.csv')
+output_json_path = os.path.join(BASE_DIR, 'data', 'infracoes.json')
 
-# Função para detectar encoding
 def read_content(path):
     for enc in ['utf-8', 'utf-16', 'latin-1']:
         try:
@@ -38,71 +41,83 @@ def read_content(path):
             continue
     return None
 
-content = read_content(input_path)
-if not content:
-    print("Erro ao ler arquivo original.")
-    exit(1)
+def update_database():
+    content = read_content(input_path)
+    if not content:
+        print(f"❌ Erro ao ler arquivo original em: {input_path}")
+        return
 
-# Se for UTF-16, o primeiro char pode ser BOM
-if content.startswith('\ufeff'):
-    content = content[1:]
+    # Limpeza de BOM
+    if content.startswith('\ufeff'):
+        content = content[1:]
 
-lines = content.strip().splitlines()
-reader = csv.reader(lines)
-new_rows = []
+    lines = content.strip().splitlines()
+    reader = csv.reader(lines)
+    new_rows = []
 
-try:
-    headers = next(reader)
-    new_rows.append(headers)
-    
-    for row in reader:
-        if not row or len(row) < 6: continue
+    try:
+        headers = next(reader)
+        new_rows.append(headers)
         
-        codigo = row[0]
-        desc = row[1]
-        cat = row[5]
-        
-        # 1. Atualizar descrição para incluir ACC conforme Resolução 1020/25
-        if "CNH ou Permissão" in desc:
-            desc = desc.replace("CNH ou Permissão", "CNH, PPD ou ACC")
-        if "CNH/PPD" in desc:
-            desc = desc.replace("CNH/PPD", "CNH, PPD ou ACC")
+        count = 0
+        for row in reader:
+            if not row or len(row) < 6: continue
             
-        # 2. Atualizar Valor baseado na Categoria (Multiplicadores)
-        valor = "0,00"
-        found_price = False
-        
-        # Tentar primeiro multiplicadores maiores para não bater em "Gravíssima" simples antes
-        sorted_keys = sorted(PRECOS.keys(), key=len, reverse=True)
-        for k in sorted_keys:
-            if k in cat:
-                valor = PRECOS[k]
-                found_price = True
-                break
-        
-        if codigo == "5002":
-            valor = "NIC"
+            codigo = row[0]
+            desc = row[1]
+            cat = row[5]
             
-        row[1] = desc
-        row[4] = valor
-        new_rows.append(row)
+            # 1. Inteligência Legal: Atualizar descrição para conformidade com Res. 1020/25 (ACC)
+            original_desc = desc
+            if "CNH ou Permissão" in desc:
+                desc = desc.replace("CNH ou Permissão", "CNH, PPD ou ACC")
+            if "CNH/PPD" in desc:
+                desc = desc.replace("CNH/PPD", "CNH, PPD ou ACC")
+                
+            # 2. Atualização de Valores (Multiplicadores do CTB)
+            valor = "0,00"
+            sorted_keys = sorted(PRECOS.keys(), key=len, reverse=True)
+            for k in sorted_keys:
+                if k in cat:
+                    valor = PRECOS[k]
+                    break
+            
+            if codigo == "5002":
+                valor = "NIC"
+                
+            row[1] = desc
+            row[4] = valor
+            new_rows.append(row)
+            count += 1
 
-    # Gerar o CSV final
-    output = io.StringIO()
-    writer = csv.writer(output, lineterminator='\n')
-    writer.writerows(new_rows)
-    csv_content = output.getvalue()
+        # Gerar o CSV final em memória
+        output = io.StringIO()
+        writer = csv.writer(output, lineterminator='\n')
+        writer.writerows(new_rows)
+        csv_content = output.getvalue()
 
-    # Converter para Base64
-    b64_content = base64.b64encode(csv_content.encode('utf-8')).decode('utf-8')
+        # Converter para Base64 (UTF-8)
+        b64_content = base64.b64encode(csv_content.encode('utf-8')).decode('utf-8')
 
-    # Salvar no arquivo JS
-    with open(output_js_path, 'w', encoding='utf-8') as f:
-        f.write("window.INFRACOES_CSV_BASE64 = '")
-        f.write(b64_content)
-        f.write("';\n")
+        # Criar objeto JSON com metadados para a Fase 3
+        data_packet = {
+            "version": datetime.now().strftime("%Y.%m.%d.%H%M"),
+            "updated_at": datetime.now().isoformat(),
+            "count": count,
+            "b64": b64_content
+        }
 
-    print(f"Sucesso! {len(new_rows)-1} infrações atualizadas com valores e normas de 2025.")
+        # Salvar no novo padrão assíncrono (data/infracoes.json)
+        os.makedirs(os.path.dirname(output_json_path), exist_ok=True)
+        with open(output_json_path, 'w', encoding='utf-8') as f:
+            json.dump(data_packet, f, separators=(',', ':'))
 
-except Exception as e:
-    print(f"Erro no processamento: {e}")
+        print(f"✅ Sucesso! {count} infrações processadas.")
+        print(f"📦 Arquivo gerado: {output_json_path}")
+        print(f"📅 Versão: {data_packet['version']}")
+
+    except Exception as e:
+        print(f"❌ Erro no processamento: {e}")
+
+if __name__ == "__main__":
+    update_database()

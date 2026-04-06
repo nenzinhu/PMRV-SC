@@ -34,26 +34,29 @@ function env_adicionar() {
     <div class="form-grid">
       <div class="form-row form-row-2">
         <div class="form-field">
-          <label class="field-label">Tipo</label>
+          <label class="field-label">Tipo de Envolvido</label>
           <select class="tipo">
-            <option value="ENVOLVIDO">ENVOLVIDO</option>
-            <option value="TESTEMUNHA">TESTEMUNHA</option>
+            <option value="Condutor">Condutor</option>
+            <option value="Passageiro">Passageiro</option>
+            <option value="Pedestre">Pedestre</option>
+            <option value="Testemunha">Testemunha</option>
+            <option value="Proprietário">Proprietário (Não condutor)</option>
           </select>
         </div>
         <div class="form-field">
-          <label class="field-label">Contato</label>
+          <label class="field-label">Telefone de Contato</label>
           <input type="tel" class="contato" data-input="mascaraTelefone(this)" placeholder="(00) 00000-0000" maxlength="15" autocomplete="tel">
         </div>
       </div>
       
       <div class="form-field">
         <label class="field-label">Nome Completo</label>
-        <input type="text" class="nome" placeholder="Nome Completo" spellcheck="true" autocomplete="name" onblur="env_capitalize(this)">
+        <input type="text" class="nome" placeholder="Nome completo do envolvido" spellcheck="true" autocomplete="name" onblur="env_capitalize(this)">
       </div>
 
       <div class="form-field">
         <label class="field-label">Veículo (Marca / Modelo / Placa)</label>
-        <input type="text" class="marca" placeholder="Ex: Vw Gol ABC-1234" spellcheck="false" onblur="env_capitalize(this)">
+        <input type="text" class="marca" placeholder="Ex: VW/Gol (ABC-1234)" spellcheck="false" onblur="env_capitalize(this)">
       </div>
 
       <!-- Endereço Estruturado -->
@@ -62,7 +65,7 @@ function env_adicionar() {
         <div class="form-row" style="display:flex; gap:8px;">
           <div class="form-field" style="flex:3">
             <label class="field-label">Rua / Logradouro</label>
-            <input type="text" class="end_rua" placeholder="Rua..." onblur="env_capitalize(this)">
+            <input type="text" class="end_rua" placeholder="Nome da rua ou logradouro..." onblur="env_capitalize(this)">
           </div>
           <div class="form-field" style="flex:1">
             <label class="field-label">Nº</label>
@@ -70,8 +73,8 @@ function env_adicionar() {
           </div>
         </div>
         <div class="form-field">
-          <label class="field-label">Complemento / Apto</label>
-          <input type="text" class="end_comp" placeholder="Bloco, Apto..." onblur="env_capitalize(this)">
+          <label class="field-label">Complemento / Apartamento</label>
+          <input type="text" class="end_comp" placeholder="Bloco, Apto, etc." onblur="env_capitalize(this)">
         </div>
         <div class="form-row" style="display:flex; gap:8px;">
           <div class="form-field" style="flex:1">
@@ -118,8 +121,8 @@ function env_adicionar() {
       </div>
 
       <div class="form-field">
-        <label class="field-label">Relato / Dinâmica</label>
-        <textarea class="relato" rows="3" placeholder="Descreva os fatos..." spellcheck="true" onblur="env_capitalize(this)"></textarea>
+        <label class="field-label">Relato dos Fatos / Dinâmica do Sinistro</label>
+        <textarea class="relato" rows="3" placeholder="Descreva os fatos detalhadamente..." spellcheck="true" onblur="env_capitalize(this)"></textarea>
       </div>
 
       <label class="foto-label">

@@ -37,9 +37,23 @@ function tac_calcDescanso() {
     if (diff >= 660) { // 11 horas = 660 min
         res.style.color = "#10b981";
         msg += " ✅ DESCANSO OK";
+        tac_limparInfracao();
     } else {
         res.style.color = "#ef4444";
         msg += " ⚠️ INSUFICIENTE (Mín. 11h)";
+        
+        let resumo = `*INFRAÇÃO: DESCANSO INSUFICIENTE*\n`;
+        resumo += `Enquadramento: Art. 230, XXIII do CTB\n`;
+        resumo += `Código da Infração: 670-00\n`;
+        resumo += `Lei Federal nº 13.103/15 (Lei do Motorista)\n`;
+        resumo += `----------------------------\n`;
+        resumo += `Duração Apurada: ${horas}h ${mins}min\n`;
+        resumo += `Mínimo Exigido: 11h 00min\n`;
+        resumo += `Déficit: ${Math.floor((660 - diff) / 60)}h ${(660 - diff) % 60}min\n`;
+        resumo += `----------------------------\n`;
+        resumo += `Medida Adm: Retenção para cumprimento do descanso.`;
+        
+        tac_montarInfracao(resumo);
     }
     
     res.innerText = msg;
@@ -64,12 +78,64 @@ function tac_calcConducao() {
     if (diff <= 330) { // 5h30min = 330 min
         res.style.color = "#10b981";
         msg += " ✅ DENTRO DO LIMITE";
+        tac_limparInfracao();
     } else {
         res.style.color = "#ef4444";
         msg += " ⚠️ EXCEDEU 5H30 (Art. 67-C)";
+        
+        let resumo = `*INFRAÇÃO: EXCESSO DE DIREÇÃO CONTÍNUA*\n`;
+        resumo += `Enquadramento: Art. 230, XXIII do CTB\n`;
+        resumo += `Código da Infração: 670-00\n`;
+        resumo += `Norma: Art. 67-C do CTB (Lei 13.103/15)\n`;
+        resumo += `----------------------------\n`;
+        resumo += `Tempo em Direção: ${horas}h ${mins}min\n`;
+        resumo += `Limite Contínuo: 5h 30min\n`;
+        resumo += `Excesso: ${Math.floor((diff - 330) / 60)}h ${(diff - 330) % 60}min\n`;
+        resumo += `----------------------------\n`;
+        resumo += `Medida Adm: Retenção para descanso de 30min obrigatório.`;
+        
+        tac_montarInfracao(resumo);
     }
     
     res.innerText = msg;
+}
+
+/**
+ * Funções de exibição de infração (Padronizadas)
+ */
+function tac_montarInfracao(detalhes) {
+    const box = document.getElementById('tac_infracao_box');
+    const text = document.getElementById('tac_infracao_text');
+    if (box && text) {
+        text.innerText = detalhes;
+        box.classList.remove('hidden');
+        box.style.display = 'block';
+    }
+}
+
+function tac_limparInfracao() {
+    // Só limpa se ambas as calculadoras estiverem regulares
+    const descRes = document.getElementById('tac_desc_res');
+    const condRes = document.getElementById('tac_cond_res');
+    const box = document.getElementById('tac_infracao_box');
+    
+    const descIrregular = descRes && descRes.style.color === 'rgb(239, 68, 68)';
+    const condIrregular = condRes && condRes.style.color === 'rgb(239, 68, 68)';
+    
+    if (!descIrregular && !condIrregular && box) {
+        box.classList.add('hidden');
+        box.style.display = 'none';
+    }
+}
+
+function tac_copiarInfracao() {
+    const text = document.getElementById('tac_infracao_text').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector('[data-click="tac_copiarInfracao()"]');
+        const original = btn.innerText;
+        btn.innerText = "✅ Copiado!";
+        setTimeout(() => btn.innerText = original, 2000);
+    });
 }
 
 /**

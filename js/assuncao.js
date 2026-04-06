@@ -5,10 +5,10 @@ window.PMRV = window.PMRV || {};
 
 PMRV.assuncao = (function() {
   const POLICIAIS_EFETIVO = [
-    'Sub Ten JORGE LUIZ', 'Sub Ten OSORIO',
-    '2o Sgt BARDT', '2o Sgt CAVALLAZZI', '3o Sgt DOUGLAS', '3o Sgt FIGUEIREDO',
-    '3o Sgt FRANCISCO', '3o Sgt FRANCINE', '3o Sgt LEONARDO', '3o Sgt MARTINS',
-    '3o Sgt WALTER', 'Cb ADEMIR', 'Cb ANDRADE', 'Cb CABRAL', 'Cb DIEGO',
+    'Sub-Ten JORGE LUIZ', 'Sub-Ten OSORIO',
+    '2º Sgt BARDT', '2º Sgt CAVALLAZZI', '3º Sgt DOUGLAS', '3º Sgt FIGUEIREDO',
+    '3º Sgt FRANCISCO', '3º Sgt FRANCINE', '3º Sgt LEONARDO', '3º Sgt MARTINS',
+    '3º Sgt WALTER', 'Cb ADEMIR', 'Cb ANDRADE', 'Cb CABRAL', 'Cb DIEGO',
     'Cb FABIANA', 'Cb JEFERSON', 'Cb JULIANA', 'Cb MATHEUS', 'Cb RODRIGUES',
     'Cb SANTOS', 'Cb SCARABELOT', 'Cb SILVA', 'Cb THIAGO'
   ];
@@ -70,9 +70,9 @@ PMRV.assuncao = (function() {
     if (mesaBtn) mesaBtn.classList.toggle('btn-primary', state.mesa);
     if (vtrSection) vtrSection.style.display = state.mesa ? 'none' : '';
     if (tipoSection && state.mesa) tipoSection.style.display = 'none';
-    if (polLabel) polLabel.textContent = state.mesa ? 'Policiais da Recepcao' : 'Policiais desta Viatura';
-    if (horLabel) horLabel.textContent = state.mesa ? 'Horario da Recepcao' : 'Horario desta Viatura';
-    if (confirmarBtn) confirmarBtn.textContent = state.mesa ? '+ Confirmar Recepcao' : '+ Confirmar Viatura';
+    if (polLabel) polLabel.textContent = state.mesa ? 'Policiais da Recepção' : 'Policiais desta Viatura';
+    if (horLabel) horLabel.textContent = state.mesa ? 'Horário da Recepção' : 'Horário desta Viatura';
+    if (confirmarBtn) confirmarBtn.textContent = state.mesa ? '+ Confirmar Recepção' : '+ Confirmar Viatura';
   }
 
   function atualizarLabelVtr() {
@@ -165,7 +165,7 @@ PMRV.assuncao = (function() {
     wrap.style.display = 'block';
     lista.innerHTML = state.lotes.map((lote, index) => {
       const titulo = lote.mesa
-        ? 'Recepcao do P19'
+        ? 'Recepção do P19'
         : ('PM-' + escapeHtml(lote.vtr) + ' - ' + escapeHtml(lote.tipo));
 
       return (
@@ -314,24 +314,24 @@ PMRV.assuncao = (function() {
     const horario = byId('ass_build_horario')?.value || '';
 
     if (!state.mesa && !vtr) {
-      alert('Selecione ou informe a viatura.');
+      alert('Por favor, selecione ou informe a viatura.');
       return;
     }
 
     if (!state.mesa && !tipo) {
-      alert('Selecione ou informe a escala.');
+      alert('Por favor, selecione ou informe a escala.');
       return;
     }
 
     if (!state.policiaisSelecionados.length) {
-      alert('Selecione ao menos um policial.');
+      alert('Selecione ao menos um policial para esta guarnição.');
       return;
     }
 
     state.lotes.push({
       mesa: state.mesa,
       vtr,
-      tipo: state.mesa ? 'Recepcao' : tipo,
+      tipo: state.mesa ? 'Recepção' : tipo,
       horario,
       policiais: [...state.policiaisSelecionados]
     });
@@ -358,7 +358,7 @@ PMRV.assuncao = (function() {
     if (!resultado) return;
 
     if (!state.lotes.length) {
-      resultado.textContent = 'Adicione ao menos uma viatura ou recepcao antes de gerar o texto.';
+      resultado.textContent = 'Adicione ao menos uma viatura ou recepção antes de gerar o texto do serviço.';
       byId('ass_result')?.classList.add('visible');
       return;
     }
@@ -369,23 +369,21 @@ PMRV.assuncao = (function() {
     const horarioServico = horarioSelect === 'MANUAL' ? horarioManual : horarioSelect;
 
     const linhas = [
-      'Guarnicao iniciando servico.',
+      'Guarnição iniciando o serviço operacional.',
       ''
     ];
 
     state.lotes.forEach((lote, index) => {
       const titulo = lote.mesa
-        ? 'Recepcao do P19'
+        ? 'Recepção do P19'
         : ('Viatura PM-' + lote.vtr + ' - ' + lote.tipo);
 
+      const labelPol = lote.policiais.length > 1 ? 'Policiais: ' : 'Policial: ';
       linhas.push((index + 1) + '. ' + titulo);
-      linhas.push('Policiais: ' + lote.policiais.join(' / '));
-      linhas.push('Horario: ' + lote.horario);
+      linhas.push(labelPol + lote.policiais.join(' / '));
+      linhas.push('Horário: ' + lote.horario);
       linhas.push('');
     });
-
-    linhas.push('Turno geral: ' + (horarioServico || 'Nao informado'));
-    linhas.push('Localizacao: ' + local);
 
     resultado.textContent = linhas.join('\n');
     byId('ass_result')?.classList.add('visible');

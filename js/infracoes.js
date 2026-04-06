@@ -214,48 +214,55 @@
   }
 
   function mapRecords(rows) {
-    const elements = getElements();
     if (!rows.length) return [];
     
-    // Mapeamento baseado em nomes de colunas conhecidos ou índices padrão (fallback)
+    // Mapeamento baseado nos cabeçalhos detectados ou índices fixos (fallback)
     const headers = rows[0].map(normalizeHeader);
+    console.log('[Infra] Cabeçalhos normalizados:', headers);
     
     const idx = {
-      codigo: findHeaderIndex(headers, ['codigo infracao', 'codigo']),
+      codigo: findHeaderIndex(headers, ['codigo infracao', 'codigo', 'cod']),
       descricao: findHeaderIndex(headers, ['descricao da infracao', 'descricao infracao', 'descricao']),
-      artigo: findHeaderIndex(headers, ['art ctb decreto', 'artigo']),
+      artigo: findHeaderIndex(headers, ['art ctb decreto', 'artigo', 'art']),
       infrator: findHeaderIndex(headers, ['infrator']),
       valor: findHeaderIndex(headers, ['valor real r', 'valor real rs', 'valor']),
       categoria: findHeaderIndex(headers, ['categoria']),
       medida: findHeaderIndex(headers, ['medida administrativa', 'medida'])
     };
 
-    // Se não encontrou pelo nome, usa os índices fixos baseados no nosso script de geração
-    if (idx.codigo === -1) idx.codigo = 0;
-    if (idx.descricao === -1) idx.descricao = 1;
-    if (idx.artigo === -1) idx.artigo = 2;
-    if (idx.infrator === -1) idx.infrator = 3;
-    if (idx.valor === -1) idx.valor = 4;
-    if (idx.categoria === -1) idx.categoria = 5;
-    if (idx.medida === -1) idx.medida = 6;
+    // Índices de garantia (baseados na estrutura padrão: Cod, Desc, Art, Inf, Val, Cat, Med)
+    const COD_IDX = idx.codigo !== -1 ? idx.codigo : 0;
+    const DSC_IDX = idx.descricao !== -1 ? idx.descricao : 1;
+    const ART_IDX = idx.artigo !== -1 ? idx.artigo : 2;
+    const INF_IDX = idx.infrator !== -1 ? idx.infrator : 3;
+    const VAL_IDX = idx.valor !== -1 ? idx.valor : 4;
+    const CAT_IDX = idx.categoria !== -1 ? idx.categoria : 5;
+    const MED_IDX = idx.medida !== -1 ? idx.medida : 6;
 
-    return rows.slice(1).map(row => {
+    const records = rows.slice(1).map((row, i) => {
+      if (!row || row.length < 2) return null;
+      
       const record = {
-        codigo: safeText(row[idx.codigo] || ''),
-        descricao: safeText(row[idx.descricao] || ''),
-        artigo: safeText(row[idx.artigo] || ''),
-        infrator: safeText(row[idx.infrator] || ''),
-        categoria: normalizeCategory(row[idx.categoria] || ''),
-        medida: normalizeMeasure(row[idx.medida] || ''),
-        valor: parseValue(row[idx.valor] || '')
+        codigo: safeText(row[COD_IDX] || ''),
+        descricao: safeText(row[DSC_IDX] || ''),
+        artigo: safeText(row[ART_IDX] || ''),
+        infrator: safeText(row[INF_IDX] || ''),
+        categoria: normalizeCategory(row[CAT_IDX] || ''),
+        medida: normalizeMeasure(row[MED_IDX] || ''),
+        valor: parseValue(row[VAL_IDX] || '')
       };
       record.search = buildSearchIndex(record);
       return record;
-    }).filter(r => r.codigo || r.descricao);
+    }).filter(r => r !== null && (r.codigo || r.descricao));
+
+    console.log(`[Infra] Mapeamento concluído: ${records.length} registros processados.`);
+    return records;
   }
 
   function render(records) {
     const elements = getElements();
+    if (!elements.tableBody) return;
+
     elements.totalCount.textContent = state.records.length.toLocaleString('pt-BR');
     elements.filteredCount.textContent = records.length.toLocaleString('pt-BR');
     elements.categoryCount.textContent = state.categories.length;
@@ -268,13 +275,15 @@
 
     elements.emptyState.hidden = true;
     elements.tableBody.innerHTML = records.map(record => {
+      const catClass = categoryClass(record.categoria);
+      const medClass = measureClass(record.medida);
       return `<tr>
         <td class="infra-code">${escapeHtml(record.codigo)}</td>
         <td class="infra-description">${escapeHtml(record.descricao)}</td>
         <td class="infra-muted-cell">${escapeHtml(record.artigo || '-')}</td>
         <td class="infra-muted-cell">${escapeHtml(record.infrator || '-')}</td>
-        <td><span class="infra-badge ${categoryClass(record.categoria)}">${escapeHtml(record.categoria)}</span></td>
-        <td><span class="infra-measure ${measureClass(record.medida)}">${escapeHtml(record.medida || 'Sem medida')}</span></td>
+        <td><span class="infra-badge ${catClass}">${escapeHtml(record.categoria)}</span></td>
+        <td><span class="infra-measure ${medClass}">${escapeHtml(record.medida || 'Sem medida')}</span></td>
         <td class="infra-code">${escapeHtml(formatCurrency(record.valor))}</td>
       </tr>`;
     }).join('');
@@ -285,9 +294,13 @@
     const term = normalizeSearchText(elements.search.value);
     const category = elements.category.value;
     const measure = elements.measure.value;
-    const termParts = term ? expandSearchIntent(term) : [];
+    
     const filtered = state.records.filter(r => {
-      if (termParts.length && !termParts.every(p => r.search.indexOf(p) >= 0)) return false;
+      if (term && r.search.indexOf(term) === -1) {
+        // Tenta expansão de sinônimos se a busca direta falhar
+        const termParts = expandSearchIntent(term);
+        if (!termParts.every(p => r.search.indexOf(p) >= 0)) return false;
+      }
       if (category && r.categoria !== category) return false;
       if (measure && r.medida !== measure) return false;
       return true;
@@ -297,35 +310,68 @@
 
   function decodeEmbeddedBase64(base64) {
     try {
-      const binaryString = atob(base64);
+      const binaryString = atob(base64.trim());
       const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
       return new TextDecoder('utf-8').decode(bytes);
-    } catch (e) { return ''; }
+    } catch (e) { 
+      console.error('[Infra] Erro na decodificação Base64:', e);
+      return ''; 
+    }
   }
 
-  function infra_init() {
+  async function infra_init() {
     const elements = getElements();
-    if (!elements.search || state.initialized) return;
+    if (!elements.search) return;
+    
+    // Evita reinicialização múltipla de listeners
+    if (state.initialized) {
+        // Se já inicializado, apenas garante que a tabela esteja renderizada
+        if (state.records.length > 0) render(state.records);
+        return;
+    }
     
     elements.search.addEventListener('input', applyFilters);
     elements.category.addEventListener('change', applyFilters);
     elements.measure.addEventListener('change', applyFilters);
-    elements.clear.addEventListener('click', () => {
-      elements.search.value = ''; elements.category.value = ''; elements.measure.value = '';
-      render(state.records);
-    });
+    
+    if (elements.clear) {
+        elements.clear.addEventListener('click', () => {
+            elements.search.value = ''; 
+            elements.category.value = ''; 
+            elements.measure.value = '';
+            render(state.records);
+        });
+    }
 
-    if (window.INFRACOES_CSV_BASE64) {
-      const csvText = decodeEmbeddedBase64(window.INFRACOES_CSV_BASE64);
-      const rows = parseCsv(csvText);
-      state.records = mapRecords(rows);
-      state.categories = Array.from(new Set(state.records.map(r => r.categoria).filter(Boolean))).sort();
-      state.measures = Array.from(new Set(state.records.map(r => r.medida).filter(Boolean))).sort();
-      fillSelect(elements.category, state.categories, 'Todas');
-      fillSelect(elements.measure, state.measures, 'Todas');
-      state.initialized = true;
-      render(state.records);
+    try {
+        if (elements.status) elements.status.innerText = 'Carregando base...';
+        
+        // Carrega via dataManager
+        const data = await PMRV.dataManager.loadResource('infracoes', 'data/infracoes.json');
+        
+        if (data && data.b64) {
+            const csvText = decodeEmbeddedBase64(data.b64);
+            const rows = parseCsv(csvText);
+            
+            state.records = mapRecords(rows);
+            state.categories = Array.from(new Set(state.records.map(r => r.categoria).filter(Boolean))).sort();
+            state.measures = Array.from(new Set(state.records.map(r => r.medida).filter(Boolean))).sort();
+            
+            fillSelect(elements.category, state.categories, 'Todas');
+            fillSelect(elements.measure, state.measures, 'Todas');
+            
+            state.initialized = true;
+            if (elements.status) elements.status.innerText = 'Base carregada';
+            render(state.records);
+        } else {
+            throw new Error("Base de dados vazia ou inválida.");
+        }
+    } catch (err) {
+      console.error('Erro ao carregar base de infrações:', err);
+      if (elements.status) elements.status.innerText = 'Erro ao carregar base de dados.';
     }
   }
 

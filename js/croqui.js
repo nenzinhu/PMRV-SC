@@ -120,16 +120,20 @@ function croqui_inserirIcone(tipo) {
         'v2': { e: "🚗", l: "V2", c: "filter: hue-rotate(90deg);" },
         'moto': { e: "🏍️", l: "MOTO" },
         'caminhao': { e: "🚚", l: "CAMINHÃO" },
+        'carreta': { e: "🚛", l: "CARRETA", fs: 45 },
         'onibus': { e: "🚌", l: "ÔNIBUS" },
         'bicicleta': { e: "🚲", l: "BIKE" },
         'viatura': { e: "🚓", l: "PMRV" },
         'ambulancia': { e: "🚑", l: "SAMU" },
-        'reboque': { e: "🚛", l: "CARGA" },
         'cone': { e: "⚠️", l: "CONE", fs: 30 },
         'pare': { e: "🛑", l: "PARE", fs: 35 },
+        'preferencial': { e: "🔻", l: "PREF.", fs: 35 },
+        'semaforo': { e: "🚦", l: "SEMÁF.", fs: 35 },
         'arvore': { e: "🌳", l: "ÁRVORE", fs: 35 },
         'poste': { e: "💡", l: "POSTE", fs: 30 },
         'norte': { e: "🧭", l: "NORTE", fs: 35 },
+        'buraco': { e: "🕳️", l: "DEFEITO", fs: 35 },
+        'animal_via': { e: "🐄", l: "ANIMAL", fs: 40 },
         'frenagem': { e: "⬛", l: "FRENAGEM", fs: 10 }
     };
 
@@ -210,32 +214,42 @@ function croqui_onStart(e) {
         CROQUI_SELECTED = null;
         return;
     }
+    
     croqui_selecionar(target);
     isDragging = true;
-    const coords = croqui_getCoords(e);
-    startX = coords.x;
-    startY = coords.y;
     
+    const coords = croqui_getCoords(e);
+    
+    // Captura a transformação atual para calcular o offset real
     const transform = target.getAttribute('transform') || 'translate(0,0)';
-    const match = /translate\(([^, ]+)[, ]*([^)]+)\)/.exec(transform);
-    if (match) {
-        currentX = parseFloat(match[1]);
-        currentY = parseFloat(match[2]);
-    }
+    const translateMatch = /translate\(([^, ]+)[, ]*([^)]+)\)/.exec(transform);
+    
+    currentX = translateMatch ? parseFloat(translateMatch[1]) : 0;
+    currentY = translateMatch ? parseFloat(translateMatch[2]) : 0;
+    
+    // Offset entre o ponto do clique e a origem do objeto
+    startX = coords.x - currentX;
+    startY = coords.y - currentY;
 }
 
 function croqui_onMove(e) {
     if (!isDragging || !CROQUI_SELECTED) return;
     e.preventDefault();
+    
     const coords = croqui_getCoords(e);
-    const dx = coords.x - startX;
-    const dy = coords.y - startY;
-    const newX = currentX + dx;
-    const newY = currentY + dy;
+    const newX = coords.x - startX;
+    const newY = coords.y - startY;
     
     const currentTransform = CROQUI_SELECTED.getAttribute('transform') || '';
-    const otherTransforms = currentTransform.replace(/translate\([^)]+\)/, '').trim();
-    CROQUI_SELECTED.setAttribute('transform', `translate(${newX}, ${newY}) ${otherTransforms}`);
+    // Substitui apenas o translate, preservando rotate e scale
+    const updatedTransform = currentTransform.replace(/translate\([^)]+\)/, `translate(${newX.toFixed(2)}, ${newY.toFixed(2)})`);
+    
+    // Se não havia translate, adiciona no início
+    if (!updatedTransform.includes('translate')) {
+        CROQUI_SELECTED.setAttribute('transform', `translate(${newX.toFixed(2)}, ${newY.toFixed(2)}) ${currentTransform}`);
+    } else {
+        CROQUI_SELECTED.setAttribute('transform', updatedTransform);
+    }
 }
 
 function croqui_onEnd() {

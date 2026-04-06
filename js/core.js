@@ -28,7 +28,20 @@ PMRV.core = (function() {
 
     SCREENS.forEach(id => {
       const el = document.getElementById('screen-' + id);
-      if (el) el.classList.toggle('active', id === target);
+      if (el) {
+        const isActive = id === target;
+        el.classList.toggle('active', isActive);
+        if (isActive) {
+          // Acessibilidade: mover foco para o cabeçalho da nova tela
+          setTimeout(() => {
+            const heading = el.querySelector('h1, h2, .card-title, .btn');
+            if (heading) {
+              heading.setAttribute('tabindex', '-1');
+              heading.focus();
+            }
+          }, 250);
+        }
+      }
     });
 
     const app = document.querySelector('.app');
@@ -40,6 +53,7 @@ PMRV.core = (function() {
     if (target === 'prazos-transito' && typeof window.prazos_init === 'function') window.prazos_init();
     if (target === 'patrulhamento' && typeof window.pat_init === 'function') window.pat_init();
     if (target === 'pmrv' && typeof window.pmrv_init === 'function') window.pmrv_init();
+    if (target === 'infracoes' && typeof window.infra_init === 'function') window.infra_init();
     if (target === 'danos' && typeof window.danPrepararTela === 'function') window.danPrepararTela();
     if (target === 'docs') docs_switchTab('ciclomotores');
   }

@@ -2,23 +2,23 @@
    PMRv
 --------------------------------------------------------------- */
 const PMRV_DINAMICAS = {
-  '1.1': 'O veículo V1 transitava pela via quando atropelou um pedestre.',
-  '1.2': 'O veículo V1 transitava pela via quando atropelou um animal.',
-  '2.1': 'Os veículos transitavam no mesmo sentido quando ocorreu abalroamento longitudinal.',
-  '2.2': 'Os veículos transitavam em sentidos opostos quando ocorreu abalroamento longitudinal.',
+  '1.1': 'O veículo V1 transitava pela via quando ocorreu o atropelamento de pedestre.',
+  '1.2': 'O veículo V1 transitava pela via quando ocorreu o atropelamento de animal.',
+  '2.1': 'Os veículos transitavam no mesmo sentido quando ocorreu o abalroamento longitudinal.',
+  '2.2': 'Os veículos transitavam em sentidos opostos quando ocorreu o abalroamento longitudinal.',
   '2.3': 'O veículo V1 abalroou transversalmente o veículo V2.',
   '3.1': 'Os veículos colidiram frontalmente.',
   '3.2': 'O veículo V1 colidiu na traseira do veículo V2.',
   '3.3': 'O veículo V1 colidiu com outros veículos, ocasionando engavetamento.',
-  '4.1': 'O veículo V1 chocou-se contra um poste.',
-  '4.6': 'O veículo V1 chocou-se contra uma defensa.',
+  '4.1': 'O veículo V1 chocou-se contra um poste de iluminação pública.',
+  '4.6': 'O veículo V1 chocou-se contra a defensa metálica.',
   '4.9': 'O veículo V1 chocou-se contra [OBJETO].',
-  '5.1': 'O veículo V1 perdeu o controle direcional e saiu da pista.',
-  '5.3': 'O veículo V1 perdeu o controle direcional, saiu da pista e capotou.',
-  '5.4': 'O veículo V1 perdeu o controle direcional, saiu da pista e tombou.',
+  '5.1': 'O condutor do veículo V1 perdeu o controle direcional, vindo a sair da pista.',
+  '5.3': 'O condutor do veículo V1 perdeu o controle direcional, saiu da pista e o veículo capotou.',
+  '5.4': 'O condutor do veículo V1 perdeu o controle direcional, saiu da pista e o veículo tombou.',
   '6.1': 'O veículo V1 saiu da pista e chocou-se contra um poste.',
   '6.2': 'O veículo V1 saiu da pista e chocou-se contra um muro.',
-  '6.3': 'O veículo V1 saiu da pista e chocou-se contra uma defensa.',
+  '6.3': 'O veículo V1 saiu da pista e chocou-se contra a defensa.',
   '6.4': 'O veículo V1 saiu da pista e chocou-se contra [OBJETO].',
   '7.1': 'Ocorrência registrada como [OUTROS].'
 };
@@ -64,13 +64,11 @@ function pmrv_verificarRodovia() {
     cidade.readOnly = true;
     cidade.style.opacity = '.6';
   } else {
-    // Para outras rodovias do estado, permite edição manual da cidade
-    // Opcional: Futuramente carregar cidade via geocoding reverso real
     cidade.readOnly = false;
     cidade.style.opacity = '1';
     if (!cidade.value || cidade.value === 'Florianópolis/SC') {
         cidade.value = '';
-        cidade.placeholder = 'Digite a Cidade/SC';
+        cidade.placeholder = 'Cidade/UF';
     }
   }
   pmrv_atualizar();
@@ -90,6 +88,51 @@ function pmrv_formatarKM(val) {
   if (!val) return '---';
   const num = parseFloat(String(val).replace(',', '.').replace(/[^\d.]/g, ''));
   return isNaN(num) ? '---' : num.toLocaleString('pt-BR', { minimumFractionDigits: 3 });
+}
+
+function pmrv_atualizarLocal() {
+  const rodovia = document.getElementById('pmrv_rodovia')?.value || '---';
+  const km = pmrv_formatarKM(document.getElementById('pmrv_km')?.value);
+  const campoLocal = document.getElementById('pmrv_local');
+  const textoLocal = `${rodovia}, km ${km}`;
+  if (campoLocal) campoLocal.value = textoLocal;
+  const footerLocal = document.getElementById('pmrv_local_footer');
+  if (footerLocal) footerLocal.textContent = textoLocal;
+}
+
+function pmrv_aplicarLocalNoTexto(texto) {
+  const rodovia = document.getElementById('pmrv_rodovia')?.value || '---';
+  const km = pmrv_formatarKM(document.getElementById('pmrv_km')?.value);
+  const local = document.getElementById('pmrv_local')?.value || `${rodovia}, km ${km}`;
+  const linhaRodovia = `Rodovia: ${rodovia} / KM: ${km}`;
+  const linhaRodoviaNegrito = `*Rodovia:* ${rodovia} / *KM:* ${km}`;
+
+  return texto
+    .replace(linhaRodoviaNegrito, `${linhaRodoviaNegrito}\n*Local:* ${local}`)
+    .replace(linhaRodovia, `${linhaRodovia}\nLocal: ${local}`)
+    .replace(
+      `para atendimento de sinistro na rodovia ${rodovia}, km ${km}`,
+      `para atendimento de sinistro de trânsito no local ${local}`
+    );
+}
+
+function pmrv_atualizarBotaoAvancado() {
+  const secao = document.getElementById('pmrv_advanced_section');
+  const botao = document.getElementById('pmrv_advanced_toggle');
+  if (!secao || !botao) return;
+  const aberto = secao.classList.contains('open');
+  botao.textContent = aberto ? 'Ocultar Detalhes' : 'Mais Detalhes';
+  botao.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+}
+
+function pmrv_toggleAvancado(forceOpen) {
+  const secao = document.getElementById('pmrv_advanced_section');
+  if (!secao) return;
+  const abrir = typeof forceOpen === 'boolean'
+    ? forceOpen
+    : !secao.classList.contains('open');
+  secao.classList.toggle('open', abrir);
+  pmrv_atualizarBotaoAvancado();
 }
 
 function pmrv_toggleSentidoManual() {
@@ -126,6 +169,7 @@ function pmrv_init() {
   }
 
   if (!subtipo.value) subtipo.value = '1.1';
+  pmrv_toggleAvancado(window.innerWidth > 520);
   pmrv_verificarRodovia();
   pmrv_verificarVitimas();
   pmrv_toggleSentidoManual();
@@ -139,6 +183,7 @@ function pmrv_gerarTexto(negrito = false) {
   const cidade  = document.getElementById('pmrv_cidade').value  || '---';
   const rodovia = document.getElementById('pmrv_rodovia').value || '---';
   const km      = pmrv_formatarKM(document.getElementById('pmrv_km').value);
+  const local   = document.getElementById('pmrv_local')?.value  || `${rodovia}, km ${km}`;
   const conhc   = document.getElementById('pmrv_conhecimento').value;
   const ocorr   = document.getElementById('pmrv_ocorrencia').value;
   const dinamica= document.getElementById('pmrv_dinamica_texto').value;
@@ -161,7 +206,7 @@ function pmrv_gerarTexto(negrito = false) {
     if (l  > 0) partes.push(`${String(l).padStart(2,'0')} leve(s)`);
     if (g  > 0) partes.push(`${String(g).padStart(2,'0')} grave(s)`);
     if (gs > 0) partes.push(`${String(gs).padStart(2,'0')} gravíssima(s)`);
-    infoV = '\n' + b + 'Vítimas:' + b + ' ' + (partes.length ? partes.join(', ') : 'Qtd não informada');
+    infoV = '\n' + b + 'Vítimas:' + b + ' ' + (partes.length ? partes.join(', ') : 'Quantidade não informada');
   }
 
   const hora = document.getElementById('pmrv_hora_manual').checked
@@ -177,11 +222,12 @@ function pmrv_gerarTexto(negrito = false) {
     `${b}Data:${b} ${data}\n` +
     `${b}Hora:${b} ${hora}\n` +
     `${b}Rodovia:${b} ${rodovia} / ${b}KM:${b} ${km}\n` +
+    `${b}Local:${b} ${local}\n` +
     `${b}Cidade:${b} ${cidade}\n` +
     `${b}Tipo de ocorrência:${b} ${ocorr}\n` +
     `${b}Tipo de sinistro:${b} ${tipoLabel}${infoV}\n` +
     `\n` +
-    `A guarnição foi acionada ${conhc} para atendimento de sinistro na rodovia ${rodovia}, km ${km}, sentido ${sentido || '---'}, sendo empenhada a Viatura PM-${vtr}.\n` +
+    `A equipe policial militar rodoviária foi acionada ${conhc} para atendimento de ocorrência de sinistro de trânsito na rodovia ${rodovia}, km ${km}, sentido ${sentido || '---'}, sendo empenhada a Viatura PM-${vtr}.\n` +
     `${dinamica}\n` +
     `\n` +
     `Foram adotadas as providências administrativas cabíveis.`
@@ -189,12 +235,13 @@ function pmrv_gerarTexto(negrito = false) {
 }
 
 function pmrv_atualizar() {
+  pmrv_atualizarLocal();
   const el = document.getElementById('pmrv_relatorio');
-  if (el) el.textContent = pmrv_gerarTexto(false);
+  if (el) el.textContent = pmrv_aplicarLocalNoTexto(pmrv_gerarTexto(false));
 }
 
 function pmrv_enviarWhatsApp() {
-  window.open('https://wa.me/?text=' + encodeURIComponent(pmrv_gerarTexto(true)), '_blank');
+  window.open('https://wa.me/?text=' + encodeURIComponent(pmrv_aplicarLocalNoTexto(pmrv_gerarTexto(true))), '_blank');
 }
 
 function pmrv_limpar() {
