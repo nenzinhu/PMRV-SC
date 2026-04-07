@@ -18,36 +18,25 @@
 <body>
 <div class="app" role="main">
 
-  <!-- ============================================================
-       TOPBAR
-  ============================================================ -->
+  <!-- TOPBAR COMPACTA -->
   <header class="topbar" role="banner">
     <div class="brand">
-      <img src="img/extracted_1.png" alt="Brasão PMRv" class="brand-logo" aria-hidden="true" />
-      
-      <span class="brand-pill" aria-label="Sistema PMRV-SC - Online">
-        <span class="brand-dot" aria-hidden="true"></span>
-        PMRV-SC
-      </span>
+      <img src="img/extracted_1.png" alt="PMRv" class="brand-logo" />
+      <span style="font-weight: 800; font-size: 14px; letter-spacing: -0.5px;">PMRV-SC</span>
     </div>
-    <nav class="topbar-actions" aria-label="Navegação principal">
-      <button class="btn" data-click="go('home')" aria-label="Ir para o menu principal">Menu</button>
-      <button class="btn" data-click="go('help')" aria-label="Abrir ajuda">Ajuda</button>
-      <button class="btn btn-danger" data-click="go('ended')" aria-label="Encerrar sessão">Sair</button>
-    </nav>
+    
+    <div class="topbar-shortcuts" style="display: flex; gap: 14px; align-items: center;">
+      <button class="nav-icon-btn" data-click="go('patrulhamento')" title="Patrulhamento" style="background:none; border:none; font-size:22px; padding:4px; cursor:pointer; filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));">🚔</button>
+      <button class="nav-icon-btn" data-click="go('docs')" title="Documentos" style="background:none; border:none; font-size:20px; padding:4px; cursor:pointer; filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));">📄</button>
+    </div>
+
+    <div id="top-gps-info" style="font-size: 10px; text-align: right; color: var(--primary);">
+      <span id="header-gps-txt">Localizando...</span>
+    </div>
   </header>
 
-  <!-- Barra de Telemetria Superior (GPS) -->
-  <div class="top-gps-bar" id="footer-gps-container">
-    <div class="gps-main">
-      📍 <span id="footer-gps-rodovia">Iniciando...</span> 
-      🏁 KM <span id="footer-gps-km">---</span>
-    </div>
-    <div class="gps-coords">
-      Lat: <span id="footer-gps-lat">---</span><br>
-      Lng: <span id="footer-gps-lng">---</span>
-    </div>
-  </div>
+  <!-- CONTAINER DE TELAS (SCROLL INTERNO) -->
+  <main class="screen-container" id="main-container">
 
   <!-- ============================================================
        HOME
@@ -152,6 +141,16 @@
           <div class="menu-desc">Manual de uso de cada opção</div>
           <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
+      </div>
+
+      <!-- SEÇÃO DE SISTEMA (LIMPEZA) -->
+      <div style="margin-top:24px; padding-top:16px; border-top:1px solid var(--border);">
+        <h3 style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Sistema</h3>
+        <button class="btn btn-full" style="background:rgba(239, 68, 68, 0.1); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.2); display:flex; align-items:center; justify-content:center; gap:8px;" 
+                data-click="core_confirmarLimpezaCompleta()">
+          <span>🗑️</span> Limpar Cache e Reiniciar App
+        </button>
+        <p style="font-size:10px; color:var(--muted); text-align:center; margin-top:8px;">Versão 1.0.0 · PMRV-SC Operacional</p>
       </div>
     </div>
   </section>
@@ -560,7 +559,7 @@
 
         <div id="pmrv_gps_result" class="pmrv-gps-summary hidden">
           <div class="pmrv-gps-chip">
-            <span>Rodovia</span>
+            <span>Local</span>
             <strong id="pmrv_gps_rodovia">---</strong>
           </div>
           <div class="pmrv-gps-chip">
@@ -572,8 +571,7 @@
             <strong id="pmrv_gps_acc">---</strong>
           </div>
           <div class="pmrv-gps-coords">
-            <span>Lat <strong id="pmrv_gps_lat">---</strong></span>
-            <span>Lng <strong id="pmrv_gps_lng">---</strong></span>
+            <span>Descrição <strong id="pmrv_gps_desc">---</strong></span>
           </div>
         </div>
       </div>
@@ -593,7 +591,7 @@
     <div class="card" id="dan-step-vehicle">
       <h2 class="card-title">Selecione o tipo de veículo</h2>
       <p class="card-sub" style="margin-bottom:14px;">Toque no veículo envolvido no sinistro</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">
         <button class="dan-veh-btn" id="dan-btn-carro" data-click="danEscolherVeiculo('carro')">
           <img src="img/extracted_6.png" alt="Carro" style="height:80px;width:auto;object-fit:contain;margin-bottom:6px;display:block;">
           <span style="font-family:var(--font-display);font-size:18px;font-weight:900;">Carro</span>
@@ -601,6 +599,10 @@
         <button class="dan-veh-btn" id="dan-btn-moto" data-click="danEscolherVeiculo('moto')">
           <img src="img/extracted_7.png" alt="Motocicleta" style="height:80px;width:auto;object-fit:contain;margin-bottom:6px;display:block;">
           <span style="font-family:var(--font-display);font-size:18px;font-weight:900;">Motocicleta</span>
+        </button>
+        <button class="dan-veh-btn" id="dan-btn-caminhao" data-click="danEscolherVeiculo('caminhao')">
+          <span aria-hidden="true" style="font-size:62px;line-height:1;margin-bottom:8px;display:block;">🚚</span>
+          <span style="font-family:var(--font-display);font-size:18px;font-weight:900;">Caminhão</span>
         </button>
       </div>
       <div id="dan-salvos-area" style="display:none;margin-top:16px;">
@@ -924,23 +926,10 @@
             </div>
           </div>
 
-          <div class="infra-table-wrap">
-            <table class="infra-table">
-              <thead>
-                <tr>
-                  <th>Código</th>
-                  <th>Descrição</th>
-                  <th>Artigo / Decreto</th>
-                  <th>Infrator</th>
-                  <th>Categoria</th>
-                  <th>Medida administrativa</th>
-                  <th>Valor</th>
-                </tr>
-              </thead>
-              <tbody id="infra_tableBody"></tbody>
-            </table>
-            <div id="infra_emptyState" class="infra-empty" hidden>Nenhum resultado encontrado para os filtros atuais.</div>
+          <div id="infra_list_container" class="infra-cards-list">
+            <!-- Cards serão inseridos aqui via JS -->
           </div>
+          <div id="infra_emptyState" class="infra-empty" hidden>Nenhum resultado encontrado para os filtros atuais.</div>
         </div>
       </div>
 
@@ -1023,7 +1012,7 @@
       <div class="card-header">
         <div>
           <h2 class="card-title">🚔 Patrulhamento em Lote</h2>
-          <p class="card-sub">Registre placas, local, infração e gere o resumo do turno.</p>
+          <p class="card-sub">Registre placas, local e infração ao longo do turno. No fim, encerre o patrulhamento e gere TXT ou envie no WhatsApp.</p>
         </div>
       </div>
 
@@ -1038,7 +1027,10 @@
 
         <div id="pat_placa_manual_wrap" class="form-field">
           <label class="field-label">Placa</label>
-          <input type="text" id="pat_placa" maxlength="7" placeholder="ABC1D23" data-input="pat_formatarPlaca(this)">
+          <div class="flex gap-8">
+            <input type="text" id="pat_placa" maxlength="7" placeholder="ABC1D23" data-input="pat_formatarPlaca(this)" style="flex:1;">
+            <button type="button" class="btn btn-sm" id="btn-pat-placa-voz" data-click="pat_iniciarVozPlaca()">🎙️ Voz</button>
+          </div>
           <div id="pat_placa_tipo" style="margin-top:8px;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#fff;background:#999;padding:7px 10px;border-radius:999px;display:inline-block;">DIGITANDO...</div>
         </div>
 
@@ -1086,7 +1078,7 @@
               </select>
             </div>
             <div class="form-field">
-              <input type="text" id="pat_manual_km" placeholder="KM 0.000">
+              <input type="text" id="pat_manual_km" placeholder="KM 0.000" onblur="core_formatarKM(this)">
             </div>
           </div>
         </div>
@@ -1146,23 +1138,30 @@
           <textarea id="pat_obs" rows="3" placeholder="Anote detalhes úteis para o relatório."></textarea>
         </div>
 
-        <button class="btn btn-primary btn-full btn-lg" data-click="pat_salvarVeiculo()">+ Adicionar ao lote</button>
+        <button class="btn btn-primary btn-full btn-lg" data-click="pat_salvarVeiculo()">+ Adicionar registro</button>
       </div>
 
       <div id="pat_lista_card" class="result-box hidden" style="margin-top:20px;">
-        <p class="result-label">Lote atual</p>
+        <p class="result-label">Turno em andamento</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;padding:12px 14px;border-radius:14px;border:1px solid rgba(245,130,32,.18);background:linear-gradient(180deg, rgba(245,130,32,.08), rgba(255,255,255,.02));">
+          <div>
+            <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--label);">Resumo do turno</div>
+            <div id="pat_total_turno" style="margin-top:4px;font-size:18px;font-weight:900;color:#fff;">Total de abordagens: 0</div>
+          </div>
+          <button class="btn btn-primary" data-click="pat_encerrarPatrulhamento()">🏁 Patrulhamento terminando</button>
+        </div>
         <div id="pat_lista_container"></div>
         <div class="result-actions">
           <button class="btn btn-danger" data-click="pat_limparTudo()">🗑 Limpar lote</button>
-          <button class="btn btn-primary" data-click="pat_gerarRelatorio()">⚡ Gerar resumo</button>
+          <button class="btn" data-click="pat_gerarRelatorio()">👁 Prévia do texto</button>
         </div>
       </div>
 
       <div id="pat_result_area" class="result-box hidden" style="margin-top:20px;">
-        <p class="result-label">Resumo do patrulhamento</p>
+        <p class="result-label">Resumo final do patrulhamento</p>
         <div class="result-text" id="pat_result_text"></div>
         <div class="result-actions">
-          <button class="btn btn-success" data-click="copiar('pat_result_text', this)">📋 Copiar</button>
+          <button class="btn btn-success" data-click="pat_baixarTxt()">📝 Gerar TXT</button>
           <button class="btn btn-whats" data-click="whatsapp('pat_result_text')">📲 WhatsApp</button>
         </div>
       </div>
@@ -1589,6 +1588,8 @@
       <div class="sub-box">
         <div id="prazos_uf_titulo" style="font-weight:900;font-size:18px;"></div>
         <div id="prazos_obs_uf" style="margin-top:6px;color:var(--label);font-size:12px;"></div>
+        <div id="prazos_status_uf" style="margin-top:8px;font-size:12px;font-weight:700;"></div>
+        <div id="prazos_fonte_uf" style="margin-top:6px;font-size:12px;"></div>
         <table style="width:100%;margin-top:14px;border-collapse:collapse;">
           <thead>
             <tr>
@@ -1619,10 +1620,28 @@
       </div>
 
       <div class="flex gap-8 flex-wrap" style="margin-bottom:14px;">
-        <button class="btn btn-primary" id="tab-docs-ciclomotores" data-click="docs_switchTab('ciclomotores')">Ciclomotores</button>
+        <button class="btn btn-primary" id="tab-docs-bases" data-click="docs_switchTab('bases')">Bases oficiais</button>
+        <button class="btn" id="tab-docs-ciclomotores" data-click="docs_switchTab('ciclomotores')">Ciclomotores</button>
+        <button class="btn" id="tab-docs-estrangeiros" data-click="docs_switchTab('estrangeiros')">Estrangeiros</button>
+        <button class="btn" id="tab-docs-aet" data-click="docs_switchTab('aet')">Fiscalização de AET</button>
       </div>
 
-      <div id="docs-content-ciclomotores">
+      <div id="docs-content-bases">
+        <div class="help-block" style="margin-bottom:14px;border:1px solid rgba(59,130,246,.22);background:linear-gradient(180deg, rgba(59,130,246,.12), rgba(59,130,246,.04));">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+            <div>
+              <h3 class="help-title" style="margin-bottom:4px;">Bases oficiais de trânsito</h3>
+              <p class="help-text" style="margin:0;">Acesso direto aos repositórios oficiais da Senatran e do Contran no portal gov.br.</p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <a class="btn btn-primary" href="https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/portarias-senatran" target="_blank" rel="noopener noreferrer">Portarias do Senatran</a>
+              <a class="btn" href="https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/resolucoes-contran" target="_blank" rel="noopener noreferrer">Resoluções do Contran</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="docs-content-ciclomotores" class="hidden">
         <div class="help-block" style="margin-bottom:14px;border:1px solid rgba(245,130,32,.24);background:linear-gradient(180deg, rgba(245,130,32,.10), rgba(245,130,32,.04));">
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
             <div>
@@ -1744,6 +1763,104 @@
           </div>
         </div>
       </div>
+
+      <div id="docs-content-estrangeiros" class="hidden">
+        <div class="help-stack">
+          <section class="help-block" style="border:1px solid rgba(59,130,246,.22);background:linear-gradient(180deg, rgba(59,130,246,.12), rgba(59,130,246,.04));">
+            <h3 class="help-title">Condutor e veículo estrangeiro</h3>
+            <p class="help-text">Referência operacional rápida para abordagem, conferência documental e registro de atendimento envolvendo estrangeiros.</p>
+          </section>
+
+          <section class="help-block">
+            <h3 class="help-title">O que conferir primeiro</h3>
+            <ul class="help-list">
+              <li>Identifique o país de origem do condutor e do veículo antes de concluir qualquer exigência documental.</li>
+              <li>Verifique documento de identificação, habilitação apresentada, documento do veículo e eventual comprovante de ingresso regular quando aplicável ao atendimento.</li>
+              <li>Confirme se a placa e o documento do veículo correspondem entre si e se há sinais de adulteração, inconsistência ou ausência de tradução mínima compreensível.</li>
+              <li>Descreva no relato exatamente qual documento foi apresentado, por quem, em qual idioma e com quais dados visíveis.</li>
+            </ul>
+          </section>
+
+          <section class="help-block">
+            <h3 class="help-title">Habilitação estrangeira</h3>
+            <ul class="help-list">
+              <li>Nem toda CNH estrangeira pode ser tratada da mesma forma; a análise depende do país emissor, do prazo de permanência e da situação do condutor no Brasil.</li>
+              <li>Se houver Permissão Internacional para Dirigir, registre isso separadamente do documento nacional apresentado.</li>
+              <li>Na dúvida sobre validade para condução em território nacional, evite concluir apenas pelo nome do documento e confirme a norma aplicável.</li>
+              <li>Se a situação exigir autuação, descreva o fundamento fático com precisão: ausência, incompatibilidade, prazo vencido ou documento sem correspondência com a categoria do veículo.</li>
+            </ul>
+          </section>
+
+          <section class="help-block">
+            <h3 class="help-title">Veículo estrangeiro</h3>
+            <ul class="help-list">
+              <li>Verifique placa, país, características do veículo, documento apresentado e eventual indício de circulação irregular fora das condições permitidas.</li>
+              <li>Registre marca, modelo, cor, número identificador visível e qualquer divergência entre veículo e documento.</li>
+              <li>Se houver retenção, remoção ou outra medida administrativa, descreva o motivo objetivo e os documentos efetivamente exibidos no local.</li>
+              <li>Quando a conferência normativa não estiver segura no momento da abordagem, priorize a descrição técnica completa antes de definir enquadramento.</li>
+            </ul>
+          </section>
+
+          <section class="help-block">
+            <h3 class="help-title">Fontes oficiais úteis</h3>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <a class="btn btn-primary" href="https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/resolucoes-contran" target="_blank" rel="noopener noreferrer">Resoluções do Contran</a>
+              <a class="btn" href="https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/portarias-senatran" target="_blank" rel="noopener noreferrer">Portarias do Senatran</a>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div id="docs-content-aet" class="hidden">
+        <div class="help-stack">
+          <section class="help-block" style="border:1px solid rgba(59,130,246,.22);background:linear-gradient(180deg, rgba(59,130,246,.12), rgba(59,130,246,.04));">
+            <h3 class="help-title">Fiscalização de AET em rodovia estadual de SC</h3>
+            <p class="help-text">Conteúdo restrito ao que foi validado em fonte oficial aplicável à rodovia estadual sob jurisdição da SIE/SC.</p>
+          </section>
+
+          <section class="help-block">
+            <h3 class="help-title">O que ficou confirmado</h3>
+            <ul class="help-list">
+              <li>O trânsito de veículo ou combinação com peso ou dimensão excedente depende de autorização especial, na forma do art. 101 do CTB.</li>
+              <li>Santa Catarina possui fluxo oficial da SIE para emissão de AET nas rodovias sob sua jurisdição.</li>
+              <li>A Instrução de Trabalho da SIE descreve a AET como documento emitido pela SIE para autorizar o trânsito, após análise e aprovação documental, de acordo com as características do transporte requerido.</li>
+              <li>No portal público AET.NET da SIE, o ambiente consultado referencia expressamente CTV e CTVP conforme a Resolução CONTRAN nº 305/2009.</li>
+              <li>A taxa estadual de AET aparece na legislação tributária estadual consultada, vinculada ao serviço prestado pela SIE.</li>
+            </ul>
+          </section>
+
+          <section class="help-block">
+            <h3 class="help-title">Checklist seguro de fiscalização</h3>
+            <ul class="help-list">
+              <li>Primeiro confirme se a via é estadual sob jurisdição da SIE/SC; em rodovia federal a competência documental pode ser diversa.</li>
+              <li>Verifique se a composição efetivamente excede peso ou dimensão regulamentar ou se está enquadrada em modalidade sujeita a AET.</li>
+              <li>Quando houver AET aplicável, confira órgão emissor, validade, placas/unidades do conjunto, dimensões, peso, itinerário e restrições operacionais constantes no documento.</li>
+              <li>Registre no atendimento o número da AET, o órgão emissor e exatamente qual divergência foi constatada: ausência, vencimento, desacordo de rota, desacordo de composição ou desacordo dimensional/peso.</li>
+            </ul>
+          </section>
+
+          <section class="help-block">
+            <h3 class="help-title">Cautela operacional</h3>
+            <ul class="help-list">
+              <li>O conteúdo desta aba foi limitado ao que aparece de forma verificável em fonte oficial da SIE, do CTB e do CONTRAN.</li>
+              <li>Como o portal público consultado destaca CTV/CTVP e a Instrução de Trabalho usa definição mais ampla de transporte de cargas, a conclusão sobre modalidade específica deve respeitar o documento efetivamente apresentado e a regra setorial aplicável.</li>
+              <li>Se a ocorrência envolver combinação especial, carga indivisível, requisito de escolta, janela de trânsito ou modalidade fora do fluxo público claramente descrito, confirme a regra específica na SIE antes de concluir enquadramento.</li>
+              <li>Na dúvida, descreva com precisão técnica o conjunto, a carga, as medidas e o documento apresentado, sem presumir irregularidade além do que a fonte oficial permite afirmar com segurança.</li>
+            </ul>
+          </section>
+
+          <section class="help-block">
+            <h3 class="help-title">Fontes oficiais validadas</h3>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <a class="btn btn-primary" href="https://portal.sgpe.sistemas.sc.gov.br/portalaet/" target="_blank" rel="noopener noreferrer">Portal AET da SIE/SC</a>
+              <a class="btn" href="https://www.sie.sc.gov.br/webdocs/sie/fluxo-processos/carta-de-servicos/autorizacao-especial-transito/instrucao-trabalho.pdf" target="_blank" rel="noopener noreferrer">Instrução de Trabalho AET</a>
+              <a class="btn" href="https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-contran/resolucoes/resolucao_contran_305_09.pdf" target="_blank" rel="noopener noreferrer">Resolução CONTRAN 305/2009</a>
+              <a class="btn" href="https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-contran/resolucao-contran-no-899-de-9-de-marco-de-2022" target="_blank" rel="noopener noreferrer">Atualização da Res. 882/2021</a>
+              <a class="btn" href="https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm" target="_blank" rel="noopener noreferrer">CTB - art. 101</a>
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1799,9 +1916,9 @@
 
         <section class="help-block">
           <h3 class="help-title">Danos Aparentes</h3>
-          <p class="help-text">Permite registrar avarias de carro e motocicleta com apoio visual.</p>
+          <p class="help-text">Permite registrar avarias de carro, motocicleta e caminhão com apoio visual.</p>
           <ul class="help-list">
-            <li>Escolha carro ou motocicleta.</li>
+            <li>Escolha carro, motocicleta ou caminhão.</li>
             <li>Toque na peça/ponto desejado.</li>
             <li>Selecione o tipo de dano.</li>
             <li>Salve o veículo e gere o relatório individual ou geral.</li>
@@ -1865,39 +1982,62 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       ENCERRADO
-  ============================================================ -->
-  <section id="screen-ended" class="screen">
-    <div class="card ended-box">
-      <div class="ended-icon">🚔</div>
-      <h2 class="ended-title">Aplicativo encerrado</h2>
-      <p class="ended-sub">Você pode fechar esta aba ou retornar ao menu.</p>
-      <button class="btn btn-primary btn-lg" data-click="go('home')">← Voltar ao Menu</button>
-    </div>
-  </section>
+  </main>
 
-  <footer class="app-footer" role="contentinfo">
-    <div class="app-footer-row">
-      <div class="app-footer-badge">PMRV-SC</div>
-      
-      <div class="app-footer-gps" id="footer-gps-container">
-        <div class="gps-main">
-          📍 <span id="footer-gps-rodovia">Iniciando...</span> 
-          🏁 KM <span id="footer-gps-km">---</span>
-        </div>
-        <div class="gps-coords">
-          Lat: <span id="footer-gps-lat">---</span> | Lng: <span id="footer-gps-lng">---</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="app-footer-text">Desenvolvido por <span class="app-footer-author">Cabo Jeferson</span></div>
-    
-    <div style="margin-top:10px;">
-      <button class="btn-clear-cache" type="button" data-click="if(confirm('Limpar os dados locais salvos do app?')) core_limparCache()">Limpar cache</button>
-    </div>
-  </footer>
+  <!-- BOTTOM NAVIGATION BAR -->
+  <nav class="bottom-nav" role="navigation">
+    <button class="nav-item active" id="nav-home" data-click="go('home')">
+      <span class="nav-icon nav-icon-svg" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M3 10.5 12 3l9 7.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6.5 9.5V21h11V9.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
+          <path d="M10 21v-5.5h4V21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span>Menu</span>
+    </button>
+    <button class="nav-item" id="nav-assumir" data-click="go('assumir')">
+      <span class="nav-icon nav-icon-svg" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M5 15.5h14l-1 3H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M7.5 10.5h9l1.6 5H5.9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <circle cx="8" cy="18.2" r="1.6" fill="currentColor"/>
+          <circle cx="16" cy="18.2" r="1.6" fill="currentColor"/>
+          <path d="M12 6.5v3.5M10.2 8.2H13.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span>Serviço</span>
+    </button>
+    <button class="nav-item" id="nav-pmrv" data-click="go('pmrv')">
+      <span class="nav-icon nav-icon-svg" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M7 4.5h7l3 3V19.5H7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M14 4.5v3h3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M9.2 11h5.8M9.2 14h5.8M9.2 17h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span>Relato</span>
+    </button>
+    <button class="nav-item" id="nav-infracoes" data-click="go('infracoes')">
+      <span class="nav-icon nav-icon-svg" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <circle cx="11" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="1.9"/>
+          <path d="m15.2 15.2 4.3 4.3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+          <path d="M11 8.7v4.6M8.7 11H13.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span>Consulta</span>
+    </button>
+    <button class="nav-item" id="nav-danos" data-click="go('danos')">
+      <span class="nav-icon nav-icon-svg" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M14.5 5.2a3.5 3.5 0 0 0 4.3 4.3l-7.7 7.7a2.2 2.2 0 1 1-3.1-3.1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M6.6 17.4 4.8 19.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span>Danos</span>
+    </button>
+  </nav>
 
 </div><!-- /.app -->
 
@@ -1969,11 +2109,16 @@
       <button class="btn" data-click="croqui_filtrarIcones('objeto')">Sinalização</button>
       <button class="btn" data-click="croqui_filtrarIcones('obstaculo')">Obstáculos</button>
       <button class="btn" data-click="croqui_filtrarIcones('sinistro')">Sinistros</button>
+      <button class="btn" data-click="croqui_filtrarIcones('frequentes')">⭐ Frequentes</button>
     </div>
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
-      <!-- Veículos -->
-      <button class="btn croqui-icon-item veiculo" data-click="croqui_inserirIcone('v1')">🚗 Veículo 1</button>
+      <!-- Frequentes -->
+      <button class="btn croqui-icon-item frequentes hidden" data-click="croqui_inserirPistaSvg('waldermar viera SC-.svg')">🛣️ Pista W. Vieira</button>
+      <button class="btn croqui-icon-item frequentes hidden" data-click="croqui_inserirSvg('pedestre.svg', true)">🚶 Pedestre (SVG)</button>
+      <button class="btn croqui-icon-item frequentes hidden" data-click="croqui_inserirIcone('viatura')">🚓 Viatura PMRv</button>
+      <button class="btn croqui-icon-item frequentes hidden" data-click="croqui_inserirIcone('v1')">🚗 Veículo 1 (V1)</button>
+      <button class="btn croqui-icon-item frequentes hidden" data-click="croqui_inserirIcone('v2')">🚘 Veículo 2 (V2)</button>
       <button class="btn croqui-icon-item veiculo" data-click="croqui_inserirIcone('v2')">🚘 Veículo 2</button>
       <button class="btn croqui-icon-item veiculo" data-click="croqui_inserirIcone('moto')">🏍️ Moto</button>
       <button class="btn croqui-icon-item veiculo" data-click="croqui_inserirIcone('caminhao')">🚚 Caminhão</button>
@@ -1992,6 +2137,7 @@
       <button class="btn croqui-icon-item objeto hidden" data-click="croqui_inserirIcone('frenagem')">⬛ Frenagem</button>
 
       <!-- Obstáculos -->
+      <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirSvg('pedestre.svg', true)">🚶 Pedestre (SVG)</button>
       <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('poste')">💡 Poste</button>
       <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('arvore')">🌳 Árvore</button>
       <button class="btn croqui-icon-item obstaculo hidden" data-click="croqui_inserirIcone('buraco')">🕳️ Defeito na Via</button>

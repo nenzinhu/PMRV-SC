@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pmrv-4em1-v3';
+const CACHE_NAME = 'pmrv-4em1-v5';
 const APP_SHELL = [
   './',
   './index.html',
@@ -6,16 +6,36 @@ const APP_SHELL = [
   './css/inlined.css',
   './css/style.css',
   './js/core.js',
+  './js/data-manager.js',
   './js/assuncao.js',
   './js/envolvidos.js',
+  './js/gps.js',
   './js/pmrv.js',
+  './js/patrulhamento.js',
   './js/danos.js',
   './js/relatorio.js',
+  './js/infracoes.js',
+  './js/pesos.js',
+  './js/tacografo.js',
+  './js/rodovias_ref.js',
+  './js/calendarios.js',
+  './js/croqui.js',
+  './data/gps_data_sc.json',
+  './data/infracoes.json',
   './icon-192.png',
   './icon-512.png',
   './icon.png',
   './relatorio.png',
   './AJUDA.png',
+  './patrulhamento.png',
+  './peso.png',
+  './tacofrafo.png',
+  './Croqui.png',
+  './ctb.png',
+  './prazos.png',
+  './infrações.png',
+  './pedestre.svg',
+  './waldermar viera SC-.svg',
   './service_worker.js',
   './img/extracted_1.png',
   './img/extracted_2.png',
@@ -66,7 +86,7 @@ self.addEventListener('fetch', event => {
         const copy = response.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
         return response;
-      });
+      }).catch(() => caches.match('./index.html'));
     })
   );
 });
