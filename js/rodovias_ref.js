@@ -186,8 +186,8 @@ function ref_localizar() {
     }
 
     const resBox = document.getElementById('ref_result_box');
-    document.getElementById('ref_res_rod').innerText = rodKey;
-    document.getElementById('ref_res_km').innerText = " • KM " + kmVal.toFixed(3).replace('.', ',');
+    document.getElementById('ref_res_rod').innerText = rodData.nome;
+    document.getElementById('ref_res_km').innerText = " • Rodovia " + rodKey + " km " + kmVal.toFixed(3).replace('.', ',');
 
     let msgDist = "";
     let descRef = "";

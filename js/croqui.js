@@ -1,463 +1,477 @@
 /**
- * Módulo: Croqui Dinâmico de Sinistros
- * Motor de desenho técnico para perícia rodoviária
+ * Modulo: Croqui Dinamico de Sinistros
+ * Motor de desenho tecnico para pericia rodoviaria
  */
 
-let CROQUI_ELEMENTS = [];
 let CROQUI_SELECTED = null;
 let CROQUI_SVG = null;
+let CROQUI_DRAGGING = false;
+let CROQUI_DRAG_OFFSET_X = 0;
+let CROQUI_DRAG_OFFSET_Y = 0;
 
-// Configurações de Arraste
-let isDragging = false;
-let startX, startY;
-let currentX, currentY;
+const CROQUI_DEFAULT_TRANSFORM = {
+  x: 150,
+  y: 150,
+  rotate: 0,
+  scaleX: 1,
+  scaleY: 1
+};
 
-/**
- * Inicializa o Croqui
- */
+const CROQUI_ICON_MAP = {
+  v1: { emoji: '🚗', label: 'V1', fontSize: 40 },
+  v2: { emoji: '🚘', label: 'V2', fontSize: 40 },
+  moto: { emoji: '🏍️', label: 'MOTO', fontSize: 38 },
+  caminhao: { emoji: '🚚', label: 'CAMINHAO', fontSize: 40 },
+  carreta: { emoji: '🚛', label: 'CARRETA', fontSize: 44 },
+  onibus: { emoji: '🚌', label: 'ONIBUS', fontSize: 40 },
+  bicicleta: { emoji: '🚲', label: 'BIKE', fontSize: 36 },
+  viatura: { emoji: '🚓', label: 'PMRV', fontSize: 40 },
+  ambulancia: { emoji: '🚑', label: 'SAMU', fontSize: 40 },
+  reboque: { emoji: '🛻', label: 'REBOQUE', fontSize: 38 },
+  cone: { emoji: '⚠️', label: 'CONE', fontSize: 28 },
+  pare: { emoji: '🛑', label: 'PARE', fontSize: 34 },
+  preferencial: { emoji: '🔻', label: 'PREF.', fontSize: 34 },
+  semaforo: { emoji: '🚦', label: 'SEMAFORO', fontSize: 34 },
+  sem_verde: { emoji: '🟢', label: 'SEM. VERDE', fontSize: 28 },
+  sem_vermelho: { emoji: '🔴', label: 'SEM. VERM.', fontSize: 28 },
+  arvore: { emoji: '🌳', label: 'ARVORE', fontSize: 34 },
+  poste: { emoji: '💡', label: 'POSTE', fontSize: 28 },
+  norte: { emoji: '🧭', label: 'NORTE', fontSize: 34 },
+  buraco: { emoji: '🕳️', label: 'DEFEITO', fontSize: 30 },
+  animal_via: { emoji: '🐄', label: 'ANIMAL', fontSize: 36 },
+  pedestre: { emoji: '🚶', label: 'PEDESTRE', fontSize: 34 },
+  idoso: { emoji: '👨‍🦳', label: 'IDOSO', fontSize: 30 },
+  crianca: { emoji: '🧒', label: 'CRIANCA', fontSize: 30 },
+  cadeirante: { emoji: '👨‍🦽', label: 'PCD', fontSize: 30 },
+  oleo: { emoji: '🛢️', label: 'OLEO', fontSize: 30 },
+  vtr_emergencia: { emoji: '🚨', label: 'EMERG.', fontSize: 30 },
+  frenagem: { emoji: '⬛', label: 'FRENAGEM', fontSize: 18, asRect: true }
+};
+
+function croqui_getLayer(id) {
+  return document.getElementById(id);
+}
+
+function croqui_composeTransform({ x, y, rotate, scaleX, scaleY }) {
+  return `translate(${x.toFixed(2)}, ${y.toFixed(2)}) rotate(${rotate.toFixed(2)}) scale(${scaleX.toFixed(2)}, ${scaleY.toFixed(2)})`;
+}
+
+function croqui_parseTransform(element) {
+  const transform = element?.getAttribute('transform') || '';
+  const translateMatch = /translate\(([-\d.]+)[ ,]+([-\d.]+)\)/.exec(transform);
+  const rotateMatch = /rotate\(([-\d.]+)\)/.exec(transform);
+  const scaleMatch = /scale\(([-\d.]+)(?:[ ,]+([-\d.]+))?\)/.exec(transform);
+
+  const scaleX = scaleMatch ? parseFloat(scaleMatch[1]) : CROQUI_DEFAULT_TRANSFORM.scaleX;
+  const scaleY = scaleMatch && scaleMatch[2] ? parseFloat(scaleMatch[2]) : scaleX;
+
+  return {
+    x: translateMatch ? parseFloat(translateMatch[1]) : CROQUI_DEFAULT_TRANSFORM.x,
+    y: translateMatch ? parseFloat(translateMatch[2]) : CROQUI_DEFAULT_TRANSFORM.y,
+    rotate: rotateMatch ? parseFloat(rotateMatch[1]) : CROQUI_DEFAULT_TRANSFORM.rotate,
+    scaleX,
+    scaleY
+  };
+}
+
+function croqui_applyTransform(element, patch) {
+  const current = croqui_parseTransform(element);
+  const next = { ...current, ...patch };
+  element.setAttribute('transform', croqui_composeTransform(next));
+}
+
+function croqui_createGroup(idPrefix, type, transform) {
+  const element = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  element.setAttribute('id', `${idPrefix}-${Date.now()}-${Math.floor(Math.random() * 1000)}`);
+  element.setAttribute('data-type', type);
+  element.setAttribute('transform', croqui_composeTransform(transform));
+  element.style.cursor = 'move';
+  return element;
+}
+
 function croqui_init() {
-    CROQUI_SVG = document.getElementById('croqui-svg');
-    if (!CROQUI_SVG) return;
+  CROQUI_SVG = document.getElementById('croqui-svg');
+  if (!CROQUI_SVG || CROQUI_SVG.dataset.bound === 'true') return;
 
-    // Eventos de Mouse/Touch para o SVG
-    CROQUI_SVG.addEventListener('mousedown', croqui_onStart);
-    CROQUI_SVG.addEventListener('mousemove', croqui_onMove);
-    CROQUI_SVG.addEventListener('mouseup', croqui_onEnd);
+  CROQUI_SVG.dataset.bound = 'true';
+  CROQUI_SVG.addEventListener('mousedown', croqui_onStart);
+  CROQUI_SVG.addEventListener('mousemove', croqui_onMove);
+  CROQUI_SVG.addEventListener('mouseup', croqui_onEnd);
+  CROQUI_SVG.addEventListener('mouseleave', croqui_onEnd);
 
-    CROQUI_SVG.addEventListener('touchstart', croqui_onStart, { passive: false });
-    CROQUI_SVG.addEventListener('touchmove', croqui_onMove, { passive: false });
-    CROQUI_SVG.addEventListener('touchend', croqui_onEnd, { passive: false });
+  CROQUI_SVG.addEventListener('touchstart', croqui_onStart, { passive: false });
+  CROQUI_SVG.addEventListener('touchmove', croqui_onMove, { passive: false });
+  CROQUI_SVG.addEventListener('touchend', croqui_onEnd, { passive: false });
+  CROQUI_SVG.addEventListener('touchcancel', croqui_onEnd, { passive: false });
 }
 
-/**
- * Adiciona uma geometria de via ao croqui
- */
 function croqui_adicionarVia(tipo) {
-    const g = document.getElementById('croqui-vias');
-    const id = 'via-' + Date.now();
-    let element = null;
+  const layer = croqui_getLayer('croqui-vias');
+  if (!layer) return null;
 
-    if (tipo === 'reta') {
-        element = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        element.setAttribute('id', id);
-        element.setAttribute('transform', 'translate(50, 150) scale(1, 1)');
-        element.innerHTML = `
-            <rect width="300" height="100" fill="#333" />
-            <line x1="0" y1="50" x2="300" y2="50" stroke="yellow" stroke-width="2" stroke-dasharray="10,10" />
-            <line x1="0" y1="5" x2="300" y2="5" stroke="white" stroke-width="2" />
-            <line x1="0" y1="95" x2="300" y2="95" stroke="white" stroke-width="2" />
-        `;
-    } else if (tipo === 'curva') {
-        element = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        element.setAttribute('id', id);
-        element.setAttribute('transform', 'translate(100, 100) scale(1, 1)');
-        element.innerHTML = `
-            <path d="M 0 200 Q 0 0 200 0" fill="none" stroke="#333" stroke-width="100" />
-            <path d="M 0 200 Q 0 0 200 0" fill="none" stroke="yellow" stroke-width="2" stroke-dasharray="10,10" />
-        `;
-    } else if (tipo === 'cruzamento') {
-        element = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        element.setAttribute('id', id);
-        element.setAttribute('transform', 'translate(100, 100) scale(1, 1)');
-        element.innerHTML = `
-            <rect x="80" y="0" width="100" height="260" fill="#333" />
-            <rect x="0" y="80" width="260" height="100" fill="#333" />
-            <line x1="130" y1="0" x2="130" y2="260" stroke="yellow" stroke-width="2" stroke-dasharray="10,10" />
-            <line x1="0" y1="130" x2="260" y2="130" stroke="yellow" stroke-width="2" stroke-dasharray="10,10" />
-        `;
-    }
+  let element = null;
 
-    if (element) {
-        element.style.cursor = 'move';
-        element.setAttribute('data-type', 'via');
-        g.appendChild(element);
-        croqui_selecionar(element);
-    }
+  if (tipo === 'reta') {
+    element = croqui_createGroup('via', 'via', { x: 50, y: 150, rotate: 0, scaleX: 1, scaleY: 1 });
+    element.innerHTML = `
+      <rect width="300" height="100" fill="#333" />
+      <line x1="0" y1="50" x2="300" y2="50" stroke="yellow" stroke-width="2" stroke-dasharray="10,10" />
+      <line x1="0" y1="5" x2="300" y2="5" stroke="white" stroke-width="2" />
+      <line x1="0" y1="95" x2="300" y2="95" stroke="white" stroke-width="2" />
+    `;
+  } else if (tipo === 'curva') {
+    element = croqui_createGroup('via', 'via', { x: 100, y: 100, rotate: 0, scaleX: 1, scaleY: 1 });
+    element.innerHTML = `
+      <path d="M 0 200 Q 0 0 200 0" fill="none" stroke="#333" stroke-width="100" />
+      <path d="M 0 200 Q 0 0 200 0" fill="none" stroke="yellow" stroke-width="2" stroke-dasharray="10,10" />
+    `;
+  } else if (tipo === 'cruzamento') {
+    element = croqui_createGroup('via', 'via', { x: 100, y: 100, rotate: 0, scaleX: 1, scaleY: 1 });
+    element.innerHTML = `
+      <rect x="80" y="0" width="100" height="260" fill="#333" />
+      <rect x="0" y="80" width="260" height="100" fill="#333" />
+      <line x1="130" y1="0" x2="130" y2="260" stroke="yellow" stroke-width="2" stroke-dasharray="10,10" />
+      <line x1="0" y1="130" x2="260" y2="130" stroke="yellow" stroke-width="2" stroke-dasharray="10,10" />
+    `;
+  }
+
+  if (!element) return null;
+  layer.appendChild(element);
+  croqui_selecionar(element);
+  return element;
 }
 
-/**
- * Abre o modal de ícones
- */
 function croqui_abrirModalIcones() {
-    const modal = document.getElementById('croqui-modal-icones');
-    if (modal) modal.classList.remove('hidden');
+  const modal = document.getElementById('croqui-modal-icones');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+  croqui_filtrarIcones('veiculo');
 }
 
 function croqui_fecharModal() {
-    const modal = document.getElementById('croqui-modal-icones');
-    if (modal) modal.classList.add('hidden');
+  document.getElementById('croqui-modal-icones')?.classList.add('hidden');
 }
 
-function croqui_fecharModalOnBackdrop(e) {
-    if (e.target.id === 'croqui-modal-icones') croqui_fecharModal();
+function croqui_fecharModalOnBackdrop(event) {
+  if (event.target.id === 'croqui-modal-icones') croqui_fecharModal();
 }
 
-function croqui_filtrarIcones(cat) {
-    document.querySelectorAll('.croqui-icon-item').forEach(el => {
-        el.classList.toggle('hidden', !el.classList.contains(cat));
-    });
-    document.querySelectorAll('.croqui-icon-tabs .btn').forEach(btn => {
-        btn.classList.toggle('btn-primary', btn.getAttribute('data-click').includes(`'${cat}'`));
-    });
+function croqui_filtrarIcones(category) {
+  document.querySelectorAll('.croqui-icon-item').forEach(item => {
+    item.classList.toggle('hidden', !item.classList.contains(category));
+  });
+
+  document.querySelectorAll('.croqui-icon-tabs .btn').forEach(btn => {
+    const isActive = btn.getAttribute('data-click') === `croqui_filtrarIcones('${category}')`;
+    btn.classList.toggle('btn-primary', isActive);
+  });
 }
 
-/**
- * Insere um ícone de emoji (Veículo ou Objeto)
- */
+function croqui_buildIconContent(config) {
+  if (config.asRect) {
+    return '<rect x="-18" y="0" width="36" height="6" fill="#555" rx="2" />';
+  }
+
+  return `<text y="10" font-size="${config.fontSize}" text-anchor="middle">${config.emoji}</text>`;
+}
+
 function croqui_inserirIcone(tipo) {
-    const g = document.getElementById('croqui-objetos');
-    const id = 'obj-' + Date.now();
-    const element = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    
-    let emoji = "🚗";
-    let color = "";
-    let label = tipo.toUpperCase();
-    let fontSize = 40;
+  const layer = croqui_getLayer('croqui-objetos');
+  if (!layer) return null;
 
-    // Mapeamento de Emojis
-    const mapa = {
-        'v1': { e: "🚗", l: "V1" },
-        'v2': { e: "🚗", l: "V2", c: "filter: hue-rotate(90deg);" },
-        'moto': { e: "🏍️", l: "MOTO" },
-        'caminhao': { e: "🚚", l: "CAMINHÃO" },
-        'carreta': { e: "🚛", l: "CARRETA", fs: 45 },
-        'onibus': { e: "🚌", l: "ÔNIBUS" },
-        'bicicleta': { e: "🚲", l: "BIKE" },
-        'viatura': { e: "🚓", l: "PMRV" },
-        'ambulancia': { e: "🚑", l: "SAMU" },
-        'cone': { e: "⚠️", l: "CONE", fs: 30 },
-        'pare': { e: "🛑", l: "PARE", fs: 35 },
-        'preferencial': { e: "🔻", l: "PREF.", fs: 35 },
-        'semaforo': { e: "🚦", l: "SEMÁF.", fs: 35 },
-        'arvore': { e: "🌳", l: "ÁRVORE", fs: 35 },
-        'poste': { e: "💡", l: "POSTE", fs: 30 },
-        'norte': { e: "🧭", l: "NORTE", fs: 35 },
-        'buraco': { e: "🕳️", l: "DEFEITO", fs: 35 },
-        'animal_via': { e: "🐄", l: "ANIMAL", fs: 40 },
-        'frenagem': { e: "⬛", l: "FRENAGEM", fs: 10 }
-    };
+  const config = CROQUI_ICON_MAP[tipo];
+  if (!config) {
+    console.warn(`[Croqui] Icone nao mapeado: ${tipo}`);
+    alert(`Icone indisponivel: ${tipo}`);
+    return null;
+  }
 
-    if (mapa[tipo]) {
-        emoji = mapa[tipo].e;
-        label = mapa[tipo].l;
-        color = mapa[tipo].c || "";
-        fontSize = mapa[tipo].fs || 40;
-    }
+  const element = croqui_createGroup('obj', 'objeto', { ...CROQUI_DEFAULT_TRANSFORM });
+  element.innerHTML = `
+    <g class="icon-body">
+      ${croqui_buildIconContent(config)}
+    </g>
+    <text y="-25" font-size="10" font-weight="bold" fill="rgba(255,255,255,0.8)" text-anchor="middle" class="icon-label">${config.label}</text>
+  `;
 
-    element.setAttribute('id', id);
-    element.setAttribute('transform', 'translate(150, 150) rotate(0) scale(1, 1)');
-    
-    // Especial para frenagem (forma geométrica em vez de texto se preferir, mas vamos manter simples)
-    let content = `<text y="10" font-size="${fontSize}" text-anchor="middle" style="${color}">${emoji}</text>`;
-    if (tipo === 'frenagem') {
-        content = `<rect x="-15" y="0" width="30" height="5" fill="#555" rx="2" />`;
-    }
+  layer.appendChild(element);
+  croqui_fecharModal();
+  croqui_selecionar(element);
+  return element;
+}
 
+async function croqui_loadSvgMarkup(path) {
+  const response = await fetch(path);
+  if (!response.ok) {
+    throw new Error(`Falha ao carregar ${path}: HTTP ${response.status}`);
+  }
+
+  const svgText = await response.text();
+  if (!svgText.includes('<svg')) {
+    throw new Error(`Arquivo SVG invalido: ${path}`);
+  }
+
+  return svgText.replace(/<svg[^>]*>/i, '').replace(/<\/svg>/i, '').trim();
+}
+
+async function croqui_inserirSvg(filename, fromRoot = false) {
+  const layer = croqui_getLayer('croqui-objetos');
+  if (!layer) return null;
+
+  const element = croqui_createGroup('svg', 'objeto', { ...CROQUI_DEFAULT_TRANSFORM });
+  const path = fromRoot ? filename : `img/sinistros/${filename}`;
+
+  try {
+    const markup = await croqui_loadSvgMarkup(path);
     element.innerHTML = `
-        <g class="icon-body">
-            ${content}
-        </g>
-        <text y="-25" font-size="10" font-weight="bold" fill="rgba(255,255,255,0.8)" text-anchor="middle" class="icon-label">${label}</text>
+      <g class="icon-body" transform="translate(-18, -18) scale(1.6, 1.6)" style="filter: invert(1); transform-origin: center;">
+        ${markup}
+      </g>
     `;
-    
-    element.style.cursor = 'move';
-    element.setAttribute('data-type', 'objeto');
-    g.appendChild(element);
+    layer.appendChild(element);
     croqui_fecharModal();
     croqui_selecionar(element);
+    return element;
+  } catch (err) {
+    console.error('[Croqui] Erro ao inserir SVG.', err);
+    alert(`Nao foi possivel carregar o SVG: ${filename}`);
+    return null;
+  }
 }
 
-/**
- * Insere um ícone SVG (Sinistro)
- */
-function croqui_inserirSvg(filename) {
-    const g = document.getElementById('croqui-objetos');
-    const id = 'svg-' + Date.now();
-    const element = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    
-    element.setAttribute('id', id);
-    element.setAttribute('transform', 'translate(150, 150) rotate(0) scale(1, 1)');
-    
-    fetch(`img/sinistros/${filename}`)
-        .then(response => response.text())
-        .then(svgText => {
-            const cleanSvg = svgText.replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '');
-            element.innerHTML = `
-                <g class="icon-body" transform="translate(-15, -15) scale(1.5, 1.5)" style="filter: invert(1);">
-                    ${cleanSvg}
-                </g>
-            `;
-        });
+async function croqui_inserirPistaSvg(filename) {
+  const layer = croqui_getLayer('croqui-vias');
+  if (!layer) return null;
 
-    element.style.cursor = 'move';
-    element.setAttribute('data-type', 'objeto');
-    g.appendChild(element);
+  const element = croqui_createGroup('pista', 'via', { x: 210, y: 160, rotate: 0, scaleX: 0.5, scaleY: 0.5 });
+
+  try {
+    const markup = await croqui_loadSvgMarkup(filename);
+    element.innerHTML = `
+      <g class="pista-body" style="filter: brightness(0.8); transform-origin: center;">
+        ${markup}
+      </g>
+    `;
+    layer.appendChild(element);
     croqui_fecharModal();
     croqui_selecionar(element);
+    return element;
+  } catch (err) {
+    console.error('[Croqui] Erro ao inserir pista SVG.', err);
+    alert(`Nao foi possivel carregar a pista: ${filename}`);
+    return null;
+  }
 }
 
-/**
- * Lógica de Seleção e Arraste
- */
-function croqui_selecionar(el) {
-    if (CROQUI_SELECTED) {
-        CROQUI_SELECTED.classList.remove('selected');
-    }
-    CROQUI_SELECTED = el;
+function croqui_selecionar(element) {
+  if (CROQUI_SELECTED) {
+    CROQUI_SELECTED.classList.remove('selected');
+  }
+
+  CROQUI_SELECTED = element;
+  if (CROQUI_SELECTED) {
     CROQUI_SELECTED.classList.add('selected');
+  }
 }
 
-function croqui_onStart(e) {
-    const target = e.target.closest('g[id]');
-    if (!target) {
-        if (CROQUI_SELECTED) CROQUI_SELECTED.classList.remove('selected');
-        CROQUI_SELECTED = null;
-        return;
-    }
-    
-    croqui_selecionar(target);
-    isDragging = true;
-    
-    const coords = croqui_getCoords(e);
-    
-    // Captura a transformação atual para calcular o offset real
-    const transform = target.getAttribute('transform') || 'translate(0,0)';
-    const translateMatch = /translate\(([^, ]+)[, ]*([^)]+)\)/.exec(transform);
-    
-    currentX = translateMatch ? parseFloat(translateMatch[1]) : 0;
-    currentY = translateMatch ? parseFloat(translateMatch[2]) : 0;
-    
-    // Offset entre o ponto do clique e a origem do objeto
-    startX = coords.x - currentX;
-    startY = coords.y - currentY;
+function croqui_clearSelection() {
+  if (CROQUI_SELECTED) {
+    CROQUI_SELECTED.classList.remove('selected');
+  }
+  CROQUI_SELECTED = null;
 }
 
-function croqui_onMove(e) {
-    if (!isDragging || !CROQUI_SELECTED) return;
-    e.preventDefault();
-    
-    const coords = croqui_getCoords(e);
-    const newX = coords.x - startX;
-    const newY = coords.y - startY;
-    
-    const currentTransform = CROQUI_SELECTED.getAttribute('transform') || '';
-    // Substitui apenas o translate, preservando rotate e scale
-    const updatedTransform = currentTransform.replace(/translate\([^)]+\)/, `translate(${newX.toFixed(2)}, ${newY.toFixed(2)})`);
-    
-    // Se não havia translate, adiciona no início
-    if (!updatedTransform.includes('translate')) {
-        CROQUI_SELECTED.setAttribute('transform', `translate(${newX.toFixed(2)}, ${newY.toFixed(2)}) ${currentTransform}`);
-    } else {
-        CROQUI_SELECTED.setAttribute('transform', updatedTransform);
-    }
+function croqui_getCoords(event) {
+  if (!CROQUI_SVG) return { x: 0, y: 0 };
+
+  const ctm = CROQUI_SVG.getScreenCTM();
+  if (!ctm) return { x: 0, y: 0 };
+
+  const point = event.touches ? event.touches[0] : event;
+  return {
+    x: (point.clientX - ctm.e) / ctm.a,
+    y: (point.clientY - ctm.f) / ctm.d
+  };
+}
+
+function croqui_onStart(event) {
+  if (event.cancelable) {
+    event.preventDefault();
+  }
+
+  const target = event.target.closest('g[id]');
+  if (!target) {
+    croqui_clearSelection();
+    return;
+  }
+
+  croqui_selecionar(target);
+  CROQUI_DRAGGING = true;
+
+  const coords = croqui_getCoords(event);
+  const transform = croqui_parseTransform(target);
+  CROQUI_DRAG_OFFSET_X = coords.x - transform.x;
+  CROQUI_DRAG_OFFSET_Y = coords.y - transform.y;
+}
+
+function croqui_onMove(event) {
+  if (!CROQUI_DRAGGING || !CROQUI_SELECTED) return;
+  event.preventDefault();
+
+  const coords = croqui_getCoords(event);
+  croqui_applyTransform(CROQUI_SELECTED, {
+    x: coords.x - CROQUI_DRAG_OFFSET_X,
+    y: coords.y - CROQUI_DRAG_OFFSET_Y
+  });
 }
 
 function croqui_onEnd() {
-    isDragging = false;
+  CROQUI_DRAGGING = false;
 }
 
-function croqui_getCoords(e) {
-    const svg = CROQUI_SVG;
-    const CTM = svg.getScreenCTM();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    return {
-        x: (clientX - CTM.e) / CTM.a,
-        y: (clientY - CTM.f) / CTM.d
-    };
-}
-
-/**
- * Transformações (Girar, Escalar, Espelhar)
- */
 function croqui_girar() {
-    if (!CROQUI_SELECTED) return;
-    const transform = CROQUI_SELECTED.getAttribute('transform') || '';
-    const rotateMatch = /rotate\(([^)]+)\)/.exec(transform);
-    let angle = rotateMatch ? parseFloat(rotateMatch[1]) : 0;
-    angle = (angle + 15) % 360;
-    const otherTransforms = transform.replace(/rotate\([^)]+\)/, '').trim();
-    CROQUI_SELECTED.setAttribute('transform', `${otherTransforms} rotate(${angle})`);
+  if (!CROQUI_SELECTED) return;
+  const transform = croqui_parseTransform(CROQUI_SELECTED);
+  croqui_applyTransform(CROQUI_SELECTED, { rotate: (transform.rotate + 15) % 360 });
 }
 
 function croqui_escala(delta) {
-    if (!CROQUI_SELECTED) return;
-    const transform = CROQUI_SELECTED.getAttribute('transform') || '';
-    const scaleMatch = /scale\(([^, )]+)[, ]*([^)]+)?\)/.exec(transform);
-    
-    let sx = scaleMatch ? parseFloat(scaleMatch[1]) : 1;
-    let sy = (scaleMatch && scaleMatch[2]) ? parseFloat(scaleMatch[2]) : sx;
-    
-    sx = Math.max(0.2, sx + delta);
-    sy = Math.max(0.2, sy + delta);
-    
-    const otherTransforms = transform.replace(/scale\([^)]+\)/, '').trim();
-    CROQUI_SELECTED.setAttribute('transform', `${otherTransforms} scale(${sx.toFixed(2)}, ${sy.toFixed(2)})`);
+  if (!CROQUI_SELECTED) return;
+  const transform = croqui_parseTransform(CROQUI_SELECTED);
+  croqui_applyTransform(CROQUI_SELECTED, {
+    scaleX: Math.max(0.2, transform.scaleX + delta),
+    scaleY: Math.max(0.2, transform.scaleY + delta)
+  });
 }
 
 function croqui_espelhar() {
-    if (!CROQUI_SELECTED) return;
-    const transform = CROQUI_SELECTED.getAttribute('transform') || '';
-    const scaleMatch = /scale\(([^, )]+)[, ]*([^)]+)?\)/.exec(transform);
-    
-    let sx = scaleMatch ? parseFloat(scaleMatch[1]) : 1;
-    let sy = (scaleMatch && scaleMatch[2]) ? parseFloat(scaleMatch[2]) : sx;
-    
-    sx = sx * -1;
-    const otherTransforms = transform.replace(/scale\([^)]+\)/, '').trim();
-    CROQUI_SELECTED.setAttribute('transform', `${otherTransforms} scale(${sx.toFixed(2)}, ${sy.toFixed(2)})`);
+  if (!CROQUI_SELECTED) return;
+  const transform = croqui_parseTransform(CROQUI_SELECTED);
+  croqui_applyTransform(CROQUI_SELECTED, { scaleX: transform.scaleX * -1 });
 }
 
-/**
- * Controle de Camadas (Z-Index)
- */
 function croqui_camada(dir) {
-    if (!CROQUI_SELECTED) return;
-    const parent = CROQUI_SELECTED.parentNode;
-    if (dir === 'frente' && CROQUI_SELECTED.nextElementSibling) {
-        parent.appendChild(CROQUI_SELECTED); // Mover para o final = topo
-    } else if (dir === 'tras' && CROQUI_SELECTED.previousElementSibling) {
-        parent.insertBefore(CROQUI_SELECTED, parent.firstChild); // Mover para o início = fundo
+  if (!CROQUI_SELECTED || !CROQUI_SELECTED.parentNode) return;
+
+  const parent = CROQUI_SELECTED.parentNode;
+  if (dir === 'frente') {
+    const next = CROQUI_SELECTED.nextElementSibling;
+    if (next) {
+      parent.insertBefore(next, CROQUI_SELECTED);
     }
+  } else if (dir === 'tras') {
+    const previous = CROQUI_SELECTED.previousElementSibling;
+    if (previous) {
+      parent.insertBefore(CROQUI_SELECTED, previous);
+    }
+  }
 }
 
 function croqui_limpar() {
-    if (confirm("Deseja limpar todo o croqui?")) {
-        document.getElementById('croqui-vias').innerHTML = '';
-        document.getElementById('croqui-objetos').innerHTML = '';
-        CROQUI_SELECTED = null;
-    }
+  if (!confirm('Deseja limpar todo o croqui?')) return;
+  croqui_getLayer('croqui-vias').innerHTML = '';
+  croqui_getLayer('croqui-objetos').innerHTML = '';
+  croqui_clearSelection();
 }
 
-/**
- * Exportação e WhatsApp
- */
 async function croqui_exportar() {
-    const svg = CROQUI_SVG;
-    const svgData = new XMLSerializer().serializeToString(svg);
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const img = new Image();
-    
-    // Alta qualidade (2x)
-    canvas.width = svg.clientWidth * 2;
-    canvas.height = svg.clientHeight * 2;
-    
-    const svgBlob = new Blob([svgData], {type: "image/svg+xml;charset=utf-8"});
-    const url = URL.createObjectURL(svgBlob);
-    
-    img.onload = function() {
-        ctx.fillStyle = "#222"; // Fundo escuro do croqui
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        URL.revokeObjectURL(url);
-        
-        const pngUrl = canvas.toDataURL("image/png");
-        const downloadLink = document.createElement("a");
-        downloadLink.href = pngUrl;
-        downloadLink.download = "Croqui_PMRv_" + new Date().getTime() + ".png";
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-    };
-    img.src = url;
+  if (!CROQUI_SVG) return;
+
+  const svgData = new XMLSerializer().serializeToString(CROQUI_SVG);
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const image = new Image();
+
+  canvas.width = CROQUI_SVG.clientWidth * 2;
+  canvas.height = CROQUI_SVG.clientHeight * 2;
+
+  const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(svgBlob);
+
+  image.onload = () => {
+    ctx.fillStyle = '#222';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    URL.revokeObjectURL(url);
+
+    const pngUrl = canvas.toDataURL('image/png');
+    const downloadLink = document.createElement('a');
+    downloadLink.href = pngUrl;
+    downloadLink.download = `Croqui_PMRv_${Date.now()}.png`;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  };
+
+  image.onerror = () => {
+    URL.revokeObjectURL(url);
+    alert('Nao foi possivel exportar o croqui.');
+  };
+
+  image.src = url;
 }
 
 function croqui_whatsapp() {
-    alert("Dica: Use 'Salvar Imagem' e anexe a foto no WhatsApp da Central/Grupo.");
+  alert("Dica: use 'Salvar PNG' e anexe a imagem no WhatsApp.");
 }
 
-/**
- * Modelos Prontos
- */
-function croqui_aplicarModelo(tipo) {
-    if (!confirm("Isso irá limpar o desenho atual para aplicar o modelo. Continuar?")) return;
-    
-    document.getElementById('croqui-vias').innerHTML = '';
-    document.getElementById('croqui-objetos').innerHTML = '';
-    
-    if (tipo === 'frontal') {
-        croqui_adicionarVia('reta');
-        croqui_inserirIcone('v1');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(80, 185) rotate(0)');
-        croqui_inserirIcone('v2');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(220, 185) rotate(180)');
-        croqui_inserirSvg('3.1-colisao-frontal.svg');
-        setTimeout(() => { if (CROQUI_SELECTED) CROQUI_SELECTED.setAttribute('transform', 'translate(150, 185)'); }, 200);
-    } 
-    else if (tipo === 'traseira') {
-        croqui_adicionarVia('reta');
-        croqui_inserirIcone('v1');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(200, 185) rotate(0)');
-        croqui_inserirIcone('v2');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(100, 185) rotate(0)');
-        croqui_inserirSvg('3.2-colisao-traseira.svg');
-        setTimeout(() => { if (CROQUI_SELECTED) CROQUI_SELECTED.setAttribute('transform', 'translate(180, 185)'); }, 200);
-    }
-    else if (tipo === 'engavetamento') {
-        croqui_adicionarVia('reta');
-        croqui_inserirIcone('v1');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(250, 185) rotate(0)');
-        croqui_inserirIcone('v2');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(150, 185) rotate(0)');
-        croqui_inserirIcone('reboque');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(50, 185) rotate(0)');
-        croqui_inserirSvg('3.3-colisao-engavetamento.svg');
-        setTimeout(() => { if (CROQUI_SELECTED) CROQUI_SELECTED.setAttribute('transform', 'translate(150, 185)'); }, 200);
-    }
-    else if (tipo === 'atropelamento') {
-        croqui_adicionarVia('reta');
-        croqui_inserirIcone('v1');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(120, 185) rotate(0)');
-        croqui_inserirSvg('1.1-atropelamento-pedestre.svg');
-        setTimeout(() => { if (CROQUI_SELECTED) CROQUI_SELECTED.setAttribute('transform', 'translate(180, 185)'); }, 200);
-    }
-    else if (tipo === 'animal') {
-        croqui_adicionarVia('reta');
-        croqui_inserirIcone('v1');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(120, 185) rotate(0)');
-        croqui_inserirSvg('1.2-atropelamento-animal.svg');
-        setTimeout(() => { if (CROQUI_SELECTED) CROQUI_SELECTED.setAttribute('transform', 'translate(180, 185)'); }, 200);
-    }
-    else if (tipo === 'transversal') {
-        croqui_adicionarVia('cruzamento');
-        croqui_inserirIcone('v1');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(130, 220) rotate(-90)');
-        croqui_inserirIcone('v2');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(220, 130) rotate(180)');
-        croqui_inserirSvg('2.3-abalroamento-transversal.svg');
-        setTimeout(() => { if (CROQUI_SELECTED) CROQUI_SELECTED.setAttribute('transform', 'translate(130, 130)'); }, 200);
-    }
-    else if (tipo === 'longitudinal') {
-        croqui_adicionarVia('reta');
-        croqui_inserirIcone('v1');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(150, 175) rotate(0)');
-        croqui_inserirIcone('v2');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(150, 195) rotate(0)');
-        croqui_inserirSvg('2.1-abalroamento-longitudinal-mesmo-sentido.svg');
-        setTimeout(() => { if (CROQUI_SELECTED) CROQUI_SELECTED.setAttribute('transform', 'translate(150, 185)'); }, 200);
-    }
-    else if (tipo === 'poste') {
-        croqui_adicionarVia('reta');
-        croqui_inserirIcone('poste');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(150, 140)');
-        croqui_inserirIcone('v1');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(150, 160) rotate(-90)');
-        croqui_inserirSvg('4.1-choque-poste.svg');
-        setTimeout(() => { if (CROQUI_SELECTED) CROQUI_SELECTED.setAttribute('transform', 'translate(150, 150)'); }, 200);
-    }
-    else if (tipo === 'saida') {
-        croqui_adicionarVia('curva');
-        croqui_inserirIcone('v1');
-        CROQUI_SELECTED.setAttribute('transform', 'translate(100, 100) rotate(45)');
-        croqui_inserirSvg('5.3-saida-pista-capotamento.svg');
-        setTimeout(() => { if (CROQUI_SELECTED) CROQUI_SELECTED.setAttribute('transform', 'translate(120, 120)'); }, 200);
-    }
-
-    croqui_fecharModal();
+function croqui_resetCanvas() {
+  croqui_getLayer('croqui-vias').innerHTML = '';
+  croqui_getLayer('croqui-objetos').innerHTML = '';
+  croqui_clearSelection();
 }
 
-// Exposição Global
+function croqui_placeSelected(transform) {
+  if (!CROQUI_SELECTED) return;
+  croqui_applyTransform(CROQUI_SELECTED, transform);
+}
+
+function croqui_placeElement(element, transform) {
+  if (!element) return null;
+  croqui_applyTransform(element, transform);
+  return element;
+}
+
+async function croqui_aplicarModelo(tipo) {
+  if (!confirm('Isso ira limpar o desenho atual para aplicar o modelo. Continuar?')) return;
+
+  croqui_resetCanvas();
+
+  if (tipo === 'frontal') {
+    croqui_adicionarVia('reta');
+    const v1 = croqui_inserirIcone('v1');
+    croqui_placeElement(v1, { x: 80, y: 185 });
+    const v2 = croqui_inserirIcone('v2');
+    croqui_placeElement(v2, { x: 220, y: 185, rotate: 180 });
+    const impacto = await croqui_inserirSvg('3.1-colisao-frontal.svg');
+    croqui_placeElement(impacto, { x: 150, y: 185 });
+  } else if (tipo === 'traseira') {
+    croqui_adicionarVia('reta');
+    const v1 = croqui_inserirIcone('v1');
+    croqui_placeElement(v1, { x: 200, y: 185 });
+    const v2 = croqui_inserirIcone('v2');
+    croqui_placeElement(v2, { x: 100, y: 185 });
+    const impacto = await croqui_inserirSvg('3.2-colisao-traseira.svg');
+    croqui_placeElement(impacto, { x: 180, y: 185 });
+  } else if (tipo === 'transversal') {
+    croqui_adicionarVia('cruzamento');
+    const v1 = croqui_inserirIcone('v1');
+    croqui_placeElement(v1, { x: 130, y: 220, rotate: -90 });
+    const v2 = croqui_inserirIcone('v2');
+    croqui_placeElement(v2, { x: 220, y: 130, rotate: 180 });
+    const impacto = await croqui_inserirSvg('2.3-abalroamento-transversal.svg');
+    croqui_placeElement(impacto, { x: 130, y: 130 });
+  } else if (tipo === 'saida') {
+    croqui_adicionarVia('curva');
+    const v1 = croqui_inserirIcone('v1');
+    croqui_placeElement(v1, { x: 100, y: 100, rotate: 45 });
+    const impacto = await croqui_inserirSvg('5.3-saida-pista-capotamento.svg');
+    croqui_placeElement(impacto, { x: 120, y: 120 });
+  }
+
+  croqui_fecharModal();
+}
+
 window.croqui_init = croqui_init;
 window.croqui_adicionarVia = croqui_adicionarVia;
 window.croqui_abrirModalIcones = croqui_abrirModalIcones;
@@ -466,6 +480,7 @@ window.croqui_fecharModalOnBackdrop = croqui_fecharModalOnBackdrop;
 window.croqui_filtrarIcones = croqui_filtrarIcones;
 window.croqui_inserirIcone = croqui_inserirIcone;
 window.croqui_inserirSvg = croqui_inserirSvg;
+window.croqui_inserirPistaSvg = croqui_inserirPistaSvg;
 window.croqui_girar = croqui_girar;
 window.croqui_escala = croqui_escala;
 window.croqui_espelhar = croqui_espelhar;

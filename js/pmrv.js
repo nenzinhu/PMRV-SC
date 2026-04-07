@@ -23,13 +23,20 @@ const PMRV_DINAMICAS = {
   '7.1': 'Ocorrência registrada como [OUTROS].'
 };
 
+const PMRV_OCORRENCIAS = {
+  danosMateriais: 'Sinistro de tr\u00e2nsito com danos materiais',
+  vitimas: 'Sinistro de tr\u00e2nsito com v\u00edtima(s)',
+  obito: 'Sinistro de tr\u00e2nsito com \u00f3bito'
+};
+
 function pmrv_validarVtr(input) {
   input.value = input.value.replace(/\D/g, '').substring(0, 4);
   pmrv_atualizar();
 }
 
 function pmrv_verificarVitimas() {
-  const mostrar = document.getElementById('pmrv_ocorrencia').value === 'Sinistro de trânsito com vítima(s)';
+  const ocorrencia = document.getElementById('pmrv_ocorrencia').value;
+  const mostrar = ocorrencia === PMRV_OCORRENCIAS.vitimas || ocorrencia === PMRV_OCORRENCIAS.obito;
   document.getElementById('pmrv_box_vitimas').classList.toggle('hidden', !mostrar);
   pmrv_atualizar();
 }
@@ -94,7 +101,7 @@ function pmrv_atualizarLocal() {
   const rodovia = document.getElementById('pmrv_rodovia')?.value || '---';
   const km = pmrv_formatarKM(document.getElementById('pmrv_km')?.value);
   const campoLocal = document.getElementById('pmrv_local');
-  const textoLocal = `${rodovia}, km ${km}`;
+  const textoLocal = `Rodovia ${rodovia} km ${km}`;
   if (campoLocal) campoLocal.value = textoLocal;
   const footerLocal = document.getElementById('pmrv_local_footer');
   if (footerLocal) footerLocal.textContent = textoLocal;
@@ -103,16 +110,11 @@ function pmrv_atualizarLocal() {
 function pmrv_aplicarLocalNoTexto(texto) {
   const rodovia = document.getElementById('pmrv_rodovia')?.value || '---';
   const km = pmrv_formatarKM(document.getElementById('pmrv_km')?.value);
-  const local = document.getElementById('pmrv_local')?.value || `${rodovia}, km ${km}`;
-  const linhaRodovia = `Rodovia: ${rodovia} / KM: ${km}`;
-  const linhaRodoviaNegrito = `*Rodovia:* ${rodovia} / *KM:* ${km}`;
 
   return texto
-    .replace(linhaRodoviaNegrito, `${linhaRodoviaNegrito}\n*Local:* ${local}`)
-    .replace(linhaRodovia, `${linhaRodovia}\nLocal: ${local}`)
     .replace(
       `para atendimento de sinistro na rodovia ${rodovia}, km ${km}`,
-      `para atendimento de sinistro de trânsito no local ${local}`
+      `para atendimento de sinistro de trânsito na rodovia ${rodovia}, km ${km}`
     );
 }
 
@@ -183,10 +185,10 @@ function pmrv_gerarTexto(negrito = false) {
   const cidade  = document.getElementById('pmrv_cidade').value  || '---';
   const rodovia = document.getElementById('pmrv_rodovia').value || '---';
   const km      = pmrv_formatarKM(document.getElementById('pmrv_km').value);
-  const local   = document.getElementById('pmrv_local')?.value  || `${rodovia}, km ${km}`;
   const conhc   = document.getElementById('pmrv_conhecimento').value;
   const ocorr   = document.getElementById('pmrv_ocorrencia').value;
   const dinamica= document.getElementById('pmrv_dinamica_texto').value;
+  const houveObito = ocorr === PMRV_OCORRENCIAS.obito;
 
   const sentido = document.getElementById('pmrv_sentido').value === 'MANUAL'
     ? document.getElementById('pmrv_sentido_manual').value
@@ -198,7 +200,7 @@ function pmrv_gerarTexto(negrito = false) {
     tipoLabel = document.getElementById('pmrv_descricao_outros').value;
 
   let infoV = '';
-  if (ocorr === 'Sinistro de trânsito com vítima(s)') {
+  if (ocorr === PMRV_OCORRENCIAS.vitimas || houveObito) {
     const l  = Number(document.getElementById('pmrv_qtd_leve').value       || 0);
     const g  = Number(document.getElementById('pmrv_qtd_grave').value      || 0);
     const gs = Number(document.getElementById('pmrv_qtd_gravissima').value || 0);
@@ -214,6 +216,9 @@ function pmrv_gerarTexto(negrito = false) {
     : new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
   const data = new Date().toLocaleDateString('pt-BR');
+  const textoObito = houveObito
+    ? 'A prioridade foi o atendimento e a provid\u00eancia de socorro \u00e0s v\u00edtimas. Ap\u00f3s a constata\u00e7\u00e3o do \u00f3bito no local, a guarni\u00e7\u00e3o realizou o isolamento e a preserva\u00e7\u00e3o da cena do crime. Ato cont\u00ednuo, foram acionadas a Pol\u00edcia Cient\u00edfica e a Pol\u00edcia Civil para os procedimentos de per\u00edcia e investiga\u00e7\u00e3o.\n\n'
+    : '';
 
   return (
     `${b}COMANDO DE POLÍCIA MILITAR RODOVIÁRIA${b}\n` +
@@ -222,12 +227,12 @@ function pmrv_gerarTexto(negrito = false) {
     `${b}Data:${b} ${data}\n` +
     `${b}Hora:${b} ${hora}\n` +
     `${b}Rodovia:${b} ${rodovia} / ${b}KM:${b} ${km}\n` +
-    `${b}Local:${b} ${local}\n` +
     `${b}Cidade:${b} ${cidade}\n` +
     `${b}Tipo de ocorrência:${b} ${ocorr}\n` +
     `${b}Tipo de sinistro:${b} ${tipoLabel}${infoV}\n` +
     `\n` +
     `A equipe policial militar rodoviária foi acionada ${conhc} para atendimento de ocorrência de sinistro de trânsito na rodovia ${rodovia}, km ${km}, sentido ${sentido || '---'}, sendo empenhada a Viatura PM-${vtr}.\n` +
+    `${textoObito}` +
     `${dinamica}\n` +
     `\n` +
     `Foram adotadas as providências administrativas cabíveis.`
@@ -248,9 +253,9 @@ function pmrv_limpar() {
   ['pmrv_sade','pmrv_vtr','pmrv_km','pmrv_sentido_manual','pmrv_nome_objeto','pmrv_descricao_outros','pmrv_dinamica_texto']
     .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
 
-  document.getElementById('pmrv_ocorrencia').value   = 'Sinistro de trânsito com danos materiais';
+  document.getElementById('pmrv_ocorrencia').value   = PMRV_OCORRENCIAS.danosMateriais;
   document.getElementById('pmrv_conhecimento').value = 'pela Central';
-  document.getElementById('pmrv_sentido').value      = 'Centro–Bairro';
+  document.getElementById('pmrv_sentido').value      = 'Centro\u2013Bairro';
   document.getElementById('pmrv_subtipo').value      = '1.1';
   document.getElementById('pmrv_hora_auto').checked  = true;
   ['pmrv_qtd_leve','pmrv_qtd_grave','pmrv_qtd_gravissima'].forEach(id => document.getElementById(id).value = 0);
@@ -264,3 +269,5 @@ function pmrv_limpar() {
 window.pmrv_init = pmrv_init;
 
 document.addEventListener('DOMContentLoaded', pmrv_init);
+
+

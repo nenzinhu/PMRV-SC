@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   const state = {
     initialized: false,
     loading: false,
@@ -9,25 +9,25 @@
   };
 
   const SEARCH_SYNONYM_GROUPS = [
-    ['licenciamento', 'licen', 'licenca', 'licença', 'crlv', 'crlv-e', 'crlv e', 'documento', 'documentos', 'doc', 'docu', 'regularizacao', 'regularização'],
-    ['placa', 'placas', 'identificacao', 'identificação', 'sinal identificador'],
-    ['cnh', 'habilitacao', 'habilitação', 'carteira', 'motorista', 'condutor', 'permissao', 'permissão', 'ppd', 'acc'],
-    ['documento', 'documentos', 'porte', 'obrigatorio', 'obrigatório', 'apresentacao', 'apresentação'],
-    ['veiculo', 'veículo', 'carro', 'automovel', 'automóvel', 'moto', 'motocicleta', 'motoneta', 'ciclomotor'],
-    ['capacete', 'viseira', 'oculos', 'óculos', 'protecao', 'proteção'],
+    ['licenciamento', 'licen', 'licenca', 'licenÃ§a', 'crlv', 'crlv-e', 'crlv e', 'documento', 'documentos', 'doc', 'docu', 'regularizacao', 'regularizaÃ§Ã£o'],
+    ['placa', 'placas', 'identificacao', 'identificaÃ§Ã£o', 'sinal identificador'],
+    ['cnh', 'habilitacao', 'habilitaÃ§Ã£o', 'carteira', 'motorista', 'condutor', 'permissao', 'permissÃ£o', 'ppd', 'acc'],
+    ['documento', 'documentos', 'porte', 'obrigatorio', 'obrigatÃ³rio', 'apresentacao', 'apresentaÃ§Ã£o'],
+    ['veiculo', 'veÃ­culo', 'carro', 'automovel', 'automÃ³vel', 'moto', 'motocicleta', 'motoneta', 'ciclomotor'],
+    ['capacete', 'viseira', 'oculos', 'Ã³culos', 'protecao', 'proteÃ§Ã£o'],
     ['estacionar', 'estacionamento', 'parar', 'parada'],
-    ['alcool', 'álcool', 'embriaguez', 'bebida', 'etilometro', 'etilômetro', 'bafometro', 'bafômetro'],
+    ['alcool', 'Ã¡lcool', 'embriaguez', 'bebida', 'etilometro', 'etilÃ´metro', 'bafometro', 'bafÃ´metro'],
     ['celular', 'telefone', 'smartphone', 'aparelho'],
-    ['farol', 'farois', 'faróis', 'luz', 'lanterna', 'iluminacao', 'iluminação'],
+    ['farol', 'farois', 'farÃ³is', 'luz', 'lanterna', 'iluminacao', 'iluminaÃ§Ã£o'],
     ['ultrapassagem', 'ultrapassar', 'passagem'],
     ['pedestre', 'faixa', 'travessia', 'passarela'],
-    ['remocao', 'remoção', 'guincho', 'recolhimento'],
-    ['retencao', 'retenção', 'reter']
+    ['remocao', 'remoÃ§Ã£o', 'guincho', 'recolhimento'],
+    ['retencao', 'retenÃ§Ã£o', 'reter']
   ];
 
   const SEARCH_INTENT_RULES = [
     {
-      triggers: ['nao pagou', 'não pagou', 'licenciamento atrasado', 'licenciamento vencido', 'nao licenciou', 'não licenciou'],
+      triggers: ['nao pagou', 'nÃ£o pagou', 'licenciamento atrasado', 'licenciamento vencido', 'nao licenciou', 'nÃ£o licenciou'],
       expansions: ['licenciamento', 'crlv', 'documento']
     },
     {
@@ -41,7 +41,7 @@
   ];
 
   const SEARCH_CODE_SHORTCUTS = [
-    { code: '7366-2', terms: ['7366-2', '736-62', 'celular'] },
+    { code: '736-62', terms: ['7366-2', '736-62', 'celular'] },
     { code: '5185-1', terms: ['5185-1', '518-51', 'cinto'] },
     { code: '5010-1', terms: ['5010-0', '501-00', 'sem cnh', 'sem acc'] },
     { code: '5169-1', terms: ['7579-0', '757-90', 'recusa', 'bafometro'] }
@@ -216,9 +216,9 @@
   function mapRecords(rows) {
     if (!rows.length) return [];
     
-    // Mapeamento baseado nos cabeçalhos detectados ou índices fixos (fallback)
+    // Mapeamento baseado nos cabeÃ§alhos detectados ou Ã­ndices fixos (fallback)
     const headers = rows[0].map(normalizeHeader);
-    console.log('[Infra] Cabeçalhos normalizados:', headers);
+    console.log('[Infra] CabeÃ§alhos normalizados:', headers);
     
     const idx = {
       codigo: findHeaderIndex(headers, ['codigo infracao', 'codigo', 'cod']),
@@ -230,7 +230,7 @@
       medida: findHeaderIndex(headers, ['medida administrativa', 'medida'])
     };
 
-    // Índices de garantia (baseados na estrutura padrão: Cod, Desc, Art, Inf, Val, Cat, Med)
+    // Ãndices de garantia (baseados na estrutura padrÃ£o: Cod, Desc, Art, Inf, Val, Cat, Med)
     const COD_IDX = idx.codigo !== -1 ? idx.codigo : 0;
     const DSC_IDX = idx.descricao !== -1 ? idx.descricao : 1;
     const ART_IDX = idx.artigo !== -1 ? idx.artigo : 2;
@@ -255,49 +255,96 @@
       return record;
     }).filter(r => r !== null && (r.codigo || r.descricao));
 
-    console.log(`[Infra] Mapeamento concluído: ${records.length} registros processados.`);
+    console.log(`[Infra] Mapeamento concluÃ­do: ${records.length} registros processados.`);
     return records;
   }
 
   function render(records) {
     const elements = getElements();
-    if (!elements.tableBody) return;
+    const container = document.getElementById('infra_list_container');
+    if (!container) return;
 
     elements.totalCount.textContent = state.records.length.toLocaleString('pt-BR');
     elements.filteredCount.textContent = records.length.toLocaleString('pt-BR');
     elements.categoryCount.textContent = state.categories.length;
 
     if (!records.length) {
-      elements.tableBody.innerHTML = '';
+      container.innerHTML = '';
       elements.emptyState.hidden = false;
       return;
     }
 
     elements.emptyState.hidden = true;
-    elements.tableBody.innerHTML = records.map(record => {
+    container.innerHTML = records.map((record, index) => {
       const catClass = categoryClass(record.categoria);
       const medClass = measureClass(record.medida);
-      return `<tr>
-        <td class="infra-code">${escapeHtml(record.codigo)}</td>
-        <td class="infra-description">${escapeHtml(record.descricao)}</td>
-        <td class="infra-muted-cell">${escapeHtml(record.artigo || '-')}</td>
-        <td class="infra-muted-cell">${escapeHtml(record.infrator || '-')}</td>
-        <td><span class="infra-badge ${catClass}">${escapeHtml(record.categoria)}</span></td>
-        <td><span class="infra-measure ${medClass}">${escapeHtml(record.medida || 'Sem medida')}</span></td>
-        <td class="infra-code">${escapeHtml(formatCurrency(record.valor))}</td>
-      </tr>`;
+      const cardId = `infra-card-${index}`;
+      
+      return `
+        <div class="infra-card" id="${cardId}" data-cat="${record.categoria}" onclick="infra_toggleCard('${cardId}')">
+          <div class="infra-card-header">
+            <div class="infra-card-main">
+              <span class="infra-card-code">${escapeHtml(record.codigo)}</span>
+              <div class="infra-card-title">${escapeHtml(record.descricao)}</div>
+            </div>
+            <div class="infra-card-chevron">▼</div>
+          </div>
+          
+          <div class="infra-card-content">
+            <div class="infra-detail-row">
+              <div class="infra-detail-item">
+                <span class="infra-detail-label">Amparo Legal</span>
+                <span class="infra-detail-value">${escapeHtml(record.artigo || 'Não informado')}</span>
+              </div>
+              <div class="infra-detail-item">
+                <span class="infra-detail-label">Infrator</span>
+                <span class="infra-detail-value">${escapeHtml(record.infrator || 'Não informado')}</span>
+              </div>
+              <div class="infra-detail-item">
+                <span class="infra-detail-label">Valor da Multa</span>
+                <span class="infra-detail-value" style="color:var(--primary); font-weight:800;">${escapeHtml(formatCurrency(record.valor))}</span>
+              </div>
+            </div>
+            
+            <div class="infra-badge-row">
+              <span class="infra-badge ${catClass}">${escapeHtml(record.categoria)}</span>
+              <span class="infra-measure ${medClass}">${escapeHtml(record.medida || 'Sem medida')}</span>
+            </div>
+          </div>
+        </div>
+      `;
     }).join('');
   }
+
+  window.infra_toggleCard = (id) => {
+    const card = document.getElementById(id);
+    if (!card) return;
+    
+    // Fecha outros cards abertos (opcional, para foco Ãºnico)
+    document.querySelectorAll('.infra-card.expanded').forEach(c => {
+      if (c.id !== id) c.classList.remove('expanded');
+    });
+    
+    card.classList.toggle('expanded');
+    if (card.classList.contains('expanded')) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  };
 
   function applyFilters() {
     const elements = getElements();
     const term = normalizeSearchText(elements.search.value);
+    const shortcutCode = resolveCodeShortcut(term);
+    const normalizedShortcutCode = normalizeSearchText(shortcutCode);
     const category = elements.category.value;
     const measure = elements.measure.value;
     
     const filtered = state.records.filter(r => {
       if (term && r.search.indexOf(term) === -1) {
-        // Tenta expansão de sinônimos se a busca direta falhar
+        if (normalizedShortcutCode && normalizeSearchText(r.codigo) === normalizedShortcutCode) {
+          return (!category || r.categoria === category) && (!measure || r.medida === measure);
+        }
+        // Tenta expansÃ£o de sinÃ´nimos se a busca direta falhar
         const termParts = expandSearchIntent(term);
         if (!termParts.every(p => r.search.indexOf(p) >= 0)) return false;
       }
@@ -317,7 +364,7 @@
       }
       return new TextDecoder('utf-8').decode(bytes);
     } catch (e) { 
-      console.error('[Infra] Erro na decodificação Base64:', e);
+      console.error('[Infra] Erro na decodificaÃ§Ã£o Base64:', e);
       return ''; 
     }
   }
@@ -326,9 +373,9 @@
     const elements = getElements();
     if (!elements.search) return;
     
-    // Evita reinicialização múltipla de listeners
+    // Evita reinicializaÃ§Ã£o mÃºltipla de listeners
     if (state.initialized) {
-        // Se já inicializado, apenas garante que a tabela esteja renderizada
+        // Se jÃ¡ inicializado, apenas garante que a tabela esteja renderizada
         if (state.records.length > 0) render(state.records);
         return;
     }
@@ -367,10 +414,10 @@
             if (elements.status) elements.status.innerText = 'Base carregada';
             render(state.records);
         } else {
-            throw new Error("Base de dados vazia ou inválida.");
+            throw new Error("Base de dados vazia ou invÃ¡lida.");
         }
     } catch (err) {
-      console.error('Erro ao carregar base de infrações:', err);
+      console.error('Erro ao carregar base de infraÃ§Ãµes:', err);
       if (elements.status) elements.status.innerText = 'Erro ao carregar base de dados.';
     }
   }
@@ -378,7 +425,10 @@
   window.infra_init = infra_init;
   window.infra_applyShortcut = (term) => {
     const elements = getElements();
-    if (elements.search) { elements.search.value = term; applyFilters(); }
+    if (elements.search) {
+      elements.search.value = resolveCodeShortcut(term) || term;
+      applyFilters();
+    }
     window.infra_showTab('consulta');
   };
   window.infra_showTab = (tab) => {
@@ -389,3 +439,4 @@
     document.getElementById('infra_panel_frequentes').hidden = isConsulta;
   };
 })();
+

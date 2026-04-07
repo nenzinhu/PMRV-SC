@@ -23,9 +23,20 @@ const include = [
   'lateral direita.png',
   'splash.jpeg',
   'css',
+  'data',
   'js',
   'img',
-  'icon'
+  'icon',
+  'path',
+  'patrulhamento.png',
+  'peso.png',
+  'tacofrafo.png',
+  'Croqui.png',
+  'ctb.png',
+  'prazos.png',
+  'infrações.png',
+  'pedestre.svg',
+  'waldermar viera SC-.svg'
 ];
 
 function rmrf(target) {
