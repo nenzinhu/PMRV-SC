@@ -1,0 +1,97 @@
+[
+  {
+    "code": "1.1",
+    "title": "Atropelamento de Pedestre",
+    "file": "img/sinistros/1.1-atropelamento-pedestre.svg"
+  },
+  {
+    "code": "1.2",
+    "title": "Atropelamento de Animal",
+    "file": "img/sinistros/1.2-atropelamento-animal.svg"
+  },
+  {
+    "code": "2.1",
+    "title": "Abalroamento Longitudinal (Mesmo Sentido)",
+    "file": "img/sinistros/2.1-abalroamento-longitudinal-mesmo-sentido.svg"
+  },
+  {
+    "code": "2.2",
+    "title": "Abalroamento Longitudinal (Sentido Oposto)",
+    "file": "img/sinistros/2.2-abalroamento-longitudinal-sentido-oposto.svg"
+  },
+  {
+    "code": "2.3",
+    "title": "Abalroamento Transversal",
+    "file": "img/sinistros/2.3-abalroamento-transversal.svg"
+  },
+  {
+    "code": "3.1",
+    "title": "Colisão Frontal",
+    "file": "img/sinistros/3.1-colisao-frontal.svg"
+  },
+  {
+    "code": "3.2",
+    "title": "Colisão Traseira",
+    "file": "img/sinistros/3.2-colisao-traseira.svg"
+  },
+  {
+    "code": "3.3",
+    "title": "Colisão Engavetamento",
+    "file": "img/sinistros/3.3-colisao-engavetamento.svg"
+  },
+  {
+    "code": "4.1",
+    "title": "Choque em Poste",
+    "file": "img/sinistros/4.1-choque-poste.svg"
+  },
+  {
+    "code": "4.6",
+    "title": "Choque em Defensa",
+    "file": "img/sinistros/4.6-choque-defensa.svg"
+  },
+  {
+    "code": "4.9",
+    "title": "Choque em Objeto",
+    "file": "img/sinistros/4.9-choque-objeto.svg"
+  },
+  {
+    "code": "5.1",
+    "title": "Saída de Pista Simples",
+    "file": "img/sinistros/5.1-saida-pista-simples.svg"
+  },
+  {
+    "code": "5.3",
+    "title": "Saída de Pista com Capotamento",
+    "file": "img/sinistros/5.3-saida-pista-capotamento.svg"
+  },
+  {
+    "code": "5.4",
+    "title": "Saída de Pista com Tombamento",
+    "file": "img/sinistros/5.4-saida-pista-tombamento.svg"
+  },
+  {
+    "code": "6.1",
+    "title": "Saída + Choque em Poste",
+    "file": "img/sinistros/6.1-saida-choque-poste.svg"
+  },
+  {
+    "code": "6.2",
+    "title": "Saída + Choque em Muro",
+    "file": "img/sinistros/6.2-saida-choque-muro.svg"
+  },
+  {
+    "code": "6.3",
+    "title": "Saída + Choque em Defensa",
+    "file": "img/sinistros/6.3-saida-choque-defensa.svg"
+  },
+  {
+    "code": "6.4",
+    "title": "Saída + Choque em Objeto",
+    "file": "img/sinistros/6.4-saida-choque-objeto.svg"
+  },
+  {
+    "code": "7.1",
+    "title": "Outros",
+    "file": "img/sinistros/7.1-outros.svg"
+  }
+]
