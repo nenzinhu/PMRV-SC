@@ -2119,3 +2119,52 @@
         height: 18px;
       }
     }
+
+    .pes-axle-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .pes-axle-card {
+      border: 1px solid rgba(245, 130, 32, 0.25);
+      border-radius: 14px;
+      padding: 10px;
+      background: linear-gradient(180deg, rgba(245, 130, 32, 0.08), rgba(255, 255, 255, 0.02));
+    }
+
+    .pes-axle-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .pes-axle-head strong {
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .pes-axle-tag {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary);
+      background: rgba(245, 130, 32, 0.16);
+      border: 1px solid rgba(245, 130, 32, 0.45);
+      padding: 4px 8px;
+      border-radius: 999px;
+    }
+
+    .pes-axle-media {
+      border: 1px dashed rgba(245, 130, 32, 0.28);
+      border-radius: 10px;
+      padding: 8px;
+      background: rgba(15, 23, 42, 0.28);
+    }
+
+    .pes-axle-media svg {
+      width: 100%;
+      height: 88px;
+      display: block;
+    }

@@ -6,3 +6,34 @@
   cursor: pointer;
   filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
 }
+
+/* Estilos para Referências Próximas (TomTom) */
+.poi-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.poi-card:active {
+  transform: scale(0.98);
+}
+
+#ref_prox_categorias .btn {
+  margin-bottom: 4px;
+  font-size: 11px;
+  padding: 6px 10px;
+}
+
+#ref_prox_categorias .btn-outline {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.poi-card .btn-sm {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
