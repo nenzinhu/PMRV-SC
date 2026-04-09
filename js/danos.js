@@ -201,6 +201,39 @@ let danPontoAberto  = null;
 let danVeiculosSalvos = [];
 let danTooltipHideTimer = null;
 
+function danGetReportModule() {
+  return PMRV.danosReport;
+}
+
+function danGetRenderModule() {
+  return PMRV.danosRender;
+}
+
+function danGetStateModule() {
+  return PMRV.danosState;
+}
+
+function danBuildStatePayload() {
+  return {
+    currentDamages: danDanos,
+    currentVehicle: danVeiculo,
+    motoDb: v360db,
+    motoEditId: v360editId,
+    motoTab: v360tab,
+    savedVehicles: danVeiculosSalvos
+  };
+}
+
+function danApplyState(nextState) {
+  if (!nextState) return;
+  danDanos = nextState.currentDamages;
+  danVeiculo = nextState.currentVehicle;
+  v360db = nextState.motoDb;
+  v360editId = nextState.motoEditId;
+  v360tab = nextState.motoTab;
+  danVeiculosSalvos = nextState.savedVehicles;
+}
+
 function danGetMeta(tipo) {
   return DAN_VEICULO_META[tipo] || DAN_VEICULO_META.carro;
 }
@@ -372,17 +405,16 @@ function danRenderDiagramaMulti(idx) {
    DANOS — NAVEGAÇÃO
 --------------------------------------------------------------- */
 function danEscolherVeiculo(v) {
-  danVeiculo = v;
-  danDanos   = {};
-  danVista   = 'frontal';
+  danApplyState(
+    danGetStateModule()?.selectVehicle?.(danBuildStatePayload(), v, danUsa360, v360makeDb)
+  );
+  danVista = 'frontal';
   danAtualizarBotoesTipo(v);
   document.getElementById('dan-step-vehicle').style.display = 'none';
 
   if (danUsa360(v)) {
     document.getElementById('dan-step-moto360').style.display = 'block';
     document.getElementById('dan-step-diagram').style.display = 'none';
-    v360db = v360makeDb();
-    v360tab = 'frente';
     v360render();
   } else {
     document.getElementById('dan-step-diagram').style.display = 'block';
@@ -430,11 +462,9 @@ function danPrepararTela() {
 
 function danLimparTudo() {
   if (!confirm('Apagar todos os danos registrados?')) return;
-  danVeiculo = null;
-  danDanos = {};
-  danVeiculosSalvos = [];
-  v360db = v360makeDb();
-  v360tab = 'frente';
+  danApplyState(
+    danGetStateModule()?.clearAll?.(v360makeDb)
+  );
   document.getElementById('dan-summary-tags').innerHTML = '<div style="font-size:13px;color:var(--label);text-align:center;padding:18px;border:1px dashed var(--border);border-radius:10px;">Nenhum dano registrado ainda.<br>Toque nos pontos do diagrama.</div>';
   document.getElementById('v360-summary-tags').innerHTML = '<div style="font-size:13px;color:var(--label);text-align:center;padding:18px;border:1px dashed var(--border);border-radius:10px;">Nenhum dano registrado ainda.<br>Adicione marcadores na foto.</div>';
   document.getElementById('dan-result-area').style.display = 'none';
@@ -448,18 +478,22 @@ function danLimparTudo() {
 
 function danSalvarVeiculo() {
   if (danUsa360(danVeiculo)) {
-    let hasInsp = false;
-    ['frente','tras','direita','esquerda'].forEach(t => {
-      v360db[t].forEach(i => { if (i.dano !== null) hasInsp = true; });
-    });
-    if (!hasInsp) { alert('Registre ao menos um dano antes de salvar.'); return; }
-    danVeiculosSalvos.push({ tipo: 'moto', v360db: JSON.parse(JSON.stringify(v360db)) });
+    if (!danGetReportModule()?.hasMotoAvaria?.(v360db)) { alert('Registre ao menos um dano antes de salvar.'); return; }
+    danApplyState(
+      danGetStateModule()?.saveCurrentVehicle?.(
+        danBuildStatePayload(),
+        { tipo: 'moto', v360db: danGetReportModule().cloneMotoSnapshot(v360db) }
+      )
+    );
   } else {
     if (!Object.keys(danDanos).length) { alert('Registre ao menos um dano antes de salvar.'); return; }
-    danVeiculosSalvos.push({ tipo: danVeiculo, danos: Object.assign({}, danDanos) });
+    danApplyState(
+      danGetStateModule()?.saveCurrentVehicle?.(
+        danBuildStatePayload(),
+        { tipo: danVeiculo, danos: Object.assign({}, danDanos) }
+      )
+    );
   }
-  danVeiculo = null;
-  danDanos = {};
   danAtualizarBotoesTipo(null);
   danVoltarStep1();
   danRenderSalvos();
@@ -470,78 +504,34 @@ function danRenderSalvos() {
   const lista = document.getElementById('dan-salvos-lista');
   if (!danVeiculosSalvos.length) { area.style.display = 'none'; return; }
   area.style.display = 'block';
-  lista.innerHTML = danVeiculosSalvos.map(function(v, idx) {
-    const emoji = danGetEmoji(v.tipo);
-    const label = danGetLabel(v.tipo);
-    let count = 0;
-    if (danUsa360(v.tipo)) {
-      ['frente','tras','direita','esquerda'].forEach(t => { v.v360db[t].forEach(i => { if (i.dano !== null) count++; }); });
-    } else {
-      count = Object.keys(v.danos).length;
-    }
-    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;">'
-      + '<span style="font-size:26px;">' + emoji + '</span>'
-      + '<div style="flex:1;">'
-      + '<div style="font-weight:700;font-size:14px;">' + label + ' ' + (idx + 1) + '</div>'
-      + '<div style="font-size:12px;color:var(--label);">' + count + ' dano' + (count !== 1 ? 's' : '') + ' registrado' + (count !== 1 ? 's' : '') + '</div>'
-      + '</div>'
-      + '<button data-click="danRemoverSalvo(' + idx + ')" style="font-size:12px;padding:4px 8px;color:#D82A2E;border:1px solid #D82A2E;border-radius:6px;background:transparent;cursor:pointer;">✕</button>'
-      + '</div>';
-  }).join('');
+  lista.innerHTML = danGetRenderModule()?.buildSavedVehiclesHtml?.(danVeiculosSalvos, {
+    countVehicleAvarias: danGetReportModule()?.countVehicleAvarias,
+    getEmoji: danGetEmoji,
+    getLabel: danGetLabel,
+    uses360: danUsa360
+  }) || '';
   document.getElementById('dan-todos-result-area').style.display = 'none';
 }
 
 function danRemoverSalvo(idx) {
-  danVeiculosSalvos.splice(idx, 1);
+  danApplyState(
+    danGetStateModule()?.removeSavedVehicle?.(danBuildStatePayload(), idx)
+  );
   danRenderSalvos();
 }
 
 function danGerarTextoTodos() {
   if (!danVeiculosSalvos.length) { alert('Nenhum veículo salvo ainda.'); return; }
-  const data = new Date().toLocaleDateString('pt-BR');
-  let txt = '*RELATÓRIO DE DANOS — MÚLTIPLOS VEÍCULOS*\nData: ' + data;
-  txt += '\nVeículos analisados: ' + danVeiculosSalvos.length;
-  txt += '\n===========================';
+  const txt = danGetReportModule()?.buildMultipleReport?.({
+    date: new Date().toLocaleDateString('pt-BR'),
+    diagramas: DAN_DIAGRAMAS,
+    getLabel: danGetLabel,
+    motoTabNames: { frente: 'Frente', tras: 'Traseira', direita: 'Lado Direito', esquerda: 'Lado Esquerdo' },
+    uses360: danUsa360,
+    vehicles: danVeiculosSalvos,
+    vistaLabels: DAN_VISTA_LABELS
+  }) || '';
 
-  danVeiculosSalvos.forEach(function(v, idx) {
-    const label = danGetLabel(v.tipo);
-    txt += '\n\n*Veículo ' + (idx + 1) + ' — ' + label + '*';
-    txt += '\n---------------------------';
-
-    if (danUsa360(v.tipo)) {
-      const V360_NAMES_L = { frente: 'Frente', tras: 'Traseira', direita: 'Lado Direito', esquerda: 'Lado Esquerdo' };
-      ['frente','tras','direita','esquerda'].forEach(function(t) {
-        const its = v.v360db[t].filter(function(i) { return i.dano !== null; });
-        if (!its.length) return;
-        txt += '\n\n' + V360_NAMES_L[t] + ':';
-        its.sort(function(a,b) { return a.num - b.num; }).forEach(function(i) {
-          txt += '\n• ' + i.nome + ': ' + i.dano;
-        });
-      });
-    } else {
-      const cfg_map = DAN_DIAGRAMAS[v.tipo];
-      const porVista = { frontal: [], traseira: [], esquerda: [], direita: [] };
-      Object.keys(v.danos).forEach(function(id) {
-        const mapa = { F: 'frontal', T: 'traseira', E: 'esquerda', D: 'direita' };
-        const vis = mapa[id.charAt(0)];
-        if (vis) porVista[vis].push(id);
-      });
-      Object.entries(porVista).forEach(function([vista, pontos]) {
-        if (!pontos.length) return;
-        const cfg = cfg_map[vista];
-        txt += '\n\n' + DAN_VISTA_LABELS[vista] + ':';
-        pontos.forEach(function(id) {
-          const ponto = cfg.pontos.find(function(p) { return p.id === id; });
-          if (!ponto) return;
-          const tipo = v.danos[id];
-          const num = cfg.pontos.indexOf(ponto) + 1;
-          txt += '\n• ' + ponto.label + ': ' + tipo;
-        });
-      });
-    }
-  });
-
-  txt += '\n\nObs.: relato baseado em condições visíveis no local, sem caráter pericial.';
   document.getElementById('dan-todos-result-text').textContent = txt;
   const ra = document.getElementById('dan-todos-result-area');
   ra.style.display = 'block';
@@ -1233,31 +1223,12 @@ function danAtualizarSummary() {
 function danGerarTexto() {
   /* ── MOTO via v360 ── */
   if (danUsa360(danVeiculo)) {
-    const tabs = ['frente','tras','direita','esquerda'];
-
-    /* Verifica se ao menos uma peça foi inspecionada */
-    let hasInsp = false;
-    tabs.forEach(t => { v360db[t].forEach(i => { if (i.dano !== null) hasInsp = true; }); });
-    if (!hasInsp) { alert('Inspecione ao menos uma peça antes de gerar o relatório.'); return; }
-
-    const data = new Date().toLocaleDateString('pt-BR');
-    const avarias= tabs.reduce((s,t) => s + v360db[t].filter(i=>i.dano!==null).length, 0);
-
-    let txt = `*VISTORIA DE MOTOCICLETA*\nData: ${data}`;
-    txt += `\nAvarias registradas: ${avarias}`;
-    txt += `\n---------------------------`;
-
-    tabs.forEach(t => {
-      const its = v360db[t].filter(i => i.dano !== null);
-      if (!its.length) return;
-      txt += `\n\n${V360_NAMES[t]}:`;
-      [...its].sort((a,b) => a.num - b.num).forEach(i => {
-        const status = ` ${i.dano}`;
-        txt += `\n• ${i.nome}: ${status}`;
-      });
-    });
-
-    txt += '\n\nObs.: relato baseado em condições visíveis no local, sem caráter pericial.';
+    const txt = danGetReportModule()?.buildMotoReport?.(
+      v360db,
+      V360_NAMES,
+      new Date().toLocaleDateString('pt-BR')
+    ) || '';
+    if (!txt) { alert('Inspecione ao menos uma peça antes de gerar o relatório.'); return; }
 
     document.getElementById('v360-result-text').textContent = txt;
     const ra = document.getElementById('v360-result-area');
@@ -1267,33 +1238,15 @@ function danGerarTexto() {
   }
 
   /* ── CARRO / CAMINHÃO via diagrama SVG ── */
-  const ids = Object.keys(danDanos);
-  if (!ids.length) { alert('Registre ao menos um dano antes de gerar o relatório.'); return; }
-
-  const data     = new Date().toLocaleDateString('pt-BR');
-  const label = danGetLabel(danVeiculo).toUpperCase();
-  let txt = `*RELATÓRIO DE DANOS APARENTES*\nTipo de veículo: ${label}\nData: ${data}\n---------------------------`;
-
-  const porVista = {frontal:[],traseira:[],esquerda:[],direita:[]};
-  ids.forEach(id => {
-    const mapa = {F:'frontal',T:'traseira',E:'esquerda',D:'direita'};
-    const v    = mapa[id.charAt(0)];
-    if (v) porVista[v].push(id);
-  });
-
-  Object.entries(porVista).forEach(([vista, pontos]) => {
-    if (!pontos.length) return;
-    txt += `\n\n${DAN_VISTA_LABELS[vista].toUpperCase()}:`;
-    pontos.forEach(id => {
-      const cfg   = DAN_DIAGRAMAS[danVeiculo][vista];
-      const ponto = cfg.pontos.find(p => p.id === id);
-      if (!ponto) return;
-      const tipo = danDanos[id];
-      txt += `\n• ${ponto.label}: ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`;
-    });
-  });
-
-  txt += '\n\nObservação: relato baseado em avarias visíveis no local, sem caráter pericial.';
+  const txt = danGetReportModule()?.buildDiagramReport?.({
+    danos: danDanos,
+    date: new Date().toLocaleDateString('pt-BR'),
+    diagramas: DAN_DIAGRAMAS,
+    getLabel: danGetLabel,
+    tipo: danVeiculo,
+    vistaLabels: DAN_VISTA_LABELS
+  }) || '';
+  if (!txt) { alert('Registre ao menos um dano antes de gerar o relatório.'); return; }
 
   document.getElementById('dan-result-text').textContent = txt;
   const ra = document.getElementById('dan-result-area');
@@ -1375,7 +1328,9 @@ function v360makeDb(){
 }
 
 function v360switchTab(el, t){
-  v360tab = t;
+  danApplyState(
+    danGetStateModule()?.setMotoTab?.(danBuildStatePayload(), t)
+  );
   document.querySelectorAll('#dan-step-moto360 .dan-tab').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
   document.querySelectorAll('#dan-step-moto360 .moto-img').forEach(i=>i.classList.remove('active'));
@@ -1402,7 +1357,9 @@ function v360clearDano(){
 
 function v360closeModal(){
   document.getElementById('v360-overlay').classList.remove('show');
-  v360editId = null;
+  danApplyState(
+    danGetStateModule()?.setMotoEditId?.(danBuildStatePayload(), null)
+  );
 }
 
 function v360closeModalOnBackdrop(event) {
@@ -1411,7 +1368,9 @@ function v360closeModalOnBackdrop(event) {
 
 function v360openEdit(id){
   const item = v360db[v360tab].find(i=>i.id===id); if(!item) return;
-  v360editId = id;
+  danApplyState(
+    danGetStateModule()?.setMotoEditId?.(danBuildStatePayload(), id)
+  );
   document.getElementById('v360-m-title').innerText = String(item.num).padStart(2,'0')+' — '+item.nome;
   document.getElementById('v360-m-sub').innerText   = item.grupo ? 'Grupo: '+item.grupo+'. Selecione a avaria.' : 'Selecione o tipo de avaria.';
   document.querySelectorAll('.v360-dbtn').forEach(b=>{
@@ -1468,39 +1427,15 @@ function v360renderPalette(){
   const list = document.getElementById('v360-legend-list');
   if(!list) return;
 
-  /* Mapa num → { tab, item } para todas as peças */
-  const placed = {};
-  V360_TABS.forEach(tab => {
-    v360db[tab].forEach(item => { placed[item.num] = {tab, item}; });
-  });
-
-  /* Agrupar V360_MOTO_PARTES por campo g */
-  const groups = {}, groupOrder = [];
-  V360_MOTO_PARTES.forEach(p => {
-    if(!groups[p.g]){ groups[p.g]=[]; groupOrder.push(p.g); }
-    groups[p.g].push(p);
-  });
-
-  let html = '';
-  groupOrder.forEach(gname => {
-    html += `<div class="v360-pal-group"><div class="v360-pal-ghdr">${gname}</div>`;
-    groups[gname].forEach(p => {
-      const num = parseInt(p.n, 10);
-      const pl  = placed[num];
-      if(pl){
-        const cor = v360corDano(pl.item.dano);
-        const statusLabel = pl.item.dano || 'Pendente';
-        const tabLabel    = V360_NAMES[pl.tab];
-        html += `<div class="v360-pal-item" data-click="v360EditarResumo('${pl.tab}',${pl.item.id})" title="${p.t} — em ${tabLabel}">
-          <div class="v360-pal-chip" style="background:${cor};color:#fff;">${p.n}</div>
-          <div class="v360-pal-name">${p.t}</div>
-          <div class="v360-pal-badge" style="background:${cor};color:#fff;">${statusLabel}</div>
-        </div>`;
-      }
-    });
-    html += `</div>`;
-  });
-  list.innerHTML = html;
+  list.innerHTML = danGetRenderModule()?.buildV360PaletteHtml?.(
+    V360_MOTO_PARTES,
+    V360_TABS,
+    v360db,
+    {
+      getDamageColor: v360corDano,
+      tabNames: V360_NAMES
+    }
+  ) || '';
 }
 
 function v360corDano(d){
@@ -1513,45 +1448,26 @@ function v360corDano(d){
 
 function v360updateSummary(){
   const container = document.getElementById('v360-summary-tags');
-
-  const total   = V360_TABS.reduce((s,t)=>s+v360db[t].length, 0);
-  const insp    = V360_TABS.reduce((s,t)=>s+v360db[t].filter(i=>i.dano!==null).length, 0);
-  const avarias = V360_TABS.reduce((s,t)=>s+v360db[t].filter(i=>i.dano!==null).length, 0);
-  const totalPecas = V360_TABS.reduce((s,t)=>s+v360db[t].length, 0);
-
-  const pct = total ? Math.round(insp/total*100) : 0;
-  let html = `<div style="margin-bottom:10px;">
-    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px;">
-      <span>📋 Posicionadas: <b style="color:var(--text)">${total}/${totalPecas}</b> &nbsp;·&nbsp; Inspecionadas: <b style="color:var(--text)">${insp}</b></span>
-      <span>🚨 Avarias: <b style="color:${avarias?'#ef4444':'#22c55e'}">${avarias}</b></span>
-    </div>
-    <div style="height:6px;background:var(--border);border-radius:4px;overflow:hidden;">
-      <div style="height:100%;width:${pct}%;background:${avarias?'#e67e22':'#22c55e'};border-radius:4px;transition:width .3s"></div>
-    </div>
-  </div>`;
-
-  const avTags = [];
-  V360_TABS.forEach(t => {
-    v360db[t].filter(i=>i.dano!==null).forEach(item => {
-      const cor   = v360corDano(item.dano);
-      const emoji = item.dano==='Quebrado'?'🔴':item.dano==='Trincado'?'🟠':item.dano==='Riscado'?'🟡':'🟣';
-      avTags.push(`<span class="dan-tag" style="background:${cor};color:#fff;cursor:pointer;" data-click="v360EditarResumo('${t}',${item.id})" title="Clique para editar">${emoji} ${item.num}. ${item.nome} — ${item.dano}</span>`);
-    });
-  });
-
-  if(avTags.length){
-    html += `<div style="font-size:11px;font-weight:700;color:var(--label);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">⚠️ Avarias detectadas</div><div>${avTags.join('')}</div>`;
-  } else if(insp > 0){
-    html += `<div style="font-size:13px;color:#22c55e;text-align:center;padding:8px 0;">✅ Nenhuma avaria registrada.</div>`;
-  } else {
-    html += `<div style="font-size:13px;color:var(--label);text-align:center;padding:8px 0;">Clique nos círculos na foto para classificar o dano.</div>`;
-  }
-  container.innerHTML = html;
+  container.innerHTML = danGetRenderModule()?.buildV360SummaryHtml?.(
+    V360_TABS,
+    v360db,
+    {
+      getDamageColor: v360corDano,
+      getDamageEmoji(damage) {
+        if (damage === 'Quebrado') return '🔴';
+        if (damage === 'Trincado') return '🟠';
+        if (damage === 'Riscado') return '🟡';
+        return '🟣';
+      }
+    }
+  ) || '';
 }
 
 function v360limpar(){
   if(confirm('Resetar toda a vistoria? As posições e classificações serão apagadas.')){
-    v360db = v360makeDb();
+    danApplyState(
+      danGetStateModule()?.resetMotoInspection?.(danBuildStatePayload(), v360makeDb)
+    );
     v360switchTab(document.getElementById('v360-tab-frente'),'frente');
     v360render();
   }

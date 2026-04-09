@@ -21,9 +21,11 @@ function pes_init() {
 function pes_switchTab(tab) {
     document.getElementById('pes-content-pbt').classList.toggle('hidden', tab !== 'pbt');
     document.getElementById('pes-content-dim').classList.toggle('hidden', tab !== 'dim');
+    document.getElementById('pes-content-img').classList.toggle('hidden', tab !== 'img');
     
     document.getElementById('tab-pes-pbt').classList.toggle('btn-primary', tab === 'pbt');
     document.getElementById('tab-pes-dim').classList.toggle('btn-primary', tab === 'dim');
+    document.getElementById('tab-pes-img').classList.toggle('btn-primary', tab === 'img');
     
     // Limpa infração ao trocar de contexto para evitar confusão
     document.getElementById('pes_infracao_box').classList.add('hidden');

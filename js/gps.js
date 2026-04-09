@@ -11,6 +11,11 @@ const GPS_RODOVIAS_BASE = {
 };
 
 const GPS_REVERSE_CACHE = new Map();
+const GPS_MONITOR_STATE = {
+    watchId: null,
+    activeScreen: 'home',
+    unsupportedLogged: false
+};
 
 function gps_formatarKm(km) {
     return typeof km === 'number' ? km.toFixed(3).replace('.', ',') : '---';
@@ -105,7 +110,7 @@ async function gps_preencherSelects() {
 
     if (!banco) return;
 
-    const selectIds = ['pmrv_rodovia', 'pat_manual_rodovia'];
+    const selectIds = ['pmrv_rodovia', 'pat_manual_rodovia', 'ref_rodovia'];
     const rodovias = Object.keys(banco).sort((a, b) => {
         if (a.startsWith('SC-') && !b.startsWith('SC-')) return -1;
         if (!a.startsWith('SC-') && b.startsWith('SC-')) return 1;
@@ -115,6 +120,9 @@ async function gps_preencherSelects() {
     selectIds.forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
+
+        // Se for o patrulhamento e já tiver rodovias (além da padrão), não sobrescreve
+        if (id === 'pat_manual_rodovia' && el.options.length > 2) return;
 
         const valorAtual = el.value;
         el.innerHTML = '';
@@ -179,7 +187,8 @@ function gps_obterLocalizacao() {
 
     const btnHome = document.querySelector('.btn-gps-minimal[data-click="gps_obterLocalizacao()"]');
     const btnPmrv = document.getElementById('btn-gps-localizar-pmrv');
-    const activeBtn = btnPmrv || btnHome;
+    const btnRef = document.getElementById('btn-gps-localizar-ref');
+    const activeBtn = btnPmrv || btnRef || btnHome;
 
     let originalText = '';
     if (activeBtn) {
@@ -194,17 +203,26 @@ function gps_obterLocalizacao() {
             const resultado = await gps_descreverLocal(latitude, longitude);
 
             if (resultado.encontrado) {
-                const rodoviaEl = document.getElementById('pmrv_rodovia');
-                const kmEl = document.getElementById('pmrv_km');
-
-                if (rodoviaEl) {
-                    rodoviaEl.value = resultado.rodovia;
+                // Atualiza PMRV
+                const pmrvRodEl = document.getElementById('pmrv_rodovia');
+                const pmrvKmEl = document.getElementById('pmrv_km');
+                if (pmrvRodEl) {
+                    pmrvRodEl.value = resultado.rodovia;
                     if (typeof pmrv_verificarRodovia === 'function') pmrv_verificarRodovia();
                 }
-
-                if (kmEl) {
-                    kmEl.value = gps_formatarKm(resultado.km);
+                if (pmrvKmEl) {
+                    pmrvKmEl.value = gps_formatarKm(resultado.km);
                     if (typeof pmrv_atualizar === 'function') pmrv_atualizar();
+                }
+
+                // Atualiza REFERENCIAS
+                const refRodEl = document.getElementById('ref_rodovia');
+                const refKmEl = document.getElementById('ref_km');
+                if (refRodEl) {
+                    refRodEl.value = resultado.rodovia;
+                }
+                if (refKmEl) {
+                    refKmEl.value = gps_formatarKm(resultado.km);
                 }
             }
 
@@ -389,11 +407,16 @@ function gps_simularLocalizacao() {
 
 function gps_iniciarMonitoramentoRodape() {
     if (!navigator.geolocation) {
-        console.warn('Geolocalizacao nao suportada para o rodape.');
+        if (!GPS_MONITOR_STATE.unsupportedLogged) {
+            console.warn('Geolocalizacao nao suportada para o rodape.');
+            GPS_MONITOR_STATE.unsupportedLogged = true;
+        }
         return;
     }
 
-    navigator.geolocation.watchPosition(
+    if (GPS_MONITOR_STATE.watchId !== null) return;
+
+    GPS_MONITOR_STATE.watchId = navigator.geolocation.watchPosition(
         async (pos) => {
             const { latitude, longitude } = pos.coords;
             const resultado = await gps_descreverLocal(latitude, longitude);
@@ -411,13 +434,44 @@ function gps_iniciarMonitoramentoRodape() {
     );
 }
 
+function gps_pararMonitoramentoRodape() {
+    if (!navigator.geolocation) return;
+    if (GPS_MONITOR_STATE.watchId === null) return;
+    navigator.geolocation.clearWatch(GPS_MONITOR_STATE.watchId);
+    GPS_MONITOR_STATE.watchId = null;
+}
+
+function gps_deveMonitorarTela(screenName) {
+    return screenName === 'home' || screenName === 'pmrv' || screenName === 'patrulhamento';
+}
+
+function gps_onScreenChange(screenName) {
+    GPS_MONITOR_STATE.activeScreen = screenName || 'home';
+    if (document.hidden) {
+        gps_pararMonitoramentoRodape();
+        return;
+    }
+
+    if (gps_deveMonitorarTela(GPS_MONITOR_STATE.activeScreen)) {
+        gps_iniciarMonitoramentoRodape();
+    } else {
+        gps_pararMonitoramentoRodape();
+    }
+}
+
 window.gps_preencherSelects = gps_preencherSelects;
 window.gps_obterLocalizacao = gps_obterLocalizacao;
 window.gps_identificarRodoviaKM = gps_identificarRodoviaKM;
 window.gps_simularLocalizacao = gps_simularLocalizacao;
 window.gps_descreverLocal = gps_descreverLocal;
+window.gps_onScreenChange = gps_onScreenChange;
 
 document.addEventListener('DOMContentLoaded', () => {
     gps_preencherSelects();
-    setTimeout(gps_iniciarMonitoramentoRodape, 1500);
+    const activeScreen = document.querySelector('.screen.active')?.id?.replace('screen-', '') || 'home';
+    setTimeout(() => gps_onScreenChange(activeScreen), 1500);
+});
+
+document.addEventListener('visibilitychange', () => {
+    gps_onScreenChange(GPS_MONITOR_STATE.activeScreen);
 });

@@ -5,7 +5,10 @@ const root = process.cwd();
 const outDir = path.join(root, 'capacitor-www');
 
 const include = [
+  'Api.txt',
   'index.html',
+  'index-referencias-grande-florianopolis.html',
+  'index-referencias-grande-florianopolis-150m.html',
   'manifest.json',
   'service_worker.js',
   'icon-192.png',
@@ -36,7 +39,8 @@ const include = [
   'prazos.png',
   'infrações.png',
   'pedestre.svg',
-  'waldermar viera SC-.svg'
+  'waldermar viera SC-.svg',
+  'referencias-grande-florianopolis-150m.xlsx'
 ];
 
 function rmrf(target) {

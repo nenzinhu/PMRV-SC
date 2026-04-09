@@ -3,7 +3,6 @@
  * Registro rapido de infracoes em lote com persistencia local.
  */
 
-let PAT_VEICULOS = [];
 let patRelogioHandle = null;
 let PAT_SPEECH_RECOGNITION = null;
 const PAT_GPS_STATUS_LABEL = 'Sintonizando...';
@@ -76,6 +75,22 @@ function pat_escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
+function pat_getStore() {
+  return PMRV.patrulhamentoStore;
+}
+
+function pat_getReport() {
+  return PMRV.patrulhamentoReport;
+}
+
+function pat_getRender() {
+  return PMRV.patrulhamentoRender;
+}
+
+function pat_getVeiculos() {
+  return pat_getStore()?.getAll?.() || [];
+}
+
 function pat_init() {
   pat_carregarCache();
   pat_atualizarDataHora();
@@ -85,17 +100,10 @@ function pat_init() {
 }
 
 function pat_carregarCache() {
-  const salvo = localStorage.getItem('pmrv_pat_lote');
-  if (!salvo) return;
-
-  try {
-    PAT_VEICULOS = JSON.parse(salvo);
-    pat_renderizarLista();
-    if (PAT_VEICULOS.length > 0) {
-      pat_setBoxVisible('pat_lista_card', true);
-    }
-  } catch (e) {
-    console.error('Erro ao carregar cache de patrulhamento', e);
+  const veiculos = pat_getStore()?.load?.() || [];
+  pat_renderizarLista();
+  if (veiculos.length > 0) {
+    pat_setBoxVisible('pat_lista_card', true);
   }
 }
 
@@ -132,10 +140,6 @@ function pat_resetFormulario() {
   document.getElementById('pat_quick_celular_box')?.classList.add('hidden');
   document.querySelectorAll('.infra-quick-card').forEach(c => c.classList.remove('active'));
   pat_atualizarDataHora();
-}
-
-function pat_salvarCache() {
-  localStorage.setItem('pmrv_pat_lote', JSON.stringify(PAT_VEICULOS));
 }
 
 async function pat_simularOCR(input) {
@@ -404,8 +408,10 @@ function pat_salvarVeiculo() {
     local = pat_normalizarLocalGps(document.getElementById('pat_local')?.value);
   } else {
     const rod = document.getElementById('pat_manual_rodovia')?.value;
-    const km = document.getElementById('pat_manual_km')?.value;
-    local = rod || km ? `Rodovia ${rod || 'nao informada'} km ${km || 's/n'}` : 'Local nao informado';
+    const kmInput = document.getElementById('pat_manual_km');
+    if (kmInput) core_formatarKM(kmInput);
+    const km = kmInput?.value || '0,000';
+    local = rod ? `${rod}, KM ${km}` : `KM ${km}`;
   }
 
   if (!placa || placa.length < 7) {
@@ -434,8 +440,7 @@ function pat_salvarVeiculo() {
     return;
   }
 
-  PAT_VEICULOS.unshift({ id: Date.now(), placa, data, hora, local, obs, infracao: infracaoObj });
-  pat_salvarCache();
+  pat_getStore()?.add?.({ id: Date.now(), placa, data, hora, local, obs, infracao: infracaoObj });
   pat_renderizarLista();
   pat_setBoxVisible('pat_lista_card', true);
   pat_setBoxVisible('pat_result_area', false);
@@ -447,23 +452,30 @@ function pat_renderizarLista() {
   const container = document.getElementById('pat_lista_container');
   const card = document.getElementById('pat_lista_card');
   const totalEl = document.getElementById('pat_total_turno');
+  const veiculos = pat_getVeiculos();
   if (!container || !card) return;
 
-  if (PAT_VEICULOS.length === 0) {
+  if (veiculos.length === 0) {
     pat_setBoxVisible('pat_lista_card', false);
     if (totalEl) totalEl.textContent = 'Total de abordagens: 0';
     return;
   }
 
   pat_setBoxVisible('pat_lista_card', true);
-  if (totalEl) totalEl.textContent = `Total de abordagens: ${PAT_VEICULOS.length}`;
+  if (totalEl) totalEl.textContent = `Total de abordagens: ${veiculos.length}`;
   container.innerHTML = '';
 
-  PAT_VEICULOS.forEach((v, index) => {
-    const num = PAT_VEICULOS.length - index;
+  veiculos.forEach((v, index) => {
+    const num = veiculos.length - index;
     const item = document.createElement('div');
     item.className = 'pat-item';
     item.style.cssText = 'display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; background:rgba(255,255,255,0.05); margin-bottom:8px; border-left:4px solid var(--primary);';
+    const renderedHtml = pat_getRender()?.buildListItemHtml?.(v, index, veiculos.length, pat_escapeHtml);
+    if (renderedHtml) {
+      item.innerHTML = renderedHtml;
+      container.appendChild(item);
+      return;
+    }
     
     item.innerHTML = `
       <div style="background:var(--primary); color:white; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:900; flex-shrink:0;">
@@ -485,32 +497,24 @@ function pat_renderizarLista() {
 
 function pat_removerVeiculo(index) {
   if (!confirm('Remover este registro?')) return;
-  PAT_VEICULOS.splice(index, 1);
-  pat_salvarCache();
+  pat_getStore()?.removeAt?.(index);
   pat_renderizarLista();
-  if (PAT_VEICULOS.length === 0) {
+  if (pat_getVeiculos().length === 0) {
     pat_setBoxVisible('pat_lista_card', false);
   }
 }
 
 function pat_limparTudo() {
   if (!confirm('Apagar todo o lote?')) return;
-  PAT_VEICULOS = [];
-  pat_salvarCache();
+  pat_getStore()?.clear?.();
   pat_renderizarLista();
   pat_setBoxVisible('pat_lista_card', false);
   pat_setBoxVisible('pat_result_area', false);
 }
 
 function pat_gerarRelatorio() {
-  if (PAT_VEICULOS.length === 0) return;
-  let txt = `PATRULHAMENTO RODOVIARIO - PMRv SC\nData: ${PAT_VEICULOS[0].data}\n--------------------------\n\n`;
-  PAT_VEICULOS.forEach((v, i) => {
-    txt += `${i + 1}. [${v.placa}] as ${v.hora}\n${v.infracao.nome} (${v.infracao.codigo})\n${v.local}\n`;
-    if (v.obs) txt += `Obs: ${v.obs}\n`;
-    txt += '--------------------------\n\n';
-  });
-  txt += 'Gerado via PMRv Operacional';
+  const txt = pat_getReport()?.build?.(pat_getVeiculos()) || '';
+  if (!txt) return;
 
   const resultText = document.getElementById('pat_result_text');
   const resultArea = document.getElementById('pat_result_area');
@@ -519,7 +523,7 @@ function pat_gerarRelatorio() {
 }
 
 function pat_encerrarPatrulhamento() {
-  if (PAT_VEICULOS.length === 0) {
+  if (pat_getVeiculos().length === 0) {
     alert('Nenhum registro foi adicionado ao patrulhamento.');
     return;
   }
@@ -540,7 +544,7 @@ function pat_baixarTxt() {
   const blob = new Blob([texto], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
-  const dataArquivo = (PAT_VEICULOS[0]?.data || new Date().toLocaleDateString('pt-BR')).replace(/\//g, '-');
+  const dataArquivo = pat_getReport()?.buildFileDate?.(pat_getVeiculos()) || new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
 
   link.href = url;
   link.download = `Patrulhamento_PMrv_${dataArquivo}.txt`;

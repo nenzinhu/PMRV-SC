@@ -4,18 +4,25 @@
 window.PMRV = window.PMRV || {};
 
 function core_formatarKM(input) {
-  let val = input.value.trim().replace('.', ',');
-  if (!val) return;
-
-  if (!val.includes(',')) {
-    val += ',000';
-  } else {
-    const partes = val.split(',');
-    partes[1] = (partes[1] + '000').substring(0, 3);
-    val = partes[0] + ',' + partes[1];
+  let val = input.value.trim().replace(/[^\d.,]/g, '').replace('.', ',');
+  if (!val) {
+    input.value = '';
+    return;
   }
 
-  input.value = val;
+  let partes = val.split(',');
+  let inteiro = partes[0] || '0';
+  let decimal = partes[1] || '';
+
+  let numInteiro = parseInt(inteiro, 10);
+  if (isNaN(numInteiro)) numInteiro = 0;
+  if (numInteiro > 99) numInteiro = 99;
+  inteiro = numInteiro.toString();
+
+  // Sempre força 3 zeros se não houver decimal, ou trunca/completa se houver
+  decimal = (decimal + '000').substring(0, 3);
+
+  input.value = inteiro + ',' + decimal;
   input.dispatchEvent(new Event('input'));
 }
 
@@ -24,7 +31,7 @@ window.core_formatarKM = core_formatarKM;
 PMRV.core = (function() {
   const SCREENS = [
     'home', 'assumir', 'patrulhamento', 'infracoes', 'envolvidos', 'pmrv', 'danos',
-    'relatorio', 'pesos', 'tacografo', 'croqui', 'rodovias-ref', 'docs',
+    'relatorio', 'pesos', 'tacografo', 'croqui', 'rodovias-ref', 'referencias-proximas', 'docs',
     'guia-ciclomotores', 'guia-estrangeiros', 'prazos-transito', 'prazos-gerais',
     'guia-aet', 'guia-sinistros', 'help', 'ended', 'module-missing'
   ];
@@ -81,6 +88,7 @@ PMRV.core = (function() {
     if (target === 'pmrv' && typeof window.pmrv_init === 'function') window.pmrv_init();
     if (target === 'infracoes' && typeof window.infra_init === 'function') window.infra_init();
     if (target === 'danos' && typeof window.danPrepararTela === 'function') window.danPrepararTela();
+    if (typeof window.gps_onScreenChange === 'function') window.gps_onScreenChange(target);
     if (target === 'docs') docs_switchTab('bases');
   }
 
@@ -99,7 +107,7 @@ PMRV.core = (function() {
   }
 
   function docs_switchTab(tab) {
-    const tabs = ['bases', 'ciclomotores', 'estrangeiros', 'aet'];
+    const tabs = ['bases', 'ciclomotores', 'estrangeiros', 'aet', 'pops'];
     tabs.forEach(id => {
       document.getElementById('docs-content-' + id)?.classList.toggle('hidden', id !== tab);
       document.getElementById('tab-docs-' + id)?.classList.toggle('btn-primary', id === tab);
