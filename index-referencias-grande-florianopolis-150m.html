@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Referências 150 m | Grande Florianópolis</title>
+  <link rel="stylesheet" href="css/inlined.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    :root {
+      --refs-bg: #08111f;
+      --refs-panel: rgba(10, 20, 36, 0.92);
+      --refs-panel-strong: rgba(13, 28, 48, 0.98);
+      --refs-border: rgba(148, 163, 184, 0.18);
+      --refs-accent: #f59e0b;
+      --refs-text: #f8fafc;
+      --refs-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      height: auto;
+      min-height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 0;
+      color: var(--refs-text);
+      background:
+        radial-gradient(circle at top left, rgba(245, 158, 11, 0.16), transparent 32%),
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 28%),
+        linear-gradient(180deg, #040913 0%, #08111f 48%, #030711 100%);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      touch-action: pan-y;
+    }
+
+    .refs-shell {
+      width: min(1280px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 40px;
+    }
+
+    .refs-hero,
+    .refs-panel {
+      background: var(--refs-panel);
+      border: 1px solid var(--refs-border);
+      border-radius: 24px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(10px);
+    }
+
+    .refs-hero {
+      padding: 28px;
+      margin-bottom: 20px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .refs-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.14);
+      color: #fde68a;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+    }
+
+    .refs-subtitle {
+      margin: 10px 0 0;
+      max-width: 980px;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--refs-muted);
+    }
+
+    .refs-actions,
+    .refs-stats,
+    .refs-filters,
+    .refs-road-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .refs-actions {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .refs-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 12px 16px;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      color: var(--refs-text);
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .refs-btn:hover { transform: translateY(-1px); }
+
+    .refs-btn-primary {
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      color: #1f1400;
+    }
+
+    .refs-btn-secondary {
+      background: rgba(59, 130, 246, 0.12);
+      border-color: rgba(59, 130, 246, 0.2);
+    }
+
+    .refs-stats { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+    .refs-stat {
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: var(--refs-panel-strong);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+    }
+
+    .refs-stat-label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--refs-muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .refs-stat-value {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .refs-main { display: grid; gap: 20px; }
+
+    .refs-panel { padding: 22px; }
+
+    .refs-panel-title {
+      margin: 0 0 8px;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .refs-panel-sub {
+      margin: 0 0 18px;
+      color: var(--refs-muted);
+      line-height: 1.55;
+    }
+
+    .refs-filters {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      margin-bottom: 18px;
+    }
+
+    .refs-field label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--refs-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .refs-field input,
+    .refs-field select {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(5, 12, 22, 0.85);
+      color: var(--refs-text);
+      outline: none;
+    }
+
+    .refs-road-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .refs-locate-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      margin-bottom: 14px;
+    }
+
+    .refs-locate-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .refs-route-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      margin-bottom: 14px;
+    }
+
+    .refs-preset-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .refs-preset-btn {
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid rgba(59, 130, 246, 0.18);
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.12);
+      color: #dbeafe;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .refs-btn-neutral {
+      background: rgba(148, 163, 184, 0.08);
+      border-color: rgba(148, 163, 184, 0.18);
+    }
+
+    .refs-locate-result {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(7, 17, 30, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      display: grid;
+      gap: 10px;
+    }
+
+    .refs-locate-result[hidden] {
+      display: none;
+    }
+
+    .refs-locate-kicker {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.14);
+      color: #bfdbfe;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .refs-locate-title {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .refs-locate-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .refs-locate-text {
+      margin: 0;
+      color: var(--refs-muted);
+      line-height: 1.6;
+    }
+
+    .refs-tomtom-box {
+      margin-bottom: 14px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(7, 17, 30, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      display: grid;
+      gap: 12px;
+    }
+
+    .refs-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--refs-text);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .refs-toggle input {
+      width: 16px;
+      height: 16px;
+      accent-color: #f59e0b;
+    }
+
+    .refs-status {
+      font-size: 12px;
+      color: var(--refs-muted);
+      line-height: 1.5;
+    }
+
+    .refs-result-block {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.14);
+      display: grid;
+      gap: 8px;
+    }
+
+    .refs-result-block[hidden] {
+      display: none;
+    }
+
+    .refs-result-label {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.12);
+      color: #fde68a;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .refs-result-lines {
+      display: grid;
+      gap: 6px;
+      color: var(--refs-muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .refs-result-lines strong {
+      color: var(--refs-text);
+    }
+
+    .refs-route-results {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .refs-route-results[hidden] {
+      display: none;
+    }
+
+    .refs-poi-card {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(7, 17, 30, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      display: grid;
+      gap: 10px;
+    }
+
+    .refs-poi-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .refs-poi-text {
+      margin: 0;
+      color: var(--refs-muted);
+      line-height: 1.6;
+    }
+
+    .refs-road-card {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(7, 17, 30, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+    }
+
+    .refs-road-card h3 {
+      margin: 0 0 6px;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+
+    .refs-road-card p {
+      margin: 0 0 10px;
+      color: var(--refs-muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .refs-road-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .refs-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.12);
+      color: #fde68a;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .refs-table-wrap {
+      overflow: auto;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      background: rgba(6, 13, 24, 0.78);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 920px;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: rgba(15, 25, 41, 0.97);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #cbd5e1;
+    }
+
+    td {
+      font-size: 14px;
+      color: #e2e8f0;
+    }
+
+    .refs-km {
+      font-weight: 800;
+      color: #f8fafc;
+      white-space: nowrap;
+    }
+
+    .refs-marco {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.12);
+      color: #bbf7d0;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .refs-type {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .refs-type-marco_intervalo {
+      background: rgba(59, 130, 246, 0.14);
+      color: #bfdbfe;
+    }
+
+    .refs-type-inicio_trecho {
+      background: rgba(34, 197, 94, 0.14);
+      color: #bbf7d0;
+    }
+
+    .refs-type-fim_trecho {
+      background: rgba(239, 68, 68, 0.14);
+      color: #fecaca;
+    }
+
+    .refs-empty {
+      padding: 26px;
+      text-align: center;
+      color: var(--refs-muted);
+    }
+
+    .refs-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--refs-muted);
+      line-height: 1.7;
+    }
+
+    .refs-footer {
+      margin-top: 10px;
+      text-align: right;
+      color: var(--refs-muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 720px) {
+      .refs-shell { width: min(100vw - 20px, 1280px); padding-top: 18px; }
+      .refs-hero, .refs-panel { padding: 18px; border-radius: 20px; }
+      .refs-stat-value { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="refs-shell">
+    <section class="refs-hero">
+      <div>
+        <span class="refs-eyebrow">Grande Florianópolis · 150 metros</span>
+        <h1>Índice separado de referências rodoviárias</h1>
+        <p class="refs-subtitle">
+          Consulta operacional com marcos a cada 150 metros nas rodovias locais da Grande Florianópolis,
+          usando a base GPS já embarcada no projeto. A planilha Excel é gerada a partir da mesma base.
+        </p>
+      </div>
+
+      <div class="refs-actions">
+        <a class="refs-btn refs-btn-primary" href="referencias-grande-florianopolis-150m.xlsx">Baixar Excel (.xlsx)</a>
+        <a class="refs-btn refs-btn-secondary" href="index.html">Voltar ao app principal</a>
+      </div>
+
+      <div class="refs-stats">
+        <div class="refs-stat">
+          <span class="refs-stat-label">Rodovias incluídas</span>
+          <span class="refs-stat-value" id="stat-roads">--</span>
+        </div>
+        <div class="refs-stat">
+          <span class="refs-stat-label">Referências geradas</span>
+          <span class="refs-stat-value" id="stat-rows">--</span>
+        </div>
+        <div class="refs-stat">
+          <span class="refs-stat-label">Intervalo padrão</span>
+          <span class="refs-stat-value" id="stat-interval">--</span>
+        </div>
+        <div class="refs-stat">
+          <span class="refs-stat-label">Última geração</span>
+          <span class="refs-stat-value" id="stat-generated" style="font-size:18px; line-height:1.3;">--</span>
+        </div>
+      </div>
+    </section>
+
+    <main class="refs-main">
+      <section class="refs-panel">
+        <h2 class="refs-panel-title">Trechos incluídos</h2>
+        <p class="refs-panel-sub">
+          Cada card resume o trecho considerado no índice separado. O filtro e a tabela abaixo usam exatamente os mesmos dados.
+        </p>
+        <div class="refs-road-grid" id="road-grid"></div>
+      </section>
+
+      <section class="refs-panel">
+        <h2 class="refs-panel-title">Transformar latitude e longitude em referencia</h2>
+        <p class="refs-panel-sub">
+          Informe latitude e longitude em decimal para localizar a referencia operacional mais proxima na base local.
+        </p>
+
+        <div class="refs-locate-grid">
+          <div class="refs-field">
+            <label for="locate-lat">Latitude</label>
+            <input id="locate-lat" type="text" placeholder="Ex.: -27.596500">
+          </div>
+          <div class="refs-field">
+            <label for="locate-lng">Longitude</label>
+            <input id="locate-lng" type="text" placeholder="Ex.: -48.549300">
+          </div>
+          <div class="refs-field">
+            <label for="locate-road">Rodovia preferencial</label>
+            <select id="locate-road">
+              <option value="">Buscar em todas</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="refs-tomtom-box">
+          <div class="refs-locate-grid" style="margin-bottom:0;">
+            <div class="refs-field">
+              <label for="tomtom-key">TomTom API key</label>
+              <input id="tomtom-key" type="password" placeholder="Ler de Api.txt ou colar manualmente">
+            </div>
+            <div class="refs-field">
+              <label>&nbsp;</label>
+              <button class="refs-btn refs-btn-neutral" type="button" id="btn-load-tomtom-key">Carregar chave local</button>
+            </div>
+          </div>
+          <label class="refs-toggle" for="locate-use-tomtom">
+            <input id="locate-use-tomtom" type="checkbox" checked>
+            Usar TomTom para detalhar o ponto encontrado
+          </label>
+          <div class="refs-status" id="tomtom-status">
+            A referência local continua definindo o km operacional. A TomTom acrescenta endereço, rota, classe viária, limite de velocidade e mapcode quando houver rede.
+          </div>
+        </div>
+
+        <div class="refs-locate-actions">
+          <button class="refs-btn refs-btn-primary" type="button" id="btn-locate-reference">Transformar em referencia</button>
+          <button class="refs-btn refs-btn-neutral" type="button" id="btn-use-gps">Usar GPS atual</button>
+        </div>
+
+        <div class="refs-locate-result" id="locate-result" hidden>
+          <span class="refs-locate-kicker">Referencia encontrada</span>
+          <h3 class="refs-locate-title" id="locate-result-title">--</h3>
+          <div class="refs-locate-meta" id="locate-result-meta"></div>
+          <p class="refs-locate-text" id="locate-result-text">--</p>
+          <div class="refs-result-block" id="locate-result-tomtom" hidden>
+            <span class="refs-result-label">TomTom</span>
+            <div class="refs-result-lines" id="locate-result-tomtom-lines"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="refs-panel">
+        <h2 class="refs-panel-title">TomTom Along Route Search</h2>
+        <p class="refs-panel-sub">
+          Busca POIs ao longo da rodovia escolhida usando a geometria local do app como rota. O km operacional continua sendo o da base local; a TomTom entra apenas para localizar pontos de interesse ao longo do trajeto.
+        </p>
+
+        <div class="refs-route-grid">
+          <div class="refs-field">
+            <label for="route-search-road">Rodovia</label>
+            <select id="route-search-road">
+              <option value="">Selecione uma rodovia</option>
+            </select>
+          </div>
+          <div class="refs-field">
+            <label for="route-search-query">Busca TomTom</label>
+            <input id="route-search-query" type="text" placeholder="Ex.: posto, guincho, hospital, restaurante">
+          </div>
+          <div class="refs-field">
+            <label for="route-search-detour">Desvio maximo (s)</label>
+            <input id="route-search-detour" type="number" min="1" max="3600" step="1" value="180">
+          </div>
+          <div class="refs-field">
+            <label for="route-search-limit">Limite</label>
+            <input id="route-search-limit" type="number" min="1" max="20" step="1" value="8">
+          </div>
+        </div>
+
+        <div class="refs-preset-grid" id="route-search-presets">
+          <button class="refs-preset-btn" type="button" data-query="posto">Posto</button>
+          <button class="refs-preset-btn" type="button" data-query="loja">Loja</button>
+          <button class="refs-preset-btn" type="button" data-query="samu">SAMU</button>
+          <button class="refs-preset-btn" type="button" data-query="bombeiro">Bombeiro</button>
+          <button class="refs-preset-btn" type="button" data-query="policia">Policia</button>
+          <button class="refs-preset-btn" type="button" data-query="borracharia">Borracharia</button>
+          <button class="refs-preset-btn" type="button" data-query="conveniencia">Conveniencia</button>
+          <button class="refs-preset-btn" type="button" data-query="saude">Saude</button>
+          <button class="refs-preset-btn" type="button" data-query="farmacia">Farmacia</button>
+          <button class="refs-preset-btn" type="button" data-query="restaurante">Restaurante</button>
+        </div>
+
+        <div class="refs-locate-actions">
+          <button class="refs-btn refs-btn-primary" type="button" id="btn-route-search">Buscar ao longo da rota</button>
+        </div>
+
+        <div class="refs-status" id="route-search-status">
+          Informe a rodovia e o termo de busca, ou use um atalho acima. Cada POI retornado mostra a referencia operacional local mais proxima, com marco, km, nome do local e descricao do trecho.
+        </div>
+
+        <div class="refs-route-results" id="route-search-results" hidden></div>
+      </section>
+
+      <section class="refs-panel">
+        <h2 class="refs-panel-title">Consulta rápida</h2>
+        <p class="refs-panel-sub">
+          Filtre por rodovia, busque por km, marco, nome do local ou descrição, e use a planilha para trabalho externo no Excel.
+        </p>
+
+        <div class="refs-filters">
+          <div class="refs-field">
+            <label for="filter-road">Rodovia</label>
+            <select id="filter-road">
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <div class="refs-field">
+            <label for="filter-text">Busca livre</label>
+            <input id="filter-text" type="text" placeholder="Ex.: SC-401, 003+200, km 5,400">
+          </div>
+          <div class="refs-field">
+            <label for="filter-type">Tipo</label>
+            <select id="filter-type">
+              <option value="">Todos</option>
+              <option value="inicio_trecho">Início de trecho</option>
+              <option value="marco_intervalo">Marco do intervalo</option>
+              <option value="fim_trecho">Fim de trecho</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="refs-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Rodovia</th>
+                <th>Trecho</th>
+                <th>Nome do local</th>
+                <th>KM</th>
+                <th>Marco</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>Tipo</th>
+                <th>Descrição</th>
+              </tr>
+            </thead>
+            <tbody id="refs-table-body"></tbody>
+          </table>
+          <div class="refs-empty" id="refs-empty" hidden>Nenhuma referência encontrada para o filtro atual.</div>
+        </div>
+        <div class="refs-footer" id="filtered-count">--</div>
+      </section>
+
+      <section class="refs-panel">
+        <h2 class="refs-panel-title">Premissas usadas</h2>
+        <p class="refs-panel-sub">
+          Essas observações ajudam a interpretar a planilha corretamente no contexto operacional do app.
+        </p>
+        <ol class="refs-list" id="assumptions-list"></ol>
+      </section>
+    </main>
+  </div>
+
+  <script src="data/referencias_grande_florianopolis_150m.js"></script>
+    <script>
+      (function () {
+        const payload = window.GRANDE_FLORIANOPOLIS_REFERENCIAS;
+        const TOMTOM_KEY_STORAGE = 'pmrv_refs_tomtom_key_v1';
+        const TOMTOM_KEY_CANDIDATES = ['Api.txt', 'api.txt', 'Api.tct', 'api.tct'];
+        const ptBrNumber = new Intl.NumberFormat('pt-BR', {
+          minimumFractionDigits: 3,
+          maximumFractionDigits: 3
+      });
+
+      if (!payload) {
+        document.body.innerHTML = '<div style="padding:24px;color:#fff;font-family:Segoe UI,sans-serif;">Base de referências não encontrada.</div>';
+        return;
+      }
+
+      const elements = {
+        statRoads: document.getElementById('stat-roads'),
+        statRows: document.getElementById('stat-rows'),
+        statInterval: document.getElementById('stat-interval'),
+        statGenerated: document.getElementById('stat-generated'),
+        roadGrid: document.getElementById('road-grid'),
+        filterRoad: document.getElementById('filter-road'),
+        filterText: document.getElementById('filter-text'),
+        filterType: document.getElementById('filter-type'),
+        locateLat: document.getElementById('locate-lat'),
+        locateLng: document.getElementById('locate-lng'),
+        locateRoad: document.getElementById('locate-road'),
+        locateButton: document.getElementById('btn-locate-reference'),
+        locateGpsButton: document.getElementById('btn-use-gps'),
+        tomtomKey: document.getElementById('tomtom-key'),
+        tomtomLoadButton: document.getElementById('btn-load-tomtom-key'),
+        tomtomUse: document.getElementById('locate-use-tomtom'),
+        tomtomStatus: document.getElementById('tomtom-status'),
+        locateResult: document.getElementById('locate-result'),
+        locateResultTitle: document.getElementById('locate-result-title'),
+        locateResultMeta: document.getElementById('locate-result-meta'),
+        locateResultText: document.getElementById('locate-result-text'),
+        locateResultTomTom: document.getElementById('locate-result-tomtom'),
+        locateResultTomTomLines: document.getElementById('locate-result-tomtom-lines'),
+        routeSearchRoad: document.getElementById('route-search-road'),
+        routeSearchQuery: document.getElementById('route-search-query'),
+        routeSearchDetour: document.getElementById('route-search-detour'),
+        routeSearchLimit: document.getElementById('route-search-limit'),
+        routeSearchButton: document.getElementById('btn-route-search'),
+        routeSearchStatus: document.getElementById('route-search-status'),
+        routeSearchResults: document.getElementById('route-search-results'),
+        routeSearchPresets: document.getElementById('route-search-presets'),
+        tableBody: document.getElementById('refs-table-body'),
+        empty: document.getElementById('refs-empty'),
+        filteredCount: document.getElementById('filtered-count'),
+        assumptionsList: document.getElementById('assumptions-list')
+      };
+
+      function escapeHtml(value) {
+        return String(value || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function formatTimestamp(value) {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return value || '--';
+        return new Intl.DateTimeFormat('pt-BR', {
+          dateStyle: 'short',
+          timeStyle: 'short'
+        }).format(date);
+      }
+
+      function renderStats() {
+        elements.statRoads.textContent = payload.roads.length;
+        elements.statRows.textContent = payload.rows.length.toLocaleString('pt-BR');
+        elements.statInterval.textContent = payload.interval_m + ' m';
+        elements.statGenerated.textContent = formatTimestamp(payload.generated_at);
+      }
+
+      function renderRoads() {
+        elements.roadGrid.innerHTML = payload.roads.map(function (road) {
+          return [
+            '<article class="refs-road-card">',
+            '<h3>' + escapeHtml(road.rodovia) + '</h3>',
+            '<p>' + escapeHtml(road.trecho) + '</p>',
+            '<div class="refs-road-meta">',
+            '<span class="refs-chip">0,000 → ' + escapeHtml(road.km_final_label) + ' km</span>',
+            '<span class="refs-chip">' + Number(road.quantidade_referencias).toLocaleString('pt-BR') + ' referências</span>',
+            '</div>',
+            '<p style="margin-top:12px;">' + escapeHtml(road.observacoes) + '</p>',
+            '</article>'
+          ].join('');
+        }).join('');
+      }
+
+      function renderAssumptions() {
+        elements.assumptionsList.innerHTML = payload.assumptions.map(function (item) {
+          return '<li>' + escapeHtml(item) + '</li>';
+        }).join('');
+      }
+
+      function populateRoadFilter() {
+        const optionsHtml = payload.roads.map(function (road) {
+          return '<option value="' + escapeHtml(road.rodovia) + '">' + escapeHtml(road.rodovia + ' · ' + road.trecho) + '</option>';
+        }).join('');
+
+        elements.filterRoad.innerHTML = '<option value="">Todas</option>' + optionsHtml;
+        elements.locateRoad.innerHTML = '<option value="">Buscar em todas</option>' + optionsHtml;
+        elements.routeSearchRoad.innerHTML = '<option value="">Selecione uma rodovia</option>' + optionsHtml;
+      }
+
+      function typeLabel(type) {
+        if (type === 'inicio_trecho') return 'Início';
+        if (type === 'fim_trecho') return 'Fim';
+        return 'Marco ' + payload.interval_m + ' m';
+      }
+
+      function setTomTomStatus(message, tone) {
+        elements.tomtomStatus.textContent = message;
+        if (tone === 'error') {
+          elements.tomtomStatus.style.color = '#fca5a5';
+          return;
+        }
+        if (tone === 'ok') {
+          elements.tomtomStatus.style.color = '#86efac';
+          return;
+        }
+        elements.tomtomStatus.style.color = 'var(--refs-muted)';
+      }
+
+      function persistTomTomKey() {
+        const key = String(elements.tomtomKey.value || '').trim();
+        if (key) {
+          localStorage.setItem(TOMTOM_KEY_STORAGE, key);
+        } else {
+          localStorage.removeItem(TOMTOM_KEY_STORAGE);
+        }
+      }
+
+      function getTomTomKey() {
+        return String(elements.tomtomKey.value || '').trim();
+      }
+
+      async function loadTomTomKeyFromFile() {
+        for (const candidate of TOMTOM_KEY_CANDIDATES) {
+          try {
+            const response = await fetch(candidate, { cache: 'no-store' });
+            if (!response.ok) continue;
+            const key = (await response.text()).trim();
+            if (!key) continue;
+            elements.tomtomKey.value = key;
+            persistTomTomKey();
+            setTomTomStatus('Chave TomTom carregada do arquivo local ' + candidate + '.', 'ok');
+            return key;
+          } catch (error) {
+          }
+        }
+        setTomTomStatus('Nao foi possivel ler Api.txt/api.tct automaticamente. Cole a chave manualmente se necessario.', 'error');
+        return '';
+      }
+
+      async function hydrateTomTomKey() {
+        const persisted = localStorage.getItem(TOMTOM_KEY_STORAGE);
+        if (persisted) {
+          elements.tomtomKey.value = persisted;
+          setTomTomStatus('Chave TomTom restaurada do armazenamento local do navegador.', 'ok');
+          return;
+        }
+        await loadTomTomKeyFromFile();
+      }
+
+      function parsePositionString(value) {
+        const parts = String(value || '').split(',');
+        if (parts.length !== 2) return '';
+        const latitude = Number(parts[0]);
+        const longitude = Number(parts[1]);
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return '';
+        return ptBrNumber.format(latitude) + ', ' + ptBrNumber.format(longitude);
+      }
+
+      function buildTomTomUrl(latitude, longitude, key) {
+        return 'https://api.tomtom.com/search/2/reverseGeocode/'
+          + latitude + ',' + longitude
+          + '.json?key=' + encodeURIComponent(key)
+          + '&radius=80'
+          + '&language=pt-BR'
+          + '&returnMatchType=true'
+          + '&returnSpeedLimit=true'
+          + '&returnRoadClass=Functional'
+          + '&mapcodes=Local';
+      }
+
+      async function fetchTomTomReverse(latitude, longitude) {
+        const key = getTomTomKey();
+        if (!key) throw new Error('Chave TomTom nao informada.');
+
+        const response = await fetch(buildTomTomUrl(latitude, longitude, key));
+        if (!response.ok) throw new Error('TomTom reverse geocode retornou HTTP ' + response.status + '.');
+
+        const payloadTomTom = await response.json();
+        if (!payloadTomTom || !Array.isArray(payloadTomTom.addresses) || !payloadTomTom.addresses.length) {
+          throw new Error('TomTom nao retornou endereco para esta coordenada.');
+        }
+        return payloadTomTom.addresses[0];
+      }
+
+      function renderTomTomDetails(details) {
+        if (!details) {
+          elements.locateResultTomTom.hidden = true;
+          elements.locateResultTomTomLines.innerHTML = '';
+          return;
+        }
+
+        const address = details.address || {};
+        const mapcodes = Array.isArray(details.mapcodes) ? details.mapcodes : [];
+        const localMapcode = mapcodes.find(function (item) { return item.type === 'Local'; }) || mapcodes[0];
+        const roadClass = Array.isArray(details.roadClass) ? details.roadClass.join(', ') : '';
+        const lines = [
+          address.freeformAddress ? '<div><strong>Endereco:</strong> ' + escapeHtml(address.freeformAddress) + '</div>' : '',
+          address.routeNumbers && address.routeNumbers.length ? '<div><strong>Rotas:</strong> ' + escapeHtml(address.routeNumbers.join(', ')) + '</div>' : '',
+          address.streetName ? '<div><strong>Via:</strong> ' + escapeHtml(address.streetName) + '</div>' : '',
+          address.municipality ? '<div><strong>Municipio:</strong> ' + escapeHtml(address.municipality) + '</div>' : '',
+          address.neighbourhood ? '<div><strong>Bairro:</strong> ' + escapeHtml(address.neighbourhood) + '</div>' : '',
+          details.matchType ? '<div><strong>Tipo de correspondencia:</strong> ' + escapeHtml(details.matchType) + '</div>' : '',
+          roadClass ? '<div><strong>Classe viaria:</strong> ' + escapeHtml(roadClass) + '</div>' : '',
+          address.speedLimit ? '<div><strong>Limite de velocidade:</strong> ' + escapeHtml(address.speedLimit) + '</div>' : '',
+          localMapcode && localMapcode.fullMapcode ? '<div><strong>Mapcode:</strong> ' + escapeHtml(localMapcode.fullMapcode) + '</div>' : '',
+          details.position ? '<div><strong>Posicao TomTom:</strong> ' + escapeHtml(parsePositionString(details.position)) + '</div>' : ''
+        ].filter(Boolean);
+
+        if (!lines.length) {
+          elements.locateResultTomTom.hidden = true;
+          elements.locateResultTomTomLines.innerHTML = '';
+          return;
+        }
+
+        elements.locateResultTomTomLines.innerHTML = lines.join('');
+        elements.locateResultTomTom.hidden = false;
+      }
+
+      function setRouteSearchStatus(message, tone) {
+        elements.routeSearchStatus.textContent = message;
+        if (tone === 'error') {
+          elements.routeSearchStatus.style.color = '#fca5a5';
+          return;
+        }
+        if (tone === 'ok') {
+          elements.routeSearchStatus.style.color = '#86efac';
+          return;
+        }
+        elements.routeSearchStatus.style.color = 'var(--refs-muted)';
+      }
+
+      function normalizeInteger(value, fallback) {
+        const parsed = Number(String(value || '').trim());
+        if (!Number.isFinite(parsed)) return fallback;
+        return Math.round(parsed);
+      }
+
+      function formatDistanceLabel(meters) {
+        const value = Number(meters);
+        if (!Number.isFinite(value)) return '--';
+        if (Math.abs(value) >= 1000) {
+          return ptBrNumber.format(value / 1000) + ' km';
+        }
+        return Math.round(value).toLocaleString('pt-BR') + ' m';
+      }
+
+      function formatDurationLabel(seconds) {
+        const value = Number(seconds);
+        if (!Number.isFinite(value)) return '--';
+        const sign = value < 0 ? '-' : '';
+        const totalSeconds = Math.abs(Math.round(value));
+        const minutes = Math.floor(totalSeconds / 60);
+        const remainingSeconds = totalSeconds % 60;
+        if (minutes >= 60) {
+          const hours = Math.floor(minutes / 60);
+          const restMinutes = minutes % 60;
+          return sign + hours + ' h ' + restMinutes + ' min';
+        }
+        if (!minutes) return sign + remainingSeconds + ' s';
+        return sign + minutes + ' min';
+      }
+
+      function buildReferenceContext(referenceResult) {
+        if (!referenceResult || !referenceResult.row) return null;
+        const row = referenceResult.row;
+        return {
+          title: row.rodovia + ' km ' + row.km_label + ' | ' + row.marco,
+          detail: row.nome_local,
+          description: row.descricao,
+          distance: formatDistanceLabel(referenceResult.distanceMeters)
+        };
+      }
+
+      function buildRoadRoutePoints(road) {
+        const rows = payload.rows
+          .filter(function (row) { return row.rodovia === road; })
+          .slice()
+          .sort(function (left, right) { return left.km - right.km; });
+
+        const points = [];
+        rows.forEach(function (row) {
+          const previous = points[points.length - 1];
+          if (previous && previous.lat === row.latitude && previous.lon === row.longitude) return;
+          points.push({ lat: row.latitude, lon: row.longitude });
+        });
+        return points;
+      }
+
+      function sampleRoutePoints(points, maxPoints) {
+        if (points.length <= maxPoints) return points;
+        const sampled = [];
+        for (let index = 0; index < maxPoints; index += 1) {
+          const pointIndex = Math.round(index * (points.length - 1) / (maxPoints - 1));
+          const point = points[pointIndex];
+          const previous = sampled[sampled.length - 1];
+          if (previous && previous.lat === point.lat && previous.lon === point.lon) continue;
+          sampled.push(point);
+        }
+        const lastPoint = points[points.length - 1];
+        const sampledLast = sampled[sampled.length - 1];
+        if (!sampledLast || sampledLast.lat !== lastPoint.lat || sampledLast.lon !== lastPoint.lon) {
+          sampled.push(lastPoint);
+        }
+        return sampled;
+      }
+
+      function buildAlongRouteUrl(query, key, maxDetourTime, limit) {
+        return 'https://api.tomtom.com/search/2/searchAlongRoute/'
+          + encodeURIComponent(query)
+          + '.json?key=' + encodeURIComponent(key)
+          + '&maxDetourTime=' + encodeURIComponent(maxDetourTime)
+          + '&limit=' + encodeURIComponent(limit)
+          + '&language=pt-BR'
+          + '&detourOffset=true'
+          + '&sortBy=detourTime'
+          + '&spreadingMode=plan'
+          + '&openingHours=nextSevenDays'
+          + '&timeZone=iana'
+          + '&mapcodes=Local';
+      }
+
+      async function fetchTomTomAlongRoute(road, query, maxDetourTime, limit) {
+        const key = getTomTomKey();
+        if (!key) throw new Error('Chave TomTom nao informada.');
+
+        const routePoints = sampleRoutePoints(buildRoadRoutePoints(road), 120);
+        if (routePoints.length < 2) {
+          throw new Error('A rodovia selecionada nao possui pontos suficientes para montar a rota.');
+        }
+
+        const response = await fetch(buildAlongRouteUrl(query, key, maxDetourTime, limit), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            route: {
+              points: routePoints
+            }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('TomTom Along Route Search retornou HTTP ' + response.status + '.');
+        }
+
+        const payloadTomTom = await response.json();
+        return Array.isArray(payloadTomTom.results) ? payloadTomTom.results : [];
+      }
+
+      function renderAlongRouteResults(road, query, results) {
+        if (!results.length) {
+          elements.routeSearchResults.innerHTML = [
+            '<article class="refs-poi-card">',
+            '<h3 class="refs-poi-title">Nenhum POI encontrado</h3>',
+            '<p class="refs-poi-text">A TomTom nao retornou resultado para "' + escapeHtml(query) + '" ao longo da ' + escapeHtml(road) + ' com os filtros atuais.</p>',
+            '</article>'
+          ].join('');
+          elements.routeSearchResults.hidden = false;
+          return;
+        }
+
+        elements.routeSearchResults.innerHTML = results.map(function (item) {
+          const poi = item.poi || {};
+          const address = item.address || {};
+          const mapcodes = Array.isArray(item.mapcodes) ? item.mapcodes : [];
+          const localMapcode = mapcodes.find(function (entry) { return entry.type === 'Local'; }) || mapcodes[0];
+          const categories = Array.isArray(poi.categories) ? poi.categories.join(', ') : '';
+          const nearestReference = item.position
+            ? findNearestReference(item.position.lat, item.position.lon, road)
+            : null;
+          const referenceContext = buildReferenceContext(nearestReference);
+
+          return [
+            '<article class="refs-poi-card">',
+            '<span class="refs-locate-kicker">POI ao longo da rota</span>',
+            '<h3 class="refs-poi-title">' + escapeHtml(poi.name || address.freeformAddress || 'Ponto sem nome retornado') + '</h3>',
+            '<div class="refs-locate-meta">',
+            '<span class="refs-chip">' + escapeHtml(road) + '</span>',
+            '<span class="refs-chip">Desvio ' + escapeHtml(formatDurationLabel(item.detourTime)) + '</span>',
+            '<span class="refs-chip">Distancia rota ' + escapeHtml(formatDistanceLabel(item.dist)) + '</span>',
+            '<span class="refs-chip">Detour distancia ' + escapeHtml(formatDistanceLabel(item.detourDistance)) + '</span>',
+            '</div>',
+            '<p class="refs-poi-text">' + escapeHtml(address.freeformAddress || 'Sem endereco livre informado pela TomTom.') + (referenceContext ? ' Referencia operacional proxima: ' + escapeHtml(referenceContext.title + ' | ' + referenceContext.detail + ' | aprox. ' + referenceContext.distance + '.') : '') + '</p>',
+            '<div class="refs-result-lines">',
+            referenceContext ? '<div><strong>Referencia operacional local:</strong> ' + escapeHtml(referenceContext.title) + '</div>' : '',
+            referenceContext && referenceContext.detail ? '<div><strong>Local de apoio:</strong> ' + escapeHtml(referenceContext.detail) + '</div>' : '',
+            referenceContext && referenceContext.description ? '<div><strong>Descricao do trecho:</strong> ' + escapeHtml(referenceContext.description) + '</div>' : '',
+            referenceContext ? '<div><strong>Distancia do POI ate a referencia:</strong> ' + escapeHtml(referenceContext.distance) + '</div>' : '',
+            categories ? '<div><strong>Categorias:</strong> ' + escapeHtml(categories) + '</div>' : '',
+            address.municipality ? '<div><strong>Municipio:</strong> ' + escapeHtml(address.municipality) + '</div>' : '',
+            poi.phone ? '<div><strong>Telefone:</strong> ' + escapeHtml(poi.phone) + '</div>' : '',
+            poi.url ? '<div><strong>Site:</strong> <a href="' + escapeHtml(poi.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(poi.url) + '</a></div>' : '',
+            localMapcode && localMapcode.fullMapcode ? '<div><strong>Mapcode:</strong> ' + escapeHtml(localMapcode.fullMapcode) + '</div>' : '',
+            item.position ? '<div><strong>Coordenadas TomTom:</strong> ' + escapeHtml(ptBrNumber.format(item.position.lat) + ', ' + ptBrNumber.format(item.position.lon)) + '</div>' : '',
+            '</div>',
+            '</article>'
+          ].filter(Boolean).join('');
+        }).join('');
+        elements.routeSearchResults.hidden = false;
+      }
+
+      async function runAlongRouteSearch() {
+        const road = elements.routeSearchRoad.value;
+        const query = String(elements.routeSearchQuery.value || '').trim();
+        const maxDetourTime = Math.min(Math.max(normalizeInteger(elements.routeSearchDetour.value, 180), 1), 3600);
+        const limit = Math.min(Math.max(normalizeInteger(elements.routeSearchLimit.value, 8), 1), 20);
+
+        elements.routeSearchDetour.value = maxDetourTime;
+        elements.routeSearchLimit.value = limit;
+
+        if (!road) {
+          window.alert('Selecione a rodovia para a busca ao longo da rota.');
+          return;
+        }
+        if (!query) {
+          window.alert('Informe o termo da busca TomTom.');
+          return;
+        }
+
+        if (!getTomTomKey()) {
+          await loadTomTomKeyFromFile();
+        }
+        if (!getTomTomKey()) {
+          setRouteSearchStatus('Nao foi encontrada chave TomTom. Cole a chave manualmente para usar a busca ao longo da rota.', 'error');
+          return;
+        }
+
+        const originalLabel = elements.routeSearchButton.textContent;
+        elements.routeSearchButton.textContent = 'Consultando TomTom...';
+        elements.routeSearchButton.disabled = true;
+        elements.routeSearchResults.hidden = true;
+        elements.routeSearchResults.innerHTML = '';
+        setRouteSearchStatus('Montando a rota da ' + road + ' e consultando a TomTom para "' + query + '"...', 'info');
+
+        try {
+          const results = await fetchTomTomAlongRoute(road, query, maxDetourTime, limit);
+          renderAlongRouteResults(road, query, results);
+          setRouteSearchStatus(
+            results.length
+              ? 'TomTom retornou ' + results.length + ' POI(s) para "' + query + '" ao longo da ' + road + '.'
+              : 'TomTom nao retornou POIs para "' + query + '" ao longo da ' + road + '.',
+            results.length ? 'ok' : 'info'
+          );
+        } catch (error) {
+          setRouteSearchStatus(error.message, 'error');
+          elements.routeSearchResults.hidden = true;
+        } finally {
+          elements.routeSearchButton.textContent = originalLabel;
+          elements.routeSearchButton.disabled = false;
+        }
+      }
+
+      function handleRoutePresetClick(event) {
+        const button = event.target.closest('[data-query]');
+        if (!button) return;
+        const query = String(button.getAttribute('data-query') || '').trim();
+        if (!query) return;
+        elements.routeSearchQuery.value = query;
+        if (!elements.routeSearchRoad.value) {
+          setRouteSearchStatus('Atalho "' + query + '" preenchido. Agora selecione a rodovia para consultar a TomTom ao longo da rota.', 'info');
+          return;
+        }
+        runAlongRouteSearch();
+      }
+
+      function buildSearchIndex(row) {
+        return [
+          row.rodovia,
+          row.trecho,
+          row.nome_local,
+          row.km_label,
+          row.marco,
+          row.tipo,
+          row.descricao
+        ].join(' ').toLowerCase();
+      }
+
+      function getFilteredRows() {
+        const road = elements.filterRoad.value;
+        const type = elements.filterType.value;
+        const term = elements.filterText.value.trim().toLowerCase();
+
+        return payload.rows.filter(function (row) {
+          if (road && row.rodovia !== road) return false;
+          if (type && row.tipo !== type) return false;
+          if (term && buildSearchIndex(row).indexOf(term) === -1) return false;
+          return true;
+        });
+      }
+
+      function normalizeCoordinate(value) {
+        const normalized = String(value || '').trim().replace(',', '.');
+        if (!normalized) return NaN;
+        return Number(normalized);
+      }
+
+      function toRadians(value) {
+        return value * Math.PI / 180;
+      }
+
+      function haversineDistanceMeters(lat1, lng1, lat2, lng2) {
+        const earthRadiusKm = 6371;
+        const deltaLat = toRadians(lat2 - lat1);
+        const deltaLng = toRadians(lng2 - lng1);
+        const a =
+          Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+          Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+          Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return earthRadiusKm * c * 1000;
+      }
+
+      function buildLocateCandidates(preferredRoad) {
+        return payload.rows.filter(function (row) {
+          return !preferredRoad || row.rodovia === preferredRoad;
+        });
+      }
+
+      function findNearestReference(lat, lng, preferredRoad) {
+        const candidates = buildLocateCandidates(preferredRoad);
+        if (!candidates.length) return null;
+
+        let nearest = null;
+        let nearestDistance = Infinity;
+
+        candidates.forEach(function (row) {
+          const distance = haversineDistanceMeters(lat, lng, row.latitude, row.longitude);
+          if (distance < nearestDistance) {
+            nearest = row;
+            nearestDistance = distance;
+          }
+        });
+
+        if (!nearest) return null;
+        return {
+          row: nearest,
+          distanceMeters: nearestDistance
+        };
+      }
+
+      function renderLocateResult(result, sourceLabel, tomTomDetails) {
+        const row = result.row;
+        const distanceRounded = Math.round(result.distanceMeters);
+        const address = tomTomDetails && tomTomDetails.address ? tomTomDetails.address : null;
+        const tomTomSummary = address && address.freeformAddress
+          ? ' | detalhe TomTom: ' + address.freeformAddress
+          : '';
+
+        elements.locateResultTitle.textContent = row.rodovia + ' km ' + row.km_label;
+        elements.locateResultMeta.innerHTML = [
+          '<span class="refs-chip">' + escapeHtml(row.nome_local) + '</span>',
+          '<span class="refs-chip">Marco ' + escapeHtml(row.marco) + '</span>',
+          '<span class="refs-chip">Distancia aprox. ' + distanceRounded.toLocaleString('pt-BR') + ' m</span>'
+        ].join('');
+        elements.locateResultText.textContent =
+          sourceLabel +
+          ': referencia mais proxima em ' +
+          row.trecho +
+          ' | ' +
+          row.nome_local +
+          ' | tipo ' +
+          typeLabel(row.tipo) +
+          ' | coordenadas da referencia ' +
+          ptBrNumber.format(row.latitude) +
+          ', ' +
+          ptBrNumber.format(row.longitude) +
+          '.' +
+          tomTomSummary;
+        renderTomTomDetails(tomTomDetails);
+        elements.locateResult.hidden = false;
+      }
+
+      async function locateByCoordinates(sourceLabel) {
+        const latitude = normalizeCoordinate(elements.locateLat.value);
+        const longitude = normalizeCoordinate(elements.locateLng.value);
+
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+          window.alert('Informe latitude e longitude validas em formato decimal.');
+          return;
+        }
+
+        const result = findNearestReference(latitude, longitude, elements.locateRoad.value);
+        if (!result) {
+          window.alert('Nenhuma referencia disponivel para a busca atual.');
+          return;
+        }
+
+        let tomTomDetails = null;
+        if (elements.tomtomUse.checked) {
+          const key = getTomTomKey();
+          if (!key) {
+            setTomTomStatus('TomTom habilitado, mas sem chave. O resultado sera exibido apenas com a base local.', 'error');
+          } else {
+            setTomTomStatus('Consultando TomTom para detalhar o ponto...', 'info');
+            try {
+              tomTomDetails = await fetchTomTomReverse(latitude, longitude);
+              setTomTomStatus('TomTom respondeu com detalhe viario para esta coordenada.', 'ok');
+            } catch (error) {
+              setTomTomStatus(error.message + ' Resultado mantido com a base local.', 'error');
+            }
+          }
+        } else {
+          setTomTomStatus('Consulta TomTom desativada. Resultado exibido apenas com a base local.', 'info');
+        }
+
+        renderLocateResult(result, sourceLabel, tomTomDetails);
+      }
+
+      function locateUsingGps() {
+        if (!navigator.geolocation) {
+          window.alert('GPS nao suportado neste navegador.');
+          return;
+        }
+
+        const originalLabel = elements.locateGpsButton.textContent;
+        elements.locateGpsButton.textContent = 'Lendo GPS...';
+        elements.locateGpsButton.disabled = true;
+
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            elements.locateLat.value = latitude.toFixed(6);
+            elements.locateLng.value = longitude.toFixed(6);
+            locateByCoordinates('GPS atual');
+
+            elements.locateGpsButton.textContent = originalLabel;
+            elements.locateGpsButton.disabled = false;
+          },
+          function (error) {
+            let message = 'Nao foi possivel obter o GPS.';
+            if (error && error.code === 1) message = 'Permissao de GPS negada.';
+            if (error && error.code === 2) message = 'Posicao indisponivel.';
+            if (error && error.code === 3) message = 'Tempo esgotado na leitura do GPS.';
+
+            window.alert(message);
+            elements.locateGpsButton.textContent = originalLabel;
+            elements.locateGpsButton.disabled = false;
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          }
+        );
+      }
+
+      function renderTable() {
+        const filteredRows = getFilteredRows();
+
+        elements.tableBody.innerHTML = filteredRows.map(function (row) {
+          return [
+            '<tr>',
+            '<td><strong>' + escapeHtml(row.rodovia) + '</strong></td>',
+            '<td>' + escapeHtml(row.trecho) + '</td>',
+            '<td>' + escapeHtml(row.nome_local) + '</td>',
+            '<td class="refs-km">' + escapeHtml(row.km_label) + '</td>',
+            '<td><span class="refs-marco">' + escapeHtml(row.marco) + '</span></td>',
+            '<td>' + ptBrNumber.format(row.latitude) + '</td>',
+            '<td>' + ptBrNumber.format(row.longitude) + '</td>',
+            '<td><span class="refs-type refs-type-' + escapeHtml(row.tipo) + '">' + escapeHtml(typeLabel(row.tipo)) + '</span></td>',
+            '<td>' + escapeHtml(row.descricao) + '</td>',
+            '</tr>'
+          ].join('');
+        }).join('');
+
+        elements.empty.hidden = filteredRows.length !== 0;
+        elements.filteredCount.textContent =
+          filteredRows.length.toLocaleString('pt-BR') +
+          ' referência(s) exibida(s) de ' +
+          payload.rows.length.toLocaleString('pt-BR') +
+          ' no total.';
+      }
+
+      renderStats();
+      renderRoads();
+      renderAssumptions();
+      populateRoadFilter();
+      renderTable();
+      hydrateTomTomKey();
+
+      elements.filterRoad.addEventListener('change', renderTable);
+      elements.filterType.addEventListener('change', renderTable);
+      elements.filterText.addEventListener('input', renderTable);
+      elements.tomtomKey.addEventListener('input', persistTomTomKey);
+      elements.tomtomLoadButton.addEventListener('click', function () {
+        loadTomTomKeyFromFile();
+      });
+      elements.routeSearchButton.addEventListener('click', runAlongRouteSearch);
+      elements.routeSearchPresets.addEventListener('click', handleRoutePresetClick);
+      elements.routeSearchQuery.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          runAlongRouteSearch();
+        }
+      });
+      elements.locateButton.addEventListener('click', function () {
+        locateByCoordinates('Coordenadas informadas');
+      });
+      elements.locateGpsButton.addEventListener('click', locateUsingGps);
+    })();
+  </script>
+</body>
+</html>

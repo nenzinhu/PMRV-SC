@@ -4,15 +4,19 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="description" content="PMRV-SC - Ferramentas operacionais da Polícia Militar Rodoviária" />
-  <meta name="theme-color" content="#07090f" />
+  <meta name="theme-color" content="#0a0a0a" />
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <title>PMRV-SC</title>
+  <title>PMRV-SC | Operacional</title>
 
-    <link rel="stylesheet" href="css/inlined.css">
-    <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/inlined.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
@@ -58,6 +62,13 @@
           <span class="menu-arrow">›</span>
         </button>
 
+        <button class="menu-card" data-color="blue" data-click="go('patrulhamento')" aria-label="Abrir Consulta de Patrulhamento e Infrações">
+          <div class="menu-icon"><img src="patrulhamento.png" alt="" aria-hidden="true" class="menu-icon-img menu-icon-img-pat" /></div>
+          <div class="menu-title">Patrulhamento</div>
+          <div class="menu-desc">Registro rápido de infrações em lote</div>
+          <span class="menu-arrow" aria-hidden="true">›</span>
+        </button>
+
         <button class="menu-card" data-color="amber" data-click="go('infracoes')">
           <div class="menu-icon"><img src="infrações.png" alt="Consulta de Infrações" class="menu-icon-img menu-icon-img-infra" /></div>
           <div class="menu-title">Consulta de Infrações</div>
@@ -86,17 +97,17 @@
           <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
 
+        <button class="menu-card" data-color="blue" data-click="go('referencias-proximas')" aria-label="Abrir Referências Próximas (TomTom)">
+          <div class="menu-icon">📍</div>
+          <div class="menu-title">Referências Próximas</div>
+          <div class="menu-desc">Postos, SAMU, Policia, etc (TomTom)</div>
+          <span class="menu-arrow" aria-hidden="true">›</span>
+        </button>
+
         <button class="menu-card" data-color="purple" data-click="go('relatorio')" aria-label="Abrir Relatório Completo de Sinistro">
           <div class="menu-icon"><img src="relatorio.png" class="menu-icon-img menu-icon-img-rel" alt="" aria-hidden="true"></div>
           <div class="menu-title">Relatório Completo</div>
           <div class="menu-desc">Envolvidos + Danos em um relatório</div>
-          <span class="menu-arrow" aria-hidden="true">›</span>
-        </button>
-
-        <button class="menu-card" data-color="blue" data-click="go('patrulhamento')" aria-label="Abrir Consulta de Patrulhamento e Infrações">
-          <div class="menu-icon"><img src="patrulhamento.png" alt="" aria-hidden="true" class="menu-icon-img menu-icon-img-pat" /></div>
-          <div class="menu-title">Patrulhamento</div>
-          <div class="menu-desc">Registro rápido de infrações em lote</div>
           <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
 
@@ -128,10 +139,10 @@
           <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
 
-        <button class="menu-card" data-color="green" data-click="go('docs')" aria-label="Abrir Documentos e Instruções de Trânsito">
+        <button class="menu-card" data-color="green" data-click="go('docs')" aria-label="Abrir CTB Brasileiro">
           <div class="menu-icon"><img src="ctb.png" alt="" aria-hidden="true" class="menu-icon-img menu-icon-img-ctb" /></div>
-          <div class="menu-title">Documentos de Trânsito</div>
-          <div class="menu-desc">Instruções rápidas sobre porte, CNH e CRLV-e</div>
+          <div class="menu-title">CTB Brasileiro</div>
+          <div class="menu-desc">Consulta rápida sobre regras, documentos e fiscalização</div>
           <span class="menu-arrow" aria-hidden="true">›</span>
         </button>
 
@@ -1074,11 +1085,23 @@
           <div class="form-row form-row-2">
             <div class="form-field">
               <select id="pat_manual_rodovia">
-                <option value="">-- Selecione a Rodovia --</option>
+                <option value="">-- Selecione --</option>
+                <option value="SC-401">SC-401</option>
+                <option value="SC-402">SC-402</option>
+                <option value="SC-403">SC-403</option>
+                <option value="SC-404">SC-404</option>
+                <option value="SC-405">SC-405</option>
+                <option value="SC-406">SC-406</option>
+                <option value="SC-407">SC-407</option>
+                <option value="SC-281">SC-281</option>
+                <option value="SC-408">SC-408</option>
+                <option value="SC-410">SC-410</option>
+                <option value="SC-411">SC-411</option>
+                <option value="SC-435">SC-435</option>
               </select>
             </div>
             <div class="form-field">
-              <input type="text" id="pat_manual_km" placeholder="KM 0.000" onblur="core_formatarKM(this)">
+              <input type="text" id="pat_manual_km" placeholder="00,000" maxlength="6" inputmode="decimal" onblur="core_formatarKM(this)" onkeydown="if(event.key==='Enter')core_formatarKM(this)">
             </div>
           </div>
         </div>
@@ -1187,6 +1210,7 @@
       <div class="flex gap-8 flex-wrap" style="margin-bottom:14px;">
         <button class="btn btn-primary" id="tab-pes-pbt" data-click="pes_switchTab('pbt')">PBT</button>
         <button class="btn" id="tab-pes-dim" data-click="pes_switchTab('dim')">Dimensões</button>
+        <button class="btn" id="tab-pes-img" data-click="pes_switchTab('img')">Imagens</button>
       </div>
 
       <div id="pes-content-pbt">
@@ -1301,6 +1325,130 @@
             <div id="dim_alerta_titulo" style="font-weight:900;font-size:16px;"></div>
             <div id="dim_alerta_desc" style="font-size:12px;margin-top:4px;"></div>
           </div>
+        </div>
+      </div>
+
+      <div id="pes-content-img" class="hidden">
+        <div class="sub-box" style="margin-bottom:12px;">
+          <div class="result-label">Guia visual por tipo</div>
+          <div style="font-size:12px;color:var(--label);">Referência rápida do tipo de caminhão e quantidade de eixos para apoio no enquadramento de peso.</div>
+        </div>
+
+        <div class="pes-axle-grid">
+          <article class="pes-axle-card">
+            <div class="pes-axle-head">
+              <strong>Toco</strong>
+              <span class="pes-axle-tag">2 eixos</span>
+            </div>
+            <div class="pes-axle-media">
+              <svg viewBox="0 0 260 90" aria-label="Caminhão toco, dois eixos">
+                <rect x="14" y="34" width="156" height="28" rx="6" fill="#f58220"/>
+                <rect x="172" y="38" width="56" height="24" rx="4" fill="#f59e0b"/>
+                <rect x="186" y="42" width="18" height="10" rx="2" fill="#0f172a"/>
+                <circle cx="64" cy="72" r="10" fill="#1f2937"/><circle cx="64" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="146" cy="72" r="10" fill="#1f2937"/><circle cx="146" cy="72" r="4" fill="#9ca3af"/>
+              </svg>
+            </div>
+          </article>
+
+          <article class="pes-axle-card">
+            <div class="pes-axle-head">
+              <strong>Truck</strong>
+              <span class="pes-axle-tag">3 eixos</span>
+            </div>
+            <div class="pes-axle-media">
+              <svg viewBox="0 0 260 90" aria-label="Caminhão truck, três eixos">
+                <rect x="14" y="34" width="156" height="28" rx="6" fill="#f58220"/>
+                <rect x="172" y="38" width="56" height="24" rx="4" fill="#f59e0b"/>
+                <rect x="186" y="42" width="18" height="10" rx="2" fill="#0f172a"/>
+                <circle cx="58" cy="72" r="10" fill="#1f2937"/><circle cx="58" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="132" cy="72" r="10" fill="#1f2937"/><circle cx="132" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="156" cy="72" r="10" fill="#1f2937"/><circle cx="156" cy="72" r="4" fill="#9ca3af"/>
+              </svg>
+            </div>
+          </article>
+
+          <article class="pes-axle-card">
+            <div class="pes-axle-head">
+              <strong>Bitruck</strong>
+              <span class="pes-axle-tag">4 eixos</span>
+            </div>
+            <div class="pes-axle-media">
+              <svg viewBox="0 0 260 90" aria-label="Caminhão bitruck, quatro eixos">
+                <rect x="14" y="34" width="156" height="28" rx="6" fill="#f58220"/>
+                <rect x="172" y="38" width="56" height="24" rx="4" fill="#f59e0b"/>
+                <rect x="186" y="42" width="18" height="10" rx="2" fill="#0f172a"/>
+                <circle cx="50" cy="72" r="10" fill="#1f2937"/><circle cx="50" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="114" cy="72" r="10" fill="#1f2937"/><circle cx="114" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="138" cy="72" r="10" fill="#1f2937"/><circle cx="138" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="162" cy="72" r="10" fill="#1f2937"/><circle cx="162" cy="72" r="4" fill="#9ca3af"/>
+              </svg>
+            </div>
+          </article>
+
+          <article class="pes-axle-card">
+            <div class="pes-axle-head">
+              <strong>Cavalo + Semirreboque</strong>
+              <span class="pes-axle-tag">5 eixos</span>
+            </div>
+            <div class="pes-axle-media">
+              <svg viewBox="0 0 260 90" aria-label="Cavalo mais semirreboque, cinco eixos">
+                <rect x="20" y="38" width="58" height="24" rx="4" fill="#f59e0b"/>
+                <rect x="80" y="34" width="136" height="28" rx="6" fill="#f58220"/>
+                <rect x="198" y="30" width="40" height="8" rx="2" fill="#f59e0b"/>
+                <circle cx="40" cy="72" r="10" fill="#1f2937"/><circle cx="40" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="66" cy="72" r="10" fill="#1f2937"/><circle cx="66" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="124" cy="72" r="10" fill="#1f2937"/><circle cx="124" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="156" cy="72" r="10" fill="#1f2937"/><circle cx="156" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="188" cy="72" r="10" fill="#1f2937"/><circle cx="188" cy="72" r="4" fill="#9ca3af"/>
+              </svg>
+            </div>
+          </article>
+
+          <article class="pes-axle-card">
+            <div class="pes-axle-head">
+              <strong>Bitrem</strong>
+              <span class="pes-axle-tag">7 eixos</span>
+            </div>
+            <div class="pes-axle-media">
+              <svg viewBox="0 0 260 90" aria-label="Bitrem, sete eixos">
+                <rect x="14" y="40" width="44" height="22" rx="4" fill="#f59e0b"/>
+                <rect x="62" y="34" width="70" height="28" rx="6" fill="#f58220"/>
+                <rect x="140" y="34" width="100" height="28" rx="6" fill="#fb923c"/>
+                <circle cx="30" cy="72" r="9" fill="#1f2937"/><circle cx="30" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="52" cy="72" r="9" fill="#1f2937"/><circle cx="52" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="84" cy="72" r="9" fill="#1f2937"/><circle cx="84" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="112" cy="72" r="9" fill="#1f2937"/><circle cx="112" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="162" cy="72" r="9" fill="#1f2937"/><circle cx="162" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="190" cy="72" r="9" fill="#1f2937"/><circle cx="190" cy="72" r="4" fill="#9ca3af"/>
+                <circle cx="218" cy="72" r="9" fill="#1f2937"/><circle cx="218" cy="72" r="4" fill="#9ca3af"/>
+              </svg>
+            </div>
+          </article>
+
+          <article class="pes-axle-card">
+            <div class="pes-axle-head">
+              <strong>Rodotrem</strong>
+              <span class="pes-axle-tag">9 eixos</span>
+            </div>
+            <div class="pes-axle-media">
+              <svg viewBox="0 0 260 90" aria-label="Rodotrem, nove eixos">
+                <rect x="10" y="42" width="42" height="20" rx="4" fill="#f59e0b"/>
+                <rect x="56" y="34" width="58" height="28" rx="6" fill="#f58220"/>
+                <rect x="118" y="34" width="58" height="28" rx="6" fill="#fb923c"/>
+                <rect x="180" y="34" width="64" height="28" rx="6" fill="#fdba74"/>
+                <circle cx="24" cy="72" r="8" fill="#1f2937"/><circle cx="24" cy="72" r="3" fill="#9ca3af"/>
+                <circle cx="44" cy="72" r="8" fill="#1f2937"/><circle cx="44" cy="72" r="3" fill="#9ca3af"/>
+                <circle cx="72" cy="72" r="8" fill="#1f2937"/><circle cx="72" cy="72" r="3" fill="#9ca3af"/>
+                <circle cx="92" cy="72" r="8" fill="#1f2937"/><circle cx="92" cy="72" r="3" fill="#9ca3af"/>
+                <circle cx="132" cy="72" r="8" fill="#1f2937"/><circle cx="132" cy="72" r="3" fill="#9ca3af"/>
+                <circle cx="152" cy="72" r="8" fill="#1f2937"/><circle cx="152" cy="72" r="3" fill="#9ca3af"/>
+                <circle cx="188" cy="72" r="8" fill="#1f2937"/><circle cx="188" cy="72" r="3" fill="#9ca3af"/>
+                <circle cx="208" cy="72" r="8" fill="#1f2937"/><circle cx="208" cy="72" r="3" fill="#9ca3af"/>
+                <circle cx="228" cy="72" r="8" fill="#1f2937"/><circle cx="228" cy="72" r="3" fill="#9ca3af"/>
+              </svg>
+            </div>
+          </article>
         </div>
       </div>
 
@@ -1486,6 +1634,58 @@
   </section>
 
   <!-- ============================================================
+       REFERÊNCIAS PRÓXIMAS (TOMTOM)
+  ============================================================ -->
+  <section id="screen-referencias-proximas" class="screen">
+    <div class="back-row">
+      <button class="btn" data-click="go('home')">← Voltar</button>
+      <button class="btn btn-danger" data-click="go('ended')">Sair</button>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">📍 Referências Próximas</h2>
+          <p class="card-sub">Busca de POIs ao longo da rodovia via TomTom.</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label class="field-label">Rodovia Atual (GPS)</label>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="ref_prox_rodovia" readonly placeholder="Localizando..." style="flex:1;">
+            <button class="btn btn-sm" data-click="ref_prox_atualizarGPS()">🔄</button>
+          </div>
+        </div>
+        
+        <div class="form-field">
+          <label class="field-label">Categorias</label>
+          <div class="flex gap-8 flex-wrap" id="ref_prox_categorias">
+            <button class="btn btn-sm btn-primary" data-click="ref_prox_toggleCat(this, '7311')">⛽ Posto</button>
+            <button class="btn btn-sm btn-primary" data-click="ref_prox_toggleCat(this, '7322')">🚑 SAMU</button>
+            <button class="btn btn-sm btn-primary" data-click="ref_prox_toggleCat(this, '7324')">🚒 Bombeiro</button>
+            <button class="btn btn-sm btn-primary" data-click="ref_prox_toggleCat(this, '7323')">👮 Policia</button>
+            <button class="btn btn-sm btn-primary" data-click="ref_prox_toggleCat(this, '9113')">🛠️ Borracharia</button>
+            <button class="btn btn-sm btn-primary" data-click="ref_prox_toggleCat(this, '9361009')">🛒 Conveniência</button>
+            <button class="btn btn-sm btn-primary" data-click="ref_prox_toggleCat(this, '7321')">🏥 Saúde</button>
+            <button class="btn btn-sm btn-primary" data-click="ref_prox_toggleCat(this, '7326')">💊 Farmácia</button>
+            <button class="btn btn-sm btn-primary" data-click="ref_prox_toggleCat(this, '7315')">🍽️ Restaurante</button>
+            <button class="btn btn-sm btn-primary" data-click="ref_prox_toggleCat(this, '9361')">🛍️ Loja</button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-full btn-lg" id="btn-ref-prox-buscar" data-click="ref_prox_buscar()">🔍 Buscar ao longo da rota</button>
+      </div>
+
+      <div id="ref_prox_status" style="margin-top:12px; font-size:12px; color:var(--label); text-align:center;"></div>
+
+      <div id="ref_prox_results" style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
+        <!-- Resultados TomTom aqui -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
        REFERÊNCIAS DE RODOVIAS
   ============================================================ -->
   <section id="screen-rodovias-ref" class="screen">
@@ -1502,10 +1702,10 @@
       </div>
 
       <div class="form-grid">
-        <div class="form-row form-row-2">
-          <div class="form-field">
-            <label class="field-label">Rodovia</label>
-            <select id="ref_rodovia">
+        <div class="form-field">
+          <label class="field-label">Rodovia</label>
+          <div style="display:flex; gap:8px;">
+            <select id="ref_rodovia" style="flex:1;">
               <option value="SC-401">SC-401</option>
               <option value="SC-403">SC-403</option>
               <option value="SC-405">SC-405</option>
@@ -1513,11 +1713,12 @@
               <option value="SC-281">SC-281</option>
               <option value="SC-407">SC-407</option>
             </select>
+            <button class="btn btn-sm" id="btn-gps-localizar-ref" data-click="gps_obterLocalizacao()">📍 GPS</button>
           </div>
-          <div class="form-field">
-            <label class="field-label">KM</label>
-            <input type="text" id="ref_km" placeholder="0.000">
-          </div>
+        </div>
+        <div class="form-field">
+          <label class="field-label">KM</label>
+          <input type="text" id="ref_km" placeholder="0.000" inputmode="decimal" onblur="core_formatarKM(this)">
         </div>
         <button class="btn btn-primary btn-full" data-click="ref_localizar()">🔎 Localizar referência</button>
       </div>
@@ -1604,7 +1805,7 @@
   </section>
 
   <!-- ============================================================
-       DOCUMENTOS DE TRÂNSITO
+       CTB BRASILEIRO
   ============================================================ -->
   <section id="screen-docs" class="screen">
     <div class="back-row">
@@ -1614,8 +1815,8 @@
     <div class="card">
       <div class="card-header">
         <div>
-          <h2 class="card-title">📄 Documentos de Trânsito</h2>
-          <p class="card-sub">Consulta rápida sobre ciclomotores, fiscalização e exigências operacionais.</p>
+          <h2 class="card-title">📄 CTB Brasileiro</h2>
+          <p class="card-sub">Consulta rápida sobre regras, documentos, ciclomotores e exigências operacionais.</p>
         </div>
       </div>
 
@@ -1624,6 +1825,7 @@
         <button class="btn" id="tab-docs-ciclomotores" data-click="docs_switchTab('ciclomotores')">Ciclomotores</button>
         <button class="btn" id="tab-docs-estrangeiros" data-click="docs_switchTab('estrangeiros')">Estrangeiros</button>
         <button class="btn" id="tab-docs-aet" data-click="docs_switchTab('aet')">Fiscalização de AET</button>
+        <button class="btn" id="tab-docs-pops" data-click="docs_switchTab('pops')">POPS</button>
       </div>
 
       <div id="docs-content-bases">
@@ -1761,6 +1963,36 @@
               </ul>
             </section>
           </div>
+        </div>
+      </div>
+
+      <div id="docs-content-pops" class="hidden">
+        <div class="help-stack">
+          <section class="help-block" style="border:1px solid rgba(239, 68, 68, 0.22);background:linear-gradient(180deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.04));">
+            <h3 class="help-title">POP: Homicídio Culposo na Direção (Art. 302 CTB)</h3>
+            <p class="help-text">Procedimento Operacional Padrão para atendimento de sinistros com óbito constatado.</p>
+          </section>
+
+          <section class="help-block">
+            <h3 class="help-title">Protocolo de Atendimento</h3>
+            <ul class="help-list">
+              <li><strong>1. Isolamento do Local:</strong> Imediata preservação da cena do crime/sinistro. Não movimentar veículos ou vestígios até a chegada da Perícia (Científica).</li>
+              <li><strong>2. Acionamentos:</strong> Central (PMRv/COPOM) para acionamento do IML e Polícia Científica.</li>
+              <li><strong>3. Identificação:</strong> Qualificação completa do condutor, vítima(s) e testemunhas presenciais (mínimo 2, se possível).</li>
+              <li><strong>4. Teste de Alcoolemia:</strong> Obrigatório realizar o teste de etilômetro no condutor sobrevivente (Art. 306 e 277 CTB).</li>
+              <li><strong>5. Documentação:</strong> Verificação de CNH e CRLV. Se houver crime de trânsito (embriaguez, racha, etc.), condução à DP.</li>
+              <li><strong>6. Registro SADE:</strong> Preenchimento detalhado do Boletim de Ocorrência (PMRv/SADE), anexando fotos de todos os ângulos.</li>
+            </ul>
+          </section>
+
+          <section class="help-block">
+            <h3 class="help-title">Observações Importantes</h3>
+            <ul class="help-list">
+              <li><strong>Causas de Aumento:</strong> Se o condutor não possui CNH, em faixa de pedestre/calçada ou deixou de prestar socorro (Art. 302, § 1º).</li>
+              <li><strong>Influência de Álcool:</strong> Se o condutor estiver sob influência de álcool ou substância psicoativa, a pena é de reclusão de 5 a 8 anos (Art. 302, § 3º).</li>
+              <li><strong>Objetos Pessoais:</strong> Arrolar e entregar pertences da vítima à Polícia Civil ou familiares mediante recibo.</li>
+            </ul>
+          </section>
         </div>
       </div>
 
@@ -2178,15 +2410,23 @@
   <script src="js/envolvidos.js"></script>
   <script src="js/gps.js"></script>
   <script src="js/pmrv.js"></script>
+  <script src="js/patrulhamento-store.js"></script>
+  <script src="js/patrulhamento-report.js"></script>
+  <script src="js/patrulhamento-render.js"></script>
   <script src="js/patrulhamento.js"></script>
+  <script src="js/danos-state.js"></script>
+  <script src="js/danos-report.js"></script>
+  <script src="js/danos-render.js"></script>
   <script src="js/danos.js"></script>
   <script src="js/relatorio.js"></script>
   <script src="js/infracoes.js"></script>
   <script src="js/pesos.js"></script>
   <script src="js/tacografo.js"></script>
   <script src="js/rodovias_ref.js"></script>
+  <script src="data/referencias_grande_florianopolis_150m.js"></script>
   <script src="js/calendarios.js"></script>
   <script src="js/croqui.js"></script>
+  <script src="js/referencias-proximas.js"></script>
 
 </body>
 </html>
